@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'"
+    />
+    <meta
+      http-equiv="X-Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'"
+    />
+    <title>Novel Writer - Book Structure</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 15px;
+        font-size: 14px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        color: white;
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 1.8em;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+      }
+
+      .act-section {
+        margin-bottom: 25px;
+      }
+
+      .act-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        padding: 8px 15px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        backdrop-filter: blur(10px);
+      }
+
+      .act-title {
+        color: white;
+        font-size: 1.3em;
+        margin: 0;
+      }
+
+      .add-chapter-btn {
+        background: white;
+        color: #667eea;
+        border: none;
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-size: 0.9em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .add-chapter-btn:hover {
+        background: #f0f0f0;
+        transform: scale(1.05);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      .add-chapter-btn:active {
+        transform: scale(0.98);
+      }
+
+      .add-act-section {
+        text-align: center;
+        margin-top: 20px;
+        padding: 20px;
+      }
+
+      .add-act-btn {
+        background: white;
+        color: #667eea;
+        border: 2px solid white;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-size: 1.1em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .add-act-btn:hover {
+        background: #667eea;
+        color: white;
+        transform: scale(1.05);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+      }
+
+      .add-act-btn:active {
+        transform: scale(0.98);
+      }
+
+      .chapters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 12px;
+        margin-bottom: 15px;
+      }
+
+      .chapter-card {
+        background: white;
+        border-radius: 8px;
+        padding: 12px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.08);
+        transition: transform 0.2s, box-shadow 0.2s;
+        cursor: pointer;
+        position: relative;
+      }
+
+      .chapter-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .chapter-card.dragging {
+        opacity: 0.5;
+        cursor: grabbing;
+      }
+
+      .chapter-card.drag-over {
+        border: 2px dashed #667eea;
+        background: #f0f4ff;
+      }
+
+      .drag-handle {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 16px;
+        height: 16px;
+        cursor: grab;
+        display: grid;
+        grid-template-columns: repeat(2, 5px);
+        grid-template-rows: repeat(3, 5px);
+        gap: 2px;
+        padding: 2px;
+      }
+
+      .drag-handle:active {
+        cursor: grabbing;
+      }
+
+      .drag-handle-dot {
+        width: 3px;
+        height: 3px;
+        background: #999;
+        border-radius: 50%;
+      }
+
+      .drag-handle:hover .drag-handle-dot {
+        background: #667eea;
+      }
+
+      .chapter-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid #667eea;
+        padding-bottom: 8px;
+        margin-bottom: 10px;
+      }
+
+      .chapter-title-container {
+        flex: 1;
+      }
+
+      .chapter-title {
+        color: #667eea;
+        font-size: 1.1em;
+        font-weight: bold;
+        margin-bottom: 4px;
+      }
+
+      .chapter-number {
+        color: #888;
+        font-size: 0.8em;
+      }
+
+      .chapter-settings-btn {
+        background: transparent;
+        border: none;
+        color: #667eea;
+        font-size: 1.3em;
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 4px;
+        transition: all 0.2s;
+        line-height: 1;
+      }
+
+      .chapter-settings-btn:hover {
+        background: #f0f4ff;
+        transform: rotate(90deg);
+      }
+
+      .chapter-settings-btn:active {
+        transform: rotate(90deg) scale(0.9);
+      }
+
+      .sections-list {
+        list-style: none;
+      }
+
+      .section-item {
+        margin-bottom: 8px;
+        padding: 8px;
+        background: #f8f9fa;
+        border-radius: 6px;
+        border-left: 3px solid #667eea;
+      }
+
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 3px;
+      }
+
+      .section-title {
+        font-weight: 600;
+        color: #333;
+        font-size: 0.95em;
+        flex: 1;
+      }
+
+      .section-edit-btn {
+        background: transparent;
+        border: none;
+        color: #667eea;
+        font-size: 1.1em;
+        cursor: pointer;
+        padding: 2px 6px;
+        border-radius: 4px;
+        transition: all 0.2s;
+        line-height: 1;
+      }
+
+      .section-edit-btn:hover {
+        background: #e8ecff;
+        transform: scale(1.1);
+      }
+
+      .section-edit-btn:active {
+        transform: scale(0.95);
+      }
+
+      .section-summary {
+        color: #666;
+        font-size: 0.85em;
+        line-height: 1.4;
+        margin-bottom: 6px;
+      }
+
+      .section-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-top: 6px;
+      }
+
+      .section-tag {
+        display: inline-block;
+        padding: 2px 8px;
+        background: #667eea;
+        color: white;
+        font-size: 0.75em;
+        border-radius: 10px;
+        font-weight: 500;
+      }
+
+      .empty-state {
+        text-align: center;
+        color: white;
+        font-size: 0.95em;
+        padding: 25px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        backdrop-filter: blur(10px);
+      }
+
+      /* Modal styles */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+
+      .modal-overlay.active {
+        display: flex;
+      }
+
+      .modal {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        min-width: 350px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      .modal-title {
+        font-size: 1.3em;
+        color: #333;
+        margin-bottom: 15px;
+      }
+
+      .modal-input {
+        width: 100%;
+        padding: 10px;
+        font-size: 0.95em;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        margin-bottom: 15px;
+        box-sizing: border-box;
+      }
+
+      .modal-input:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .modal-buttons {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+      }
+
+      .modal-btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.9em;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .modal-btn-primary {
+        background: #667eea;
+        color: white;
+      }
+
+      .modal-btn-primary:hover {
+        background: #5568d3;
+      }
+
+      .modal-btn-secondary {
+        background: #e0e0e0;
+        color: #333;
+      }
+
+      .modal-btn-secondary:hover {
+        background: #d0d0d0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>📚 Book Structure</h1>
+      <div id="book-structure"></div>
+    </div>
+
+    <!-- Modal for adding chapter -->
+    <div id="modal-overlay" class="modal-overlay">
+      <div class="modal">
+        <h3 class="modal-title">Add New Chapter</h3>
+        <input type="text" id="modal-input" class="modal-input" placeholder="Enter chapter title...">
+        <div class="modal-buttons">
+          <button class="modal-btn modal-btn-secondary" id="modal-cancel">Cancel</button>
+          <button class="modal-btn modal-btn-primary" id="modal-confirm">Add Chapter</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for chapter properties -->
+    <div id="chapter-properties-modal" class="modal-overlay">
+      <div class="modal" style="min-width: 500px;">
+        <h3 class="modal-title">Chapter Properties</h3>
+
+        <div style="margin-bottom: 15px;">
+          <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Chapter Title</label>
+          <input type="text" id="chapter-prop-title" class="modal-input" placeholder="Chapter title...">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+            <input type="checkbox" id="chapter-prop-numbering" style="width: 18px; height: 18px; cursor: pointer;">
+            <span style="font-weight: 600; color: #333;">Numbering</span>
+          </label>
+          <div style="margin-left: 28px; margin-top: 5px; font-size: 0.85em; color: #666;">
+            If off, this chapter won't have a number (e.g., Prologue, Appendix)
+          </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+            <input type="checkbox" id="chapter-prop-visible" style="width: 18px; height: 18px; cursor: pointer;">
+            <span style="font-weight: 600; color: #333;">Visible in Final Text</span>
+          </label>
+          <div style="margin-left: 28px; margin-top: 5px; font-size: 0.85em; color: #666;">
+            If off, this chapter will be excluded from final compilation
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid #ddd; padding-top: 15px; margin-bottom: 15px;">
+          <button class="modal-btn" id="chapter-prop-delete" style="background: #dc3545; color: white; width: 100%;">
+            Delete Chapter
+          </button>
+          <div style="margin-top: 5px; font-size: 0.8em; color: #999; text-align: center;">
+            This action cannot be undone
+          </div>
+        </div>
+
+        <div class="modal-buttons">
+          <button class="modal-btn modal-btn-secondary" id="chapter-prop-cancel">Cancel</button>
+          <button class="modal-btn modal-btn-primary" id="chapter-prop-save">Save Changes</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="renderer.js"></script>
+  </body>
+</html>
