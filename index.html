@@ -21,7 +21,7 @@
 
       body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #F0EFEB;
         min-height: 100vh;
         padding: 15px;
         font-size: 14px;
@@ -33,11 +33,10 @@
       }
 
       h1 {
-        color: white;
+        color: #283618;
         text-align: center;
         margin-bottom: 20px;
         font-size: 1.8em;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
       }
 
       .act-section {
@@ -50,20 +49,20 @@
         align-items: center;
         margin-bottom: 12px;
         padding: 8px 15px;
-        background: rgba(255, 255, 255, 0.1);
+        background: #D4D4D4;
         border-radius: 8px;
-        backdrop-filter: blur(10px);
+        border: 1px solid #B7B7A4;
       }
 
       .act-title {
-        color: white;
+        color: #283618;
         font-size: 1.3em;
         margin: 0;
       }
 
       .add-chapter-btn {
-        background: white;
-        color: #667eea;
+        background: #F0EFEB;
+        color: #283618;
         border: none;
         padding: 6px 14px;
         border-radius: 6px;
@@ -71,13 +70,11 @@
         font-weight: 600;
         cursor: pointer;
         transition: all 0.2s;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
 
       .add-chapter-btn:hover {
-        background: #f0f0f0;
+        background: white;
         transform: scale(1.05);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
       }
 
       .add-chapter-btn:active {
@@ -91,9 +88,9 @@
       }
 
       .add-act-btn {
-        background: white;
-        color: #667eea;
-        border: 2px solid white;
+        background: #F0EFEB;
+        color: #283618;
+        border: 2px solid #283618;
         padding: 12px 30px;
         border-radius: 8px;
         font-size: 1.1em;
@@ -104,10 +101,9 @@
       }
 
       .add-act-btn:hover {
-        background: #667eea;
-        color: white;
+        background: white;
+        color: #283618;
         transform: scale(1.05);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
       }
 
       .add-act-btn:active {
@@ -122,18 +118,20 @@
       }
 
       .chapter-card {
-        background: white;
+        background: #D4D4D4;
         border-radius: 8px;
         padding: 12px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         transition: transform 0.2s, box-shadow 0.2s;
         cursor: pointer;
         position: relative;
+        border: 1px solid #B7B7A4;
       }
 
       .chapter-card:hover {
         transform: translateY(-3px);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        border-color: #283618;
       }
 
       .chapter-card.dragging {
@@ -142,8 +140,8 @@
       }
 
       .chapter-card.drag-over {
-        border: 2px dashed #667eea;
-        background: #f0f4ff;
+        border: 2px dashed #283618;
+        background: #B7B7A4;
       }
 
       .drag-handle {
@@ -167,19 +165,19 @@
       .drag-handle-dot {
         width: 3px;
         height: 3px;
-        background: #999;
+        background: #B7B7A4;
         border-radius: 50%;
       }
 
       .drag-handle:hover .drag-handle-dot {
-        background: #667eea;
+        background: #283618;
       }
 
       .chapter-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-bottom: 2px solid #667eea;
+        border-bottom: 2px solid #283618;
         padding-bottom: 8px;
         margin-bottom: 10px;
       }
@@ -189,21 +187,21 @@
       }
 
       .chapter-title {
-        color: #667eea;
+        color: #283618;
         font-size: 1.1em;
         font-weight: bold;
         margin-bottom: 4px;
       }
 
       .chapter-number {
-        color: #888;
+        color: #B7B7A4;
         font-size: 0.8em;
       }
 
       .chapter-settings-btn {
         background: transparent;
         border: none;
-        color: #667eea;
+        color: #283618;
         font-size: 1.3em;
         cursor: pointer;
         padding: 4px 8px;
@@ -213,7 +211,7 @@
       }
 
       .chapter-settings-btn:hover {
-        background: #f0f4ff;
+        background: #B7B7A4;
         transform: rotate(90deg);
       }
 
@@ -228,39 +226,33 @@
       .section-item {
         margin-bottom: 8px;
         padding: 8px;
-        background: #f8f9fa;
+        background: #F0EFEB;
         border-radius: 6px;
-        border-left: 3px solid #667eea;
+        border-left: 3px solid #283618;
       }
 
       .section-header {
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        margin-bottom: 3px;
-      }
-
-      .section-title {
-        font-weight: 600;
-        color: #333;
-        font-size: 0.95em;
-        flex: 1;
+        align-items: flex-start;
+        gap: 8px;
       }
 
       .section-edit-btn {
         background: transparent;
         border: none;
-        color: #667eea;
+        color: #283618;
         font-size: 1.1em;
         cursor: pointer;
         padding: 2px 6px;
         border-radius: 4px;
         transition: all 0.2s;
         line-height: 1;
+        flex-shrink: 0;
       }
 
       .section-edit-btn:hover {
-        background: #e8ecff;
+        background: #B7B7A4;
         transform: scale(1.1);
       }
 
@@ -269,10 +261,10 @@
       }
 
       .section-summary {
-        color: #666;
+        color: #283618;
         font-size: 0.85em;
         line-height: 1.4;
-        margin-bottom: 6px;
+        flex: 1;
       }
 
       .section-tags {
@@ -285,8 +277,8 @@
       .section-tag {
         display: inline-block;
         padding: 2px 8px;
-        background: #667eea;
-        color: white;
+        background: #F0EFEB;
+        color: #283618;
         font-size: 0.75em;
         border-radius: 10px;
         font-weight: 500;
@@ -294,12 +286,12 @@
 
       .empty-state {
         text-align: center;
-        color: white;
+        color: #283618;
         font-size: 0.95em;
         padding: 25px;
-        background: rgba(255, 255, 255, 0.1);
+        background: #D4D4D4;
         border-radius: 8px;
-        backdrop-filter: blur(10px);
+        border: 1px solid #B7B7A4;
       }
 
       /* Modal styles */
@@ -365,21 +357,22 @@
       }
 
       .modal-btn-primary {
-        background: #667eea;
-        color: white;
+        background: #F0EFEB;
+        color: #283618;
+        border: 1px solid #283618;
       }
 
       .modal-btn-primary:hover {
-        background: #5568d3;
+        background: white;
       }
 
       .modal-btn-secondary {
-        background: #e0e0e0;
-        color: #333;
+        background: #D4D4D4;
+        color: #283618;
       }
 
       .modal-btn-secondary:hover {
-        background: #d0d0d0;
+        background: #B7B7A4;
       }
     </style>
   </head>
@@ -447,6 +440,393 @@
       </div>
     </div>
 
-    <script src="renderer.js"></script>
+    <!-- Chapter Editor -->
+    <div id="chapter-editor" class="chapter-editor" style="display: none;">
+      <div class="editor-header">
+        <div class="editor-title">
+          <h2 id="editor-chapter-title"></h2>
+          <span id="editor-breadcrumb"></span>
+        </div>
+        <button class="editor-close-btn" id="editor-close">✕</button>
+      </div>
+
+      <div class="editor-content">
+        <div class="editor-main" id="editor-main">
+          <!-- Sections with side notes will be rendered here -->
+        </div>
+      </div>
+    </div>
+
+    <style>
+      /* Chapter Editor Styles */
+      .chapter-editor {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: white;
+        z-index: 2000;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Hide body overflow when editor is open */
+      body:has(.chapter-editor[style*="display: flex"]) {
+        overflow: hidden;
+      }
+
+      .editor-header {
+        background: #F0EFEB;
+        color: #283618;
+        padding: 15px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border-bottom: 2px solid #283618;
+      }
+
+      .editor-title h2 {
+        margin: 0;
+        font-size: 1.5em;
+      }
+
+      .editor-breadcrumb {
+        font-size: 0.85em;
+        opacity: 0.9;
+        margin-top: 4px;
+        display: block;
+      }
+
+      .editor-close-btn {
+        background: #D4D4D4;
+        border: 1px solid #283618;
+        color: #283618;
+        font-size: 1.5em;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .editor-close-btn:hover {
+        background: #B7B7A4;
+        transform: scale(1.1);
+      }
+
+      .editor-content {
+        flex: 1;
+        overflow-y: auto;
+        background: #F0EFEB;
+      }
+
+      .editor-main {
+        width: 100%;
+        padding: 40px;
+      }
+
+      .section-editor-block {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+        overflow: visible;
+        display: flex;
+        flex-direction: row;
+        border: 1px solid #D4D4D4;
+      }
+
+      .section-left-column {
+        flex: 0 0 80%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .section-body {
+        display: flex;
+        flex-direction: row;
+        flex: 1;
+      }
+
+      .section-main-content {
+        flex: 1;
+      }
+
+      .section-sidenotes {
+        flex: 0 0 20%;
+        background: #F0EFEB;
+        border-left: 1px solid #D4D4D4;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .section-note {
+        background: white;
+        border: 1px solid #283618;
+        border-radius: 6px;
+        padding: 10px;
+        font-size: 0.85em;
+        line-height: 1.5;
+        outline: none;
+        min-height: 60px;
+        resize: vertical;
+      }
+
+      .section-note:focus {
+        border-color: #283618;
+        box-shadow: 0 0 0 2px rgba(40, 54, 24, 0.2);
+      }
+
+      .add-note-btn {
+        background: #F0EFEB;
+        color: #283618;
+        border: 1px solid #283618;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 0.8em;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .add-note-btn:hover {
+        background: #D4D4D4;
+      }
+
+      .section-info-header {
+        background: #D4D4D4;
+        color: #283618;
+        padding: 12px 16px;
+        border-bottom: 2px solid #283618;
+      }
+
+      .section-header-top {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      .section-collapse-btn {
+        background: rgba(255,255,255,0.2);
+        border: none;
+        color: white;
+        width: 28px;
+        height: 28px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        flex-shrink: 0;
+      }
+
+      .section-collapse-btn:hover {
+        background: #D4D4D4;
+      }
+
+      .section-info-label {
+        font-size: 0.75em;
+        font-weight: 600;
+        color: #283618;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        flex: 1;
+      }
+
+      .section-controls {
+        display: flex;
+        gap: 8px;
+      }
+
+      .section-config-btn,
+      .section-delete-btn {
+        background: transparent;
+        border: 1px solid #283618;
+        color: #283618;
+        width: 32px;
+        height: 32px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+
+      .section-config-btn:hover {
+        background: #D4D4D4;
+        transform: rotate(90deg);
+      }
+
+      .section-delete-btn:hover {
+        background: #D4D4D4;
+        color: #dc3545;
+        transform: scale(1.1);
+      }
+
+      .section-editor-block.collapsed .section-info-summary,
+      .section-editor-block.collapsed .section-info-tags,
+      .section-editor-block.collapsed .section-main-content,
+      .section-editor-block.collapsed .section-sidenotes {
+        display: none;
+      }
+
+      .section-editor-block.collapsed {
+        margin-bottom: 10px;
+      }
+
+      .section-editor-block.collapsed .section-info-header {
+        padding: 10px 20px;
+        border-bottom: none;
+      }
+
+      .section-info-summary {
+        font-size: 0.9em;
+        opacity: 0.95;
+        line-height: 1.5;
+        margin-bottom: 8px;
+      }
+
+      .section-info-summary textarea {
+        width: 100%;
+        background: white;
+        border: 1px solid #283618;
+        padding: 6px 10px;
+        border-radius: 4px;
+        font-size: 0.9em;
+        color: #283618;
+        font-family: inherit;
+        resize: vertical;
+        min-height: 60px;
+      }
+
+      .section-info-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .section-info-tag {
+        background: #F0EFEB;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.8em;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 1px solid #283618;
+        color: #283618;
+      }
+
+      .section-info-tag:hover {
+        background: #D4D4D4;
+      }
+
+      .section-info-tag.removable::after {
+        content: ' ✕';
+        opacity: 0.7;
+        margin-left: 4px;
+      }
+
+      .tag-add-input {
+        background: white;
+        border: 1px solid #283618;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.8em;
+        width: 100px;
+        color: #283618;
+      }
+
+      .section-content-editor {
+        padding: 30px;
+        min-height: 300px;
+        font-size: 1em;
+        line-height: 1.8;
+        outline: none;
+        color: #283618;
+      }
+
+      .section-content-editor:focus {
+        background: #fefefe;
+      }
+
+      .section-content-editor p {
+        margin-bottom: 1em;
+      }
+
+      .section-content-editor:empty::before {
+        content: 'Start writing your story here...';
+        color: #B7B7A4;
+        font-style: italic;
+      }
+
+      /* Scrollbar styling */
+      .editor-main::-webkit-scrollbar,
+      .editor-sidenotes::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .editor-main::-webkit-scrollbar-track,
+      .editor-sidenotes::-webkit-scrollbar-track {
+        background: #F0EFEB;
+      }
+
+      .editor-main::-webkit-scrollbar-thumb,
+      .editor-sidenotes::-webkit-scrollbar-thumb {
+        background: #B7B7A4;
+        border-radius: 4px;
+      }
+
+      .editor-main::-webkit-scrollbar-thumb:hover,
+      .editor-sidenotes::-webkit-scrollbar-thumb:hover {
+        background: #283618;
+      }
+
+      /* New Scene Button */
+      .new-scene-btn {
+        display: block;
+        width: 100%;
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 20px;
+        background: #F0EFEB;
+        border: 2px dashed #283618;
+        border-radius: 8px;
+        color: #283618;
+        font-size: 1.1em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .new-scene-btn:hover {
+        background: white;
+        border-color: #283618;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(40, 54, 24, 0.2);
+      }
+
+      .new-scene-btn:active {
+        transform: translateY(0);
+      }
+    </style>
+
+    <!-- Load all modules in order -->
+    <script src="js/data.js"></script>
+    <script src="js/renderer.js"></script>
+    <script src="js/dragdrop.js"></script>
+    <script src="js/modals.js"></script>
+    <script src="js/editor.js"></script>
+    <script src="js/section-editor.js"></script>
+    <script src="js/events.js"></script>
+    <script src="js/app.js"></script>
   </body>
 </html>
