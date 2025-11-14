@@ -1431,7 +1431,7 @@
         background: white;
         border-radius: 8px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        margin-bottom: 20px;
+        margin-bottom: 4px;
         overflow: visible;
         display: flex;
         flex-direction: row;
@@ -1792,6 +1792,121 @@
 
       .new-scene-btn:active {
         transform: translateY(0);
+      }
+
+      /* Discrete insert button between sections */
+      .section-insert-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 30px;
+        margin: 1px 0;
+        position: relative;
+      }
+
+      .section-insert-line {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50%;
+        height: 2px;
+        background: #666;
+        opacity: 0.6;
+        transform: translateY(-50%);
+      }
+
+      .section-insert-btn {
+        position: relative;
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        background: var(--bg-primary);
+        border: 2px solid #666;
+        border-radius: 50%;
+        color: #888;
+        font-size: 14px;
+        font-weight: 400;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        z-index: 2;
+      }
+
+      .section-insert-btn:hover {
+        background: var(--bg-card);
+        border-color: var(--text-primary);
+        color: var(--text-primary);
+        transform: scale(1.15);
+      }
+
+      .section-insert-btn:active {
+        transform: scale(0.95);
+      }
+
+      .section-insert-btn .insert-icon {
+        display: block;
+        line-height: 1;
+      }
+
+      /* Section Word Count */
+      .section-word-count {
+        font-size: 0.75em;
+        color: #999;
+        text-align: right;
+        padding: 4px 8px;
+        opacity: 0.7;
+        font-style: italic;
+      }
+
+      /* Scene Settings Panel */
+      .scene-settings-panel {
+        background: var(--bg-card-inner);
+        border: 1px solid var(--border-tertiary);
+        border-radius: var(--border-radius);
+        padding: var(--spacing-lg);
+        margin: var(--spacing-sm) 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease, opacity 0.3s ease;
+      }
+
+      .settings-group {
+        margin-bottom: var(--spacing-lg);
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-sm);
+      }
+
+      .settings-group:last-child {
+        margin-bottom: 0;
+      }
+
+      .settings-label {
+        font-size: 0.85em;
+        font-weight: 600;
+        color: var(--text-primary);
+        display: block;
+      }
+
+      .settings-select,
+      .settings-input {
+        width: 100%;
+        padding: 6px 10px;
+        border: 1px solid var(--border-tertiary);
+        border-radius: var(--border-radius);
+        font-size: 0.9em;
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
+        font-family: inherit;
+      }
+
+      .settings-select:focus,
+      .settings-input:focus {
+        outline: none;
+        border-color: var(--border-secondary);
+      }
+
+      .section-config-btn.active {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
       }
 
       /* AI Panel Styles */

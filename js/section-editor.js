@@ -75,6 +75,12 @@ class SectionEditor {
     chapter.sections.forEach((section, index) => {
       const sectionBlock = this.createSectionBlock(section, index);
       container.appendChild(sectionBlock);
+
+      // Add discrete insert button between sections (except after last)
+      if (index < chapter.sections.length - 1) {
+        const insertBtn = this.createInsertButton(chapter, index);
+        container.appendChild(insertBtn);
+      }
     });
 
     // Add "New Scene" button at the end
@@ -85,6 +91,34 @@ class SectionEditor {
       this.addNewSection(chapter);
     });
     container.appendChild(newSceneBtn);
+  }
+
+  /**
+   * Create a discrete insert button between sections
+   * @param {Object} chapter - Chapter object
+   * @param {number} afterIndex - Index to insert after
+   * @returns {HTMLElement} Insert button element
+   */
+  createInsertButton(chapter, afterIndex) {
+    const container = document.createElement('div');
+    container.className = 'section-insert-container';
+
+    // Create visible line
+    const line = document.createElement('div');
+    line.className = 'section-insert-line';
+    container.appendChild(line);
+
+    const insertBtn = document.createElement('button');
+    insertBtn.className = 'section-insert-btn';
+    insertBtn.innerHTML = '<span class="insert-icon">+</span>';
+    insertBtn.title = 'Insert scene here';
+
+    insertBtn.addEventListener('click', () => {
+      this.insertSectionAfter(chapter, afterIndex);
+    });
+
+    container.appendChild(insertBtn);
+    return container;
   }
 
   createSectionBlock(section, index) {
@@ -130,8 +164,7 @@ class SectionEditor {
     configBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       e.preventDefault();
-      console.log('Scene settings clicked - feature coming soon!');
-      // TODO: Implement scene settings modal/panel
+      this.toggleSceneSettings(section, block);
     });
     controlsDiv.appendChild(configBtn);
 
@@ -176,10 +209,14 @@ class SectionEditor {
 
     header.appendChild(tagsDiv);
 
-    // Left column: header + content (80%)
+    // Scene settings panel (initially hidden)
+    const settingsPanel = this.createSceneSettingsPanel(section);
+
+    // Left column: header + settings + content (80%)
     const leftColumn = document.createElement('div');
     leftColumn.className = 'section-left-column';
     leftColumn.appendChild(header);
+    leftColumn.appendChild(settingsPanel);
 
     // Main content area
     const mainContent = document.createElement('div');
@@ -188,6 +225,10 @@ class SectionEditor {
     const contentDiv = document.createElement('div');
     contentDiv.className = 'section-content-editor';
     contentDiv.contentEditable = true;
+
+    // Create word count div first (will be referenced in event listeners)
+    const wordCountDiv = document.createElement('div');
+    wordCountDiv.className = 'section-word-count';
 
     // Format existing content if it's plain text
     if (section.content) {
@@ -204,7 +245,14 @@ class SectionEditor {
 
     contentDiv.addEventListener('blur', () => {
       section.content = contentDiv.innerHTML;
+      // Update word count
+      this.updateWordCount(contentDiv, wordCountDiv);
       // Data is saved, but don't update main view while editing
+    });
+
+    contentDiv.addEventListener('input', () => {
+      // Update word count on input
+      this.updateWordCount(contentDiv, wordCountDiv);
     });
 
     // Handle paste to strip formatting
@@ -212,16 +260,22 @@ class SectionEditor {
       e.preventDefault();
       const text = e.clipboardData.getData('text/plain');
       document.execCommand('insertText', false, text);
+      // Update word count after paste
+      setTimeout(() => this.updateWordCount(contentDiv, wordCountDiv), 0);
     });
 
     mainContent.appendChild(contentDiv);
+
+    // Add word count display
+    this.updateWordCount(contentDiv, wordCountDiv);
+    mainContent.appendChild(wordCountDiv);
 
     // Add AI Generate button
     const generateBtn = document.createElement('button');
     generateBtn.className = 'section-generate-btn';
     generateBtn.innerHTML = section.content && section.content.trim() ? '🤖 Regenerate Scene' : '✨ Generate Scene';
     generateBtn.addEventListener('click', async () => {
-      await this.generateSectionText(section, contentDiv, generateBtn);
+      await this.generateSectionText(section, contentDiv, generateBtn, wordCountDiv);
     });
     mainContent.appendChild(generateBtn);
 
@@ -369,6 +423,87 @@ class SectionEditor {
     container.appendChild(addWrapper);
   }
 
+  /**
+   * Create scene settings panel
+   */
+  createSceneSettingsPanel(section) {
+    const panel = document.createElement('div');
+    panel.className = 'scene-settings-panel';
+    panel.style.display = 'none';
+
+    // Initialize settings if not exist
+    if (!section.settings) {
+      section.settings = {
+        pov: 'third-person',
+        narrator: ''
+      };
+    }
+
+    // POV Selection
+    const povGroup = document.createElement('div');
+    povGroup.className = 'settings-group';
+
+    const povLabel = document.createElement('label');
+    povLabel.textContent = 'Point of View:';
+    povLabel.className = 'settings-label';
+    povGroup.appendChild(povLabel);
+
+    const povSelect = document.createElement('select');
+    povSelect.className = 'settings-select';
+    povSelect.innerHTML = `
+      <option value="first-person">First Person (I/We)</option>
+      <option value="second-person">Second Person (You)</option>
+      <option value="third-person">Third Person (He/She/They)</option>
+      <option value="third-person-limited">Third Person Limited</option>
+      <option value="third-person-omniscient">Third Person Omniscient</option>
+    `;
+    povSelect.value = section.settings.pov || 'third-person';
+    povSelect.addEventListener('change', () => {
+      section.settings.pov = povSelect.value;
+    });
+    povGroup.appendChild(povSelect);
+    panel.appendChild(povGroup);
+
+    // Narrator Selection
+    const narratorGroup = document.createElement('div');
+    narratorGroup.className = 'settings-group';
+
+    const narratorLabel = document.createElement('label');
+    narratorLabel.textContent = 'Narrator/Character:';
+    narratorLabel.className = 'settings-label';
+    narratorGroup.appendChild(narratorLabel);
+
+    const narratorInput = document.createElement('input');
+    narratorInput.type = 'text';
+    narratorInput.className = 'settings-input';
+    narratorInput.placeholder = 'Character name (optional)';
+    narratorInput.value = section.settings.narrator || '';
+    narratorInput.addEventListener('blur', () => {
+      section.settings.narrator = narratorInput.value.trim();
+    });
+    narratorGroup.appendChild(narratorInput);
+    panel.appendChild(narratorGroup);
+
+    return panel;
+  }
+
+  /**
+   * Toggle scene settings panel visibility
+   */
+  toggleSceneSettings(section, block) {
+    const panel = block.querySelector('.scene-settings-panel');
+    if (!panel) return;
+
+    const isVisible = panel.style.display !== 'none';
+    panel.style.display = isVisible ? 'none' : 'block';
+
+    // Toggle button state
+    const configBtn = block.querySelector('.section-config-btn');
+    if (configBtn) {
+      configBtn.classList.toggle('active', !isVisible);
+    }
+  }
+
   renderSideNotes(container, section) {
     container.innerHTML = '';
 
@@ -376,7 +511,9 @@ class SectionEditor {
       const noteDiv = document.createElement('textarea');
       noteDiv.className = 'section-note';
       noteDiv.value = note || '';
-      noteDiv.placeholder = 'Side note...';
+      noteDiv.placeholder = index === 0
+        ? 'AI Instructions: tone, POV, style, pace...\n\nOr just side notes...'
+        : 'Side note...';
       noteDiv.addEventListener('blur', () => {
         section.notes[index] = noteDiv.value.trim();
         // Data is saved, but don't update main view while editing
@@ -437,7 +574,8 @@ class SectionEditor {
       id: newId,
       summary: '',
       content: '',
-      tags: []
+      tags: [],
+      notes: []
     };
 
     chapter.sections.push(newSection);
@@ -461,7 +599,49 @@ class SectionEditor {
     // Note: onUpdate() is called only when closing the editor
   }
 
-  async generateSectionText(section, contentDiv, generateBtn) {
+  /**
+   * Insert a new section after a specific index
+   * @param {Object} chapter - Chapter object
+   * @param {number} afterIndex - Index to insert after
+   */
+  insertSectionAfter(chapter, afterIndex) {
+    // Generate new section ID
+    const allSectionIds = this.bookData.getBook().acts.flatMap(act =>
+      (act.chapters || []).flatMap(ch => (ch.sections || []).map(s => s.id))
+    );
+    const newId = Math.max(...allSectionIds, 0) + 1;
+
+    const newSection = {
+      id: newId,
+      summary: '',
+      content: '',
+      tags: [],
+      notes: []
+    };
+
+    // Insert at the position after afterIndex
+    chapter.sections.splice(afterIndex + 1, 0, newSection);
+
+    // Re-render the editor
+    const editorMain = document.getElementById('editor-main');
+    this.renderSections(editorMain, chapter);
+
+    // Scroll to the new section
+    setTimeout(() => {
+      const newBlock = document.querySelector(`[data-section-id="${newId}"]`);
+      if (newBlock) {
+        newBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Focus on summary textarea
+        const summaryTextarea = newBlock.querySelector('textarea');
+        if (summaryTextarea) {
+          summaryTextarea.focus();
+        }
+      }
+    }, 100);
+    // Note: onUpdate() is called only when closing the editor
+  }
+
+  async generateSectionText(section, contentDiv, generateBtn, wordCountDiv) {
     try {
       // Get LLM manager instance
       const llmManager = window.llmManager;
@@ -510,6 +690,29 @@ class SectionEditor {
       // Get adjacent sections context (2 before, 2 after)
       const adjacentContext = this._getAdjacentSectionsContext(chapter, currentSectionIndex);
 
+      // Get special instructions from notes
+      const specialInstructions = this._extractSpecialInstructions(section);
+
+      // Get scene settings if available
+      let settingsInstructions = '';
+      if (section.settings) {
+        const povMap = {
+          'first-person': 'primeira pessoa (eu)',
+          'second-person': 'segunda pessoa (você)',
+          'third-person': 'terceira pessoa (ele/ela)',
+          'third-person-limited': 'terceira pessoa limitada',
+          'third-person-omniscient': 'terceira pessoa onisciente'
+        };
+
+        const povText = povMap[section.settings.pov] || 'terceira pessoa';
+        settingsInstructions = `\n\nCONFIGURAÇÕES DA CENA:
+- Ponto de Vista: Escreva em ${povText}`;
+
+        if (section.settings.narrator && section.settings.narrator.trim()) {
+          settingsInstructions += `\n- Narrador/Personagem: ${section.settings.narrator}`;
+        }
+      }
+
       // Build enhanced system prompt
       const enhancedSystemPrompt = `Você é um escritor criativo especializado em narrativas envolventes e coerentes.
 
@@ -525,7 +728,7 @@ INSTRUÇÕES IMPORTANTES:
 3. Se houver texto das seções posteriores, prepare uma transição adequada que se conecte com elas
 4. Respeite os eventos e desenvolvimentos estabelecidos nos resumos de todas as seções
 5. Mantenha consistência de personagens, tom e estilo narrativo
-6. Use os resumos como guia para garantir que a narrativa flui logicamente através do livro`;
+6. Use os resumos como guia para garantir que a narrativa flui logicamente através do livro${specialInstructions ? '\n\nINSTRUÇÕES ESPECIAIS PARA ESTA SEÇÃO:\n' + specialInstructions : ''}${settingsInstructions}`;
 
       // Build enhanced user prompt
       const enhancedUserPrompt = `Com base no contexto completo fornecido, gere o texto narrativo detalhado para a seguinte seção:
@@ -537,6 +740,7 @@ CAPÍTULO: ${chapterTitle}
 SEÇÃO ATUAL:
 Resumo: ${sectionSummary}
 Tags/Temas: ${sectionTags}
+${section.notes && section.notes.length > 0 ? '\nNotas do Autor:\n' + section.notes.filter(n => n.trim()).map((n, i) => `${i + 1}. ${n}`).join('\n') : ''}
 
 ATENÇÃO:
 - Certifique-se de que o texto gerado se conecta naturalmente com as seções anteriores (se fornecidas)
@@ -570,6 +774,10 @@ Gere agora o texto completo desta seção:`;
           contentDiv.innerHTML = section.content;
           generateBtn.innerHTML = '🤖 Regenerate Scene';
           generateBtn.disabled = false;
+          // Update word count after generation completes
+          if (wordCountDiv) {
+            this.updateWordCount(contentDiv, wordCountDiv);
+          }
         },
         // onError - called on error
         (error) => {
@@ -707,6 +915,97 @@ Gere agora o texto completo desta seção:`;
       .join('');
 
     return formatted;
+  }
+
+  /**
+   * Extract special instructions from section notes
+   * Detects keywords for tone, POV, style changes
+   * @private
+   * @param {Object} section - Section with notes
+   * @returns {string} Formatted special instructions
+   */
+  _extractSpecialInstructions(section) {
+    if (!section.notes || section.notes.length === 0) {
+      return '';
+    }
+
+    const instructions = [];
+    const keywords = {
+      // Tone keywords
+      tone: ['tom', 'tone', 'mood', 'atmosfera', 'atmosphere'],
+      // POV keywords
+      pov: ['pov', 'ponto de vista', 'point of view', 'perspectiva', 'narrador', 'primeira pessoa', 'terceira pessoa'],
+      // Style keywords
+      style: ['estilo', 'style', 'writing style', 'forma de escrita', 'linguagem'],
+      // Pace keywords
+      pace: ['ritmo', 'pace', 'velocidade', 'lento', 'rápido', 'slow', 'fast'],
+      // Emotion keywords
+      emotion: ['emoção', 'emotion', 'sentimento', 'feeling', 'tensão', 'tension'],
+      // Description keywords
+      description: ['descrição', 'description', 'detalhes', 'details', 'visual', 'sensorial']
+    };
+
+    section.notes.forEach((note, index) => {
+      const noteTrimmed = note.trim();
+      if (!noteTrimmed) return;
+
+      const noteLower = noteTrimmed.toLowerCase();
+
+      // Check for specific instruction types
+      let instructionType = 'geral';
+
+      for (const [type, words] of Object.entries(keywords)) {
+        if (words.some(word => noteLower.includes(word))) {
+          instructionType = type;
+          break;
+        }
+      }
+
+      // Format instruction based on type
+      switch (instructionType) {
+        case 'tone':
+          instructions.push(`• TOM/ATMOSFERA: ${noteTrimmed}`);
+          break;
+        case 'pov':
+          instructions.push(`• PONTO DE VISTA: ${noteTrimmed}`);
+          break;
+        case 'style':
+          instructions.push(`• ESTILO DE ESCRITA: ${noteTrimmed}`);
+          break;
+        case 'pace':
+          instructions.push(`• RITMO NARRATIVO: ${noteTrimmed}`);
+          break;
+        case 'emotion':
+          instructions.push(`• EMOÇÃO/TENSÃO: ${noteTrimmed}`);
+          break;
+        case 'description':
+          instructions.push(`• DESCRIÇÃO: ${noteTrimmed}`);
+          break;
+        default:
+          instructions.push(`• ${noteTrimmed}`);
+      }
+    });
+
+    return instructions.length > 0 ? instructions.join('\n') : '';
+  }
+
+  updateWordCount(contentDiv, wordCountDiv) {
+    // Extract text from HTML content
+    const text = contentDiv.innerHTML
+      .replace(/<[^>]*>/g, ' ') // Remove HTML tags
+      .replace(/&nbsp;/g, ' ')   // Replace &nbsp; with spaces
+      .replace(/\s+/g, ' ')      // Normalize whitespace
+      .trim();
+
+    // Count words
+    const words = text.length > 0 ? text.split(' ').filter(word => word.length > 0) : [];
+    const wordCount = words.length;
+
+    // Format with comma separator for thousands
+    const formattedCount = wordCount.toLocaleString('en-US');
+
+    // Update display
+    wordCountDiv.textContent = `${formattedCount} ${wordCount === 1 ? 'word' : 'words'}`;
   }
 
   close() {
