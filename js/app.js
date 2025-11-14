@@ -93,12 +93,37 @@ class NovelWriterApp {
       const name = document.getElementById('codex-entry-name').value;
       const category = document.getElementById('codex-entry-category').value;
       const description = document.getElementById('codex-entry-description').value;
+      const tags = this.codex.currentEntryTags || [];
 
-      if (this.codex.addEntry(name, category, description)) {
-        document.getElementById('codex-entry-modal').style.display = 'none';
-        this.update();
-      } else {
+      if (!name || name.trim() === '') {
         alert('Please enter an entry name');
+        return;
+      }
+
+      if (this.codex.isEditing && this.codex.currentEntry) {
+        // Update existing entry
+        this.codex.updateEntry(this.codex.currentEntry.id, {
+          name: name.trim(),
+          category: category,
+          description: description,
+          tags: tags
+        });
+      } else {
+        // Add new entry
+        this.codex.addEntry(name, category, description, tags);
+      }
+
+      document.getElementById('codex-entry-modal').style.display = 'none';
+      this.update();
+    });
+
+    document.getElementById('codex-entry-delete').addEventListener('click', () => {
+      if (this.codex.currentEntry) {
+        if (confirm(`Are you sure you want to delete "${this.codex.currentEntry.name}"?`)) {
+          this.codex.deleteEntry(this.codex.currentEntry.id);
+          document.getElementById('codex-entry-modal').style.display = 'none';
+          this.update();
+        }
       }
     });
 

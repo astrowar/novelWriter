@@ -51,7 +51,7 @@ class Codex {
   }
 
   // Add a new entry
-  addEntry(name, category, description) {
+  addEntry(name, category, description, tags = []) {
     if (!name || name.trim() === '') {
       return false;
     }
@@ -61,6 +61,7 @@ class Codex {
       name: name.trim(),
       category: category,
       description: description || '',
+      tags: tags || [],
       createdAt: new Date().toISOString()
     };
 
@@ -130,8 +131,8 @@ class Codex {
           )
         : entries;
 
-      // Skip categories with no matching entries during search
-      if (this.searchFilter && filteredEntries.length === 0) {
+      // Skip categories with no entries (always, not just during search)
+      if (filteredEntries.length === 0) {
         return;
       }
 
@@ -170,14 +171,67 @@ class Codex {
 
   // Open entry details (to be implemented with a modal or side panel)
   openEntryDetails(entry) {
-    // For now, just show an alert with the entry details
-    alert(`${entry.name}\n\nCategory: ${entry.category}\n\n${entry.description || 'No description'}`);
+    // Open the edit modal with entry data
+    this.openEditEntryModal(entry);
+  }
+
+  // Open edit entry modal
+  openEditEntryModal(entry) {
+    const modal = document.getElementById('codex-entry-modal');
+    const modalTitle = document.getElementById('codex-entry-modal-title');
+    const categorySelect = document.getElementById('codex-entry-category');
+    const deleteBtn = document.getElementById('codex-entry-delete');
+    const saveBtn = document.getElementById('codex-entry-save');
+
+    // Set modal title
+    modalTitle.textContent = 'Edit Codex Entry';
+
+    // Populate categories
+    categorySelect.innerHTML = '';
+    this.bookData.data.codex.categories.forEach(category => {
+      const option = document.createElement('option');
+      option.value = category;
+      option.textContent = category;
+      if (category === entry.category) {
+        option.selected = true;
+      }
+      categorySelect.appendChild(option);
+    });
+
+    // Populate with entry data
+    document.getElementById('codex-entry-name').value = entry.name;
+    document.getElementById('codex-entry-description').value = entry.description || '';
+
+    // Initialize tags if not exists
+    if (!entry.tags) {
+      entry.tags = [];
+    }
+
+    // Render tags
+    this.currentEntryTags = [...entry.tags];
+    this.renderCodexEntryTags();
+
+    // Show delete button and change save button text
+    deleteBtn.style.display = 'block';
+    saveBtn.textContent = 'Update Entry';
+
+    // Store current entry being edited
+    this.currentEntry = entry;
+    this.isEditing = true;
+
+    modal.style.display = 'flex';
   }
 
   // Open add entry modal
   openAddEntryModal() {
     const modal = document.getElementById('codex-entry-modal');
+    const modalTitle = document.getElementById('codex-entry-modal-title');
     const categorySelect = document.getElementById('codex-entry-category');
+    const deleteBtn = document.getElementById('codex-entry-delete');
+    const saveBtn = document.getElementById('codex-entry-save');
+
+    // Set modal title
+    modalTitle.textContent = 'Add Codex Entry';
 
     // Populate categories
     categorySelect.innerHTML = '';
@@ -192,7 +246,63 @@ class Codex {
     document.getElementById('codex-entry-name').value = '';
     document.getElementById('codex-entry-description').value = '';
 
+    // Clear tags
+    this.currentEntryTags = [];
+    this.renderCodexEntryTags();
+
+    // Hide delete button and set save button text
+    deleteBtn.style.display = 'none';
+    saveBtn.textContent = 'Add Entry';
+
+    // Clear editing state
+    this.currentEntry = null;
+    this.isEditing = false;
+
     modal.style.display = 'flex';
+  }
+
+  // Render tags in codex entry modal
+  renderCodexEntryTags() {
+    const container = document.getElementById('codex-entry-tags');
+    container.innerHTML = '';
+
+    // Render existing tags
+    this.currentEntryTags.forEach(tag => {
+      const tagSpan = document.createElement('span');
+      tagSpan.className = 'section-info-tag removable';
+      tagSpan.style.cssText = 'padding: 4px 8px; background: var(--bg-secondary); border-radius: 12px; font-size: 0.75em; cursor: pointer;';
+      tagSpan.textContent = tag;
+      tagSpan.onclick = () => {
+        const index = this.currentEntryTags.indexOf(tag);
+        if (index > -1) {
+          this.currentEntryTags.splice(index, 1);
+          this.renderCodexEntryTags();
+        }
+      };
+      container.appendChild(tagSpan);
+    });
+
+    // Add tag input (free-form text)
+    const addInput = document.createElement('input');
+    addInput.type = 'text';
+    addInput.className = 'tag-add-input';
+    addInput.placeholder = '+ add tag';
+    addInput.autocomplete = 'off';
+    addInput.style.cssText = 'background: var(--bg-tertiary); border: 1px solid var(--border-primary); padding: 4px 8px; border-radius: 12px; font-size: 0.75em; width: 90px;';
+
+    addInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const newTag = addInput.value.trim();
+
+        if (newTag && !this.currentEntryTags.includes(newTag)) {
+          this.currentEntryTags.push(newTag);
+          this.renderCodexEntryTags();
+        }
+      }
+    });
+
+    container.appendChild(addInput);
   }
 
   // Open config modal

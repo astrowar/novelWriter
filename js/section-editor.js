@@ -238,22 +238,97 @@ class SectionEditor {
       container.appendChild(tagSpan);
     });
 
-    // Add tag input
+    // Add tag dropdown (from codex entries)
+    const addWrapper = document.createElement('div');
+    addWrapper.style.position = 'relative';
+    addWrapper.style.display = 'inline-block';
+
     const addInput = document.createElement('input');
     addInput.type = 'text';
     addInput.className = 'tag-add-input';
     addInput.placeholder = '+ add tag';
+    addInput.autocomplete = 'off';
+
+    const dropdown = document.createElement('div');
+    dropdown.className = 'tag-dropdown';
+    dropdown.style.display = 'none';
+
+    // Get all codex entries as tag options
+    const getCodexEntries = () => {
+      if (!this.bookData.data.codex || !this.bookData.data.codex.entries) {
+        return [];
+      }
+      return this.bookData.data.codex.entries.map(entry => entry.name);
+    };
+
+    const updateDropdown = (filter = '') => {
+      const entries = getCodexEntries();
+      const filtered = filter
+        ? entries.filter(name =>
+            name.toLowerCase().includes(filter.toLowerCase()) &&
+            !section.tags.includes(name)
+          )
+        : entries.filter(name => !section.tags.includes(name));
+
+      dropdown.innerHTML = '';
+
+      if (filtered.length === 0) {
+        dropdown.style.display = 'none';
+        return;
+      }
+
+      filtered.forEach(name => {
+        const option = document.createElement('div');
+        option.className = 'tag-dropdown-option';
+        option.textContent = name;
+        option.onclick = () => {
+          if (!section.tags.includes(name)) {
+            section.tags.push(name);
+            this.renderTags(container, section);
+          }
+        };
+        dropdown.appendChild(option);
+      });
+
+      dropdown.style.display = 'block';
+    };
+
+    addInput.addEventListener('focus', () => {
+      updateDropdown(addInput.value);
+    });
+
+    addInput.addEventListener('input', (e) => {
+      updateDropdown(e.target.value);
+    });
+
     addInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
+        e.preventDefault();
         const newTag = addInput.value.trim();
-        if (newTag && !section.tags.includes(newTag)) {
+        const entries = getCodexEntries();
+
+        if (newTag && entries.includes(newTag) && !section.tags.includes(newTag)) {
           section.tags.push(newTag);
           this.renderTags(container, section);
-          // Data is saved, but don't update main view while editing
+        } else if (newTag && !entries.includes(newTag)) {
+          alert('Tag must be a codex entry. Please add it to the codex first.');
         }
+      } else if (e.key === 'Escape') {
+        dropdown.style.display = 'none';
+        addInput.blur();
       }
     });
-    container.appendChild(addInput);
+
+    addInput.addEventListener('blur', (e) => {
+      // Delay to allow click on dropdown
+      setTimeout(() => {
+        dropdown.style.display = 'none';
+      }, 200);
+    });
+
+    addWrapper.appendChild(addInput);
+    addWrapper.appendChild(dropdown);
+    container.appendChild(addWrapper);
   }
 
   renderSideNotes(container, section) {

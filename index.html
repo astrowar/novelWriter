@@ -646,7 +646,7 @@
     <!-- Modal for adding codex entry -->
     <div id="codex-entry-modal" class="modal-overlay">
       <div class="modal" style="min-width: 500px;">
-        <h3 class="modal-title">Add Codex Entry</h3>
+        <h3 class="modal-title" id="codex-entry-modal-title">Add Codex Entry</h3>
 
         <div style="margin-bottom: 15px;">
           <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Entry Name</label>
@@ -661,11 +661,19 @@
         </div>
 
         <div style="margin-bottom: 15px;">
+          <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Tags</label>
+          <div id="codex-entry-tags" style="min-height: 30px; padding: 6px; border: 1px solid #ddd; border-radius: 6px; background: #f9f9f9; display: flex; flex-wrap: wrap; gap: 4px; align-items: center;">
+            <!-- Tags will be rendered here -->
+          </div>
+        </div>
+
+        <div style="margin-bottom: 15px;">
           <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Description</label>
           <textarea id="codex-entry-description" class="modal-input" rows="6" placeholder="Enter description..." style="resize: vertical; font-family: inherit;"></textarea>
         </div>
 
         <div class="modal-buttons">
+          <button class="modal-btn modal-btn-secondary" id="codex-entry-delete" style="display: none; margin-right: auto; background: #dc3545; color: white; border: 1px solid #c82333;">Delete</button>
           <button class="modal-btn modal-btn-secondary" id="codex-entry-cancel">Cancel</button>
           <button class="modal-btn modal-btn-primary" id="codex-entry-save">Add Entry</button>
         </div>
@@ -1004,6 +1012,37 @@
         font-size: 0.75em;
         width: 90px;
         color: var(--text-primary);
+      }
+
+      .tag-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-primary);
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        max-height: 200px;
+        overflow-y: auto;
+        z-index: 1000;
+        min-width: 150px;
+        margin-top: 2px;
+      }
+
+      .tag-dropdown-option {
+        padding: 6px 10px;
+        cursor: pointer;
+        font-size: 0.85em;
+        color: var(--text-primary);
+        border-bottom: 1px solid var(--border-tertiary);
+      }
+
+      .tag-dropdown-option:last-child {
+        border-bottom: none;
+      }
+
+      .tag-dropdown-option:hover {
+        background: var(--hover-bg);
       }
 
       .section-content-editor {

@@ -15,9 +15,15 @@ class UIRenderer {
     book.acts.forEach(act => {
       html += this.renderAct(act, chapterNumber);
 
-      // Update chapter count for next act
+      // Update chapter count for next act - only count chapters with numbering enabled
       if (act.chapters) {
-        chapterNumber += act.chapters.length;
+        act.chapters.forEach(chapter => {
+          // Set default if not exists
+          if (chapter.numbering === undefined) chapter.numbering = true;
+          if (chapter.numbering) {
+            chapterNumber++;
+          }
+        });
       }
     });
 
@@ -45,7 +51,14 @@ class UIRenderer {
     if (act.chapters && act.chapters.length > 0) {
       let chapterNumber = startChapterNumber;
       act.chapters.forEach(chapter => {
-        chapterNumber++;
+        // Set default if not exists
+        if (chapter.numbering === undefined) chapter.numbering = true;
+
+        // Only increment chapter number if numbering is enabled
+        if (chapter.numbering) {
+          chapterNumber++;
+        }
+
         html += this.renderChapter(chapter, act, chapterNumber);
       });
     } else {
@@ -62,12 +75,20 @@ class UIRenderer {
 
   // Render a single chapter card
   renderChapter(chapter, act, chapterNumber) {
+    // Set default if not exists
+    if (chapter.numbering === undefined) chapter.numbering = true;
+
+    // Only show chapter number if numbering is enabled
+    const chapterNumberDisplay = chapter.numbering
+      ? `<div class="chapter-number">Chapter ${chapterNumber}</div>`
+      : '';
+
     let html = `
       <div class="chapter-card" draggable="true" data-chapter-id="${chapter.id}" data-act-id="${act.id}">
         <div class="chapter-header">
           <div class="chapter-title-container">
             <div class="chapter-title" data-chapter-id="${chapter.id}" data-act-id="${act.id}">${chapter.title}</div>
-            <div class="chapter-number">Chapter ${chapterNumber}</div>
+            ${chapterNumberDisplay}
           </div>
           <button class="chapter-settings-btn" data-chapter-id="${chapter.id}" data-act-id="${act.id}" title="Chapter Settings">⚙</button>
         </div>
