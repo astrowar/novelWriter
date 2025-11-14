@@ -1,25 +1,51 @@
 /**
  * LLM Module - Integration with OpenAI-compatible APIs
  *
- * Provides AI-powered text generation and manipulation features.
+ * Manages AI-powered text generation and manipulation features.
+ *
+ * @class LLMManager
+ * @description Provides a comprehensive interface for interacting with OpenAI-compatible APIs
+ *
  * Features:
- * - Configurable API endpoint and key
- * - Multiple prompt templates for different actions
- * - Generate, summarize, expand, rewrite text
- * - Change point of view
+ * - Configurable API endpoint and authentication
+ * - Multiple customizable prompt templates
+ * - Text generation, summarization, expansion, and rewriting
+ * - Point of view transformation
+ * - Persistent configuration and prompt storage
  */
 class LLMManager {
-  constructor() {
-    this.config = {
-      apiUrl: 'https://api.openai.com/v1',
-      apiKey: '',
-      model: 'gpt-3.5-turbo',
-      temperature: 0.7,
-      maxTokens: 2000
-    };
+  // Storage keys
+  static CONFIG_KEY = 'llmConfig';
+  static PROMPTS_KEY = 'llmCustomPrompts';
 
-    // Default prompts (immutable)
-    this.defaultPrompts = {
+  // Default configuration
+  static DEFAULT_CONFIG = {
+    apiUrl: 'https://api.openai.com/v1',
+    apiKey: '',
+    model: 'gpt-3.5-turbo',
+    temperature: 0.7,
+    maxTokens: 2000
+  };
+
+  constructor() {
+    this.config = { ...LLMManager.DEFAULT_CONFIG };
+    this.defaultPrompts = this._initializeDefaultPrompts();
+    this.prompts = this._clonePrompts(this.defaultPrompts);
+
+    this._loadConfiguration();
+  }
+
+  // ============================================================================
+  // INITIALIZATION
+  // ============================================================================
+
+  /**
+   * Initialize default prompt templates
+   * @private
+   * @returns {Object} Default prompts object
+   */
+  _initializeDefaultPrompts() {
+    return {
       generate: {
         name: 'Gerar Texto da Seção',
         systemPrompt: 'Você é um escritor criativo especializado em narrativas envolventes.',
@@ -97,24 +123,38 @@ Insira diálogos entre os personagens que sejam relevantes e naturais ao context
         userPrompt: `Melhore as descrições no seguinte texto, adicionando mais detalhes sensoriais:
 
 {text}
-
 Adicione descrições mais vívidas de cenários, personagens e ambientes.`
       }
     };
-
-    // Working copy of prompts
-    this.prompts = JSON.parse(JSON.stringify(this.defaultPrompts));
-
-    // Load configuration and custom prompts
-    this.loadConfig();
-    this.loadCustomPrompts();
   }
 
   /**
-   * Load configuration from localStorage
+   * Deep clone prompts object
+   * @private
    */
-  loadConfig() {
-    const saved = localStorage.getItem('llmConfig');
+  _clonePrompts(prompts) {
+    return JSON.parse(JSON.stringify(prompts));
+  }
+
+  /**
+   * Load all configuration and prompts from storage
+   * @private
+   */
+  _loadConfiguration() {
+    this._loadConfig();
+    this._loadCustomPrompts();
+  }
+
+  // ============================================================================
+  // CONFIGURATION MANAGEMENT
+  // ============================================================================
+
+  /**
+   * Load configuration from localStorage
+   * @private
+   */
+  _loadConfig() {
+    const saved = localStorage.getItem(LLMManager.CONFIG_KEY);
     if (saved) {
       try {
         this.config = { ...this.config, ...JSON.parse(saved) };
@@ -126,89 +166,277 @@ Adicione descrições mais vívidas de cenários, personagens e ambientes.`
 
   /**
    * Save configuration to localStorage
+   * @private
    */
-  saveConfig() {
-    localStorage.setItem('llmConfig', JSON.stringify(this.config));
+  _saveConfig() {
+    localStorage.setItem(LLMManager.CONFIG_KEY, JSON.stringify(this.config));
   }
 
   /**
    * Update configuration
+   * @param {Object} newConfig - Configuration updates
    */
   updateConfig(newConfig) {
     this.config = { ...this.config, ...newConfig };
-    this.saveConfig();
+    this._saveConfig();
   }
 
   /**
-   * Get current configuration
+   * Get current configuration (returns a copy)
+   * @returns {Object} Current configuration
    */
   getConfig() {
     return { ...this.config };
   }
 
   /**
+   * Validate configuration completeness
+   * @returns {Object} { valid: boolean, missing: string[] }
+   */
+  validateConfig() {
+    const missing = [];
+    if (!this.config.apiUrl) missing.push('apiUrl');
+    if (!this.config.apiKey) missing.push('apiKey');
+    if (!this.config.model) missing.push('model');
+
+    return {
+      valid: missing.length === 0,
+      missing
+    };
+  }
+
+  // ============================================================================
+  // PROMPT MANAGEMENT
+  // ============================================================================
+
+  /**
    * Get a specific prompt by action key
+   * @param {string} actionKey - The prompt action identifier
+   * @returns {Object|null} Prompt object with name and template
    */
   getPrompt(actionKey) {
-    return this.prompts[actionKey] ? {
-      name: this.prompts[actionKey].name,
-      template: this.prompts[actionKey].systemPrompt + '\n\n' + this.prompts[actionKey].userPrompt
-    } : null;
+    const prompt = this.prompts[actionKey];
+    if (!prompt) return null;
+
+    return {
+      name: prompt.name,
+      template: `${prompt.systemPrompt}\n\n${prompt.userPrompt}`
+    };
   }
 
   /**
    * Get list of available prompts for UI
+   * @returns {Array} Array of prompt objects
    */
   getAvailablePrompts() {
     return Object.keys(this.prompts).map(key => ({
       action: key,
       name: this.prompts[key].name,
-      template: this.prompts[key].systemPrompt + '\n\n' + this.prompts[key].userPrompt
+      template: `${this.prompts[key].systemPrompt}\n\n${this.prompts[key].userPrompt}`
     }));
   }
 
   /**
-   * Replace variables in prompt template
+   * Get list of available actions
+   * @returns {Array} Array of action objects with key and name
    */
-  fillPromptTemplate(template, variables) {
-    let filled = template;
-    for (const [key, value] of Object.entries(variables)) {
-      filled = filled.replace(new RegExp(`{${key}}`, 'g'), value || '');
-    }
-    return filled;
+  getAvailableActions() {
+    return Object.keys(this.prompts).map(key => ({
+      key,
+      name: this.prompts[key].name
+    }));
   }
 
   /**
-   * Build full API URL
+   * Update a prompt template
+   * @param {string} actionKey - The prompt action identifier
+   * @param {string} templateString - New template (system\n\nuser format)
    */
-  buildApiUrl(endpoint) {
-    let baseUrl = this.config.apiUrl;
-
-    // Remove trailing slash
-    if (baseUrl.endsWith('/')) {
-      baseUrl = baseUrl.slice(0, -1);
+  updatePrompt(actionKey, templateString) {
+    if (!this.prompts[actionKey]) {
+      console.warn(`Prompt not found: ${actionKey}`);
+      return;
     }
 
+    // Split template into system and user prompts
+    const parts = templateString.split('\n\n');
+
+    if (parts.length >= 2) {
+      this.prompts[actionKey].systemPrompt = parts[0];
+      this.prompts[actionKey].userPrompt = parts.slice(1).join('\n\n');
+    } else {
+      // If no clear separator, treat it all as user prompt
+      this.prompts[actionKey].userPrompt = templateString;
+    }
+
+    this._saveCustomPrompts();
+  }
+
+  /**
+   * Reset prompt to default
+   * @param {string} actionKey - The prompt action identifier
+   */
+  resetPrompt(actionKey) {
+    if (!this.defaultPrompts[actionKey]) {
+      console.warn(`Default prompt not found: ${actionKey}`);
+      return;
+    }
+
+    // Reset to default
+    this.prompts[actionKey] = this._clonePrompts({
+      [actionKey]: this.defaultPrompts[actionKey]
+    })[actionKey];
+
+    // Update storage
+    this._removeCustomPrompt(actionKey);
+  }
+
+  /**
+   * Load custom prompts from localStorage
+   * @private
+   */
+  _loadCustomPrompts() {
+    const saved = localStorage.getItem(LLMManager.PROMPTS_KEY);
+    if (!saved) return;
+
+    try {
+      const customPrompts = JSON.parse(saved);
+      for (const key in customPrompts) {
+        if (this.prompts[key]) {
+          this.prompts[key] = { ...customPrompts[key] };
+        }
+      }
+    } catch (error) {
+      console.error('Error loading custom prompts:', error);
+    }
+  }
+
+  /**
+   * Save all custom prompts to localStorage
+   * @private
+   */
+  _saveCustomPrompts() {
+    const customPrompts = {};
+
+    for (const key in this.prompts) {
+      customPrompts[key] = {
+        systemPrompt: this.prompts[key].systemPrompt,
+        userPrompt: this.prompts[key].userPrompt,
+        name: this.prompts[key].name
+      };
+    }
+
+    localStorage.setItem(LLMManager.PROMPTS_KEY, JSON.stringify(customPrompts));
+  }
+
+  /**
+   * Remove a specific custom prompt from storage
+   * @private
+   */
+  _removeCustomPrompt(actionKey) {
+    const saved = localStorage.getItem(LLMManager.PROMPTS_KEY);
+    if (!saved) return;
+
+    try {
+      const customPrompts = JSON.parse(saved);
+      delete customPrompts[actionKey];
+      localStorage.setItem(LLMManager.PROMPTS_KEY, JSON.stringify(customPrompts));
+    } catch (error) {
+      console.error('Error removing custom prompt:', error);
+    }
+  }
+
+  /**
+   * Replace variables in prompt template
+   * @private
+   * @param {string} template - Template string with {variable} placeholders
+   * @param {Object} variables - Variable values to replace
+   * @returns {string} Filled template
+   */
+  _fillPromptTemplate(template, variables) {
+    let filled = template;
+
+    for (const [key, value] of Object.entries(variables)) {
+      const regex = new RegExp(`{${key}}`, 'g');
+      filled = filled.replace(regex, value || '');
+    }
+
+    return filled;
+  }
+
+  // ============================================================================
+  // API UTILITIES
+  // ============================================================================
+
+  /**
+   * Build full API URL with endpoint
+   * @private
+   * @param {string} endpoint - API endpoint (e.g., '/v1/models')
+   * @returns {string} Complete URL
+   */
+  _buildApiUrl(endpoint) {
+    let baseUrl = this.config.apiUrl.replace(/\/+$/, ''); // Remove trailing slashes
     return `${baseUrl}${endpoint}`;
-  }  /**
+  }
+
+  /**
+   * Create authorization headers
+   * @private
+   * @returns {Object} Headers object
+   */
+  _createHeaders(includeContentType = false) {
+    const headers = {
+      'Authorization': `Bearer ${this.config.apiKey}`
+    };
+
+    if (includeContentType) {
+      headers['Content-Type'] = 'application/json';
+    }
+
+    return headers;
+  }
+
+  /**
+   * Handle API errors
+   * @private
+   */
+  async _handleApiError(response) {
+    let errorMessage = `HTTP error! status: ${response.status}`;
+
+    try {
+      const error = await response.json();
+      errorMessage = error.error?.message || error.message || errorMessage;
+    } catch (e) {
+      // If we can't parse error JSON, use the default message
+    }
+
+    throw new Error(errorMessage);
+  }
+
+  // ============================================================================
+  // API METHODS
+  // ============================================================================
+
+  /**
    * Fetch available models from API
+   * @returns {Promise<Array>} List of available models
+   * @throws {Error} If API key is missing or request fails
    */
   async fetchModels() {
+    const validation = this.validateConfig();
     if (!this.config.apiKey) {
       throw new Error('API Key não configurada. Configure a API Key primeiro.');
     }
 
     try {
-      const url = this.buildApiUrl('/v1/models');
+      const url = this._buildApiUrl('/v1/models');
       const response = await fetch(url, {
         method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${this.config.apiKey}`
-        }
+        headers: this._createHeaders()
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        await this._handleApiError(response);
       }
 
       const data = await response.json();
@@ -222,7 +450,7 @@ Adicione descrições mais vívidas de cenários, personagens e ambientes.`
         }));
       }
 
-      // Alternative format: just array of model objects
+      // Alternative format: array of model objects
       if (Array.isArray(data)) {
         return data.map(model => ({
           id: model.id || model.name,
@@ -239,66 +467,176 @@ Adicione descrições mais vívidas de cenários, personagens e ambientes.`
   }
 
   /**
-   * Call OpenAI-compatible API
+   * Call OpenAI-compatible chat completions API
+   * @param {string} systemPrompt - System role prompt
+   * @param {string} userPrompt - User role prompt
+   * @returns {Promise<Object>} Response with content property
+   * @throws {Error} If API key is missing or request fails
    */
   async callAPI(systemPrompt, userPrompt) {
     if (!this.config.apiKey) {
       throw new Error('API Key não configurada. Configure em AI Settings.');
     }
 
-    const url = this.buildApiUrl('/v1/chat/completions');
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.config.apiKey}`
-      },
-      body: JSON.stringify({
-        model: this.config.model,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
-        ],
-        temperature: this.config.temperature,
-        max_tokens: this.config.maxTokens
-      })
-    });
+    try {
+      const url = this._buildApiUrl('/v1/chat/completions');
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: this._createHeaders(true),
+        body: JSON.stringify({
+          model: this.config.model,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt }
+          ],
+          temperature: this.config.temperature,
+          max_tokens: this.config.maxTokens
+        })
+      });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error?.message || 'API request failed');
+      if (!response.ok) {
+        await this._handleApiError(response);
+      }
+
+      const data = await response.json();
+
+      // Extract content from response
+      if (data.choices && data.choices.length > 0) {
+        return {
+          content: data.choices[0].message.content
+        };
+      }
+
+      throw new Error('Resposta da API sem conteúdo válido');
+    } catch (error) {
+      console.error('API call error:', error);
+      throw error;
     }
-
-    const data = await response.json();
-
-    // Return the content with a consistent format
-    if (data.choices && data.choices.length > 0) {
-      return {
-        content: data.choices[0].message.content
-      };
-    }
-
-    throw new Error('Resposta da API sem conteúdo válido');
   }
 
   /**
-   * Execute a prompt action
+   * Call OpenAI-compatible chat completions API with streaming
+   * @param {string} systemPrompt - System role prompt
+   * @param {string} userPrompt - User role prompt
+   * @param {Function} onChunk - Callback function called with each text chunk
+   * @param {Function} onComplete - Callback function called when stream completes
+   * @param {Function} onError - Callback function called on error
+   * @returns {Promise<void>}
+   * @throws {Error} If API key is missing or request fails
    */
-  async executePrompt(actionKey, variables) {
+  async callAPIStream(systemPrompt, userPrompt, onChunk, onComplete, onError) {
+    if (!this.config.apiKey) {
+      const error = new Error('API Key não configurada. Configure em AI Settings.');
+      if (onError) onError(error);
+      throw error;
+    }
+
+    try {
+      const url = this._buildApiUrl('/v1/chat/completions');
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: this._createHeaders(true),
+        body: JSON.stringify({
+          model: this.config.model,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt }
+          ],
+          temperature: this.config.temperature,
+          max_tokens: this.config.maxTokens,
+          stream: true
+        })
+      });
+
+      if (!response.ok) {
+        await this._handleApiError(response);
+      }
+
+      // Read the stream
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let buffer = '';
+      let fullContent = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) break;
+
+        // Decode the chunk
+        buffer += decoder.decode(value, { stream: true });
+
+        // Process complete lines
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || ''; // Keep incomplete line in buffer
+
+        for (const line of lines) {
+          const trimmedLine = line.trim();
+
+          // Skip empty lines and comments
+          if (!trimmedLine || trimmedLine.startsWith(':')) continue;
+
+          // Parse SSE format: "data: {...}"
+          if (trimmedLine.startsWith('data: ')) {
+            const data = trimmedLine.slice(6);
+
+            // Check for stream end
+            if (data === '[DONE]') continue;
+
+            try {
+              const parsed = JSON.parse(data);
+              const content = parsed.choices?.[0]?.delta?.content;
+
+              if (content) {
+                fullContent += content;
+                if (onChunk) onChunk(content, fullContent);
+              }
+            } catch (e) {
+              console.warn('Error parsing SSE chunk:', e);
+            }
+          }
+        }
+      }
+
+      if (onComplete) onComplete(fullContent);
+
+    } catch (error) {
+      console.error('API stream error:', error);
+      if (onError) onError(error);
+      throw error;
+    }
+  }
+
+  // ============================================================================
+  // HIGH-LEVEL TEXT OPERATIONS
+  // ============================================================================
+
+  /**
+   * Execute a prompt action with variables
+   * @private
+   * @param {string} actionKey - The prompt action identifier
+   * @param {Object} variables - Variables to fill in the template
+   * @returns {Promise<Object>} API response
+   */
+  async _executePrompt(actionKey, variables) {
     const prompt = this.prompts[actionKey];
     if (!prompt) {
       throw new Error(`Prompt não encontrado: ${actionKey}`);
     }
 
-    const userPrompt = this.fillPromptTemplate(prompt.userPrompt, variables);
+    const userPrompt = this._fillPromptTemplate(prompt.userPrompt, variables);
     return await this.callAPI(prompt.systemPrompt, userPrompt);
   }
 
   /**
    * Generate text for a section
+   * @param {Object} section - Section object with summary and tags
+   * @param {Object} chapter - Chapter object with title
+   * @param {string} bookTitle - Book title
+   * @returns {Promise<Object>} Generated text content
    */
   async generateSectionText(section, chapter, bookTitle) {
-    return await this.executePrompt('generate', {
+    return await this._executePrompt('generate', {
       summary: section.summary || '',
       bookTitle: bookTitle || '',
       chapterTitle: chapter.title || '',
@@ -309,131 +647,65 @@ Adicione descrições mais vívidas de cenários, personagens e ambientes.`
 
   /**
    * Summarize text
+   * @param {string} text - Text to summarize
+   * @returns {Promise<Object>} Summarized text
    */
   async summarizeText(text) {
-    return await this.executePrompt('summarize', { text });
+    return await this._executePrompt('summarize', { text });
   }
 
   /**
-   * Expand text
+   * Expand text with more details
+   * @param {string} text - Text to expand
+   * @returns {Promise<Object>} Expanded text
    */
   async expandText(text) {
-    return await this.executePrompt('expand', { text });
+    return await this._executePrompt('expand', { text });
   }
 
   /**
-   * Rewrite text
+   * Rewrite text for better quality
+   * @param {string} text - Text to rewrite
+   * @returns {Promise<Object>} Rewritten text
    */
   async rewriteText(text) {
-    return await this.executePrompt('rewrite', { text });
+    return await this._executePrompt('rewrite', { text });
   }
 
   /**
-   * Change point of view
+   * Change point of view of text
+   * @param {string} text - Text to transform
+   * @param {string} targetPOV - Target point of view
+   * @returns {Promise<Object>} Transformed text
    */
   async changePOV(text, targetPOV) {
-    return await this.executePrompt('changePOV', { text, targetPOV });
+    return await this._executePrompt('changePOV', { text, targetPOV });
   }
 
   /**
-   * Continue story
+   * Continue story from given text
+   * @param {string} text - Text to continue from
+   * @returns {Promise<Object>} Continuation text
    */
   async continueStory(text) {
-    return await this.executePrompt('continueStory', { text });
+    return await this._executePrompt('continueStory', { text });
   }
 
   /**
-   * Add dialogue
+   * Add dialogue to text
+   * @param {string} text - Text to enhance with dialogue
+   * @returns {Promise<Object>} Text with added dialogue
    */
   async addDialogue(text) {
-    return await this.executePrompt('addDialogue', { text });
+    return await this._executePrompt('addDialogue', { text });
   }
 
   /**
-   * Improve descriptions
+   * Improve descriptions in text
+   * @param {string} text - Text to enhance
+   * @returns {Promise<Object>} Text with improved descriptions
    */
   async improveDescription(text) {
-    return await this.executePrompt('improveDescription', { text });
-  }
-
-  /**
-   * Get list of available actions
-   */
-  getAvailableActions() {
-    return Object.keys(this.prompts).map(key => ({
-      key,
-      name: this.prompts[key].name
-    }));
-  }
-
-  /**
-   * Update a prompt template
-   */
-  updatePrompt(actionKey, templateString) {
-    if (this.prompts[actionKey]) {
-      // Split template into system and user prompts
-      // Expect format: "system prompt\n\nuser prompt"
-      const parts = templateString.split('\n\n');
-      if (parts.length >= 2) {
-        this.prompts[actionKey].systemPrompt = parts[0];
-        this.prompts[actionKey].userPrompt = parts.slice(1).join('\n\n');
-      } else {
-        // If no clear separator, treat it all as user prompt
-        this.prompts[actionKey].userPrompt = templateString;
-      }
-
-      // Save custom prompts
-      const customPrompts = {};
-      for (const key in this.prompts) {
-        customPrompts[key] = {
-          systemPrompt: this.prompts[key].systemPrompt,
-          userPrompt: this.prompts[key].userPrompt,
-          name: this.prompts[key].name
-        };
-      }
-      localStorage.setItem('llmCustomPrompts', JSON.stringify(customPrompts));
-    }
-  }
-
-  /**
-   * Load custom prompts
-   */
-  loadCustomPrompts() {
-    const saved = localStorage.getItem('llmCustomPrompts');
-    if (saved) {
-      try {
-        const customPrompts = JSON.parse(saved);
-        for (const key in customPrompts) {
-          if (this.prompts[key]) {
-            this.prompts[key].systemPrompt = customPrompts[key].systemPrompt;
-            this.prompts[key].userPrompt = customPrompts[key].userPrompt;
-          }
-        }
-      } catch (error) {
-        console.error('Error loading custom prompts:', error);
-      }
-    }
-  }
-
-  /**
-   * Reset prompt to default
-   */
-  resetPrompt(actionKey) {
-    if (this.defaultPrompts[actionKey]) {
-      // Reset to default
-      this.prompts[actionKey] = JSON.parse(JSON.stringify(this.defaultPrompts[actionKey]));
-
-      // Remove from custom prompts in storage
-      const saved = localStorage.getItem('llmCustomPrompts');
-      if (saved) {
-        try {
-          const customPrompts = JSON.parse(saved);
-          delete customPrompts[actionKey];
-          localStorage.setItem('llmCustomPrompts', JSON.stringify(customPrompts));
-        } catch (error) {
-          console.error('Error resetting prompt:', error);
-        }
-      }
-    }
+    return await this._executePrompt('improveDescription', { text });
   }
 }

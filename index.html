@@ -1689,6 +1689,8 @@
         line-height: 1.8;
         outline: none;
         color: var(--text-primary);
+        white-space: pre-wrap; /* Preserve whitespace and wrap text */
+        word-wrap: break-word;
       }
 
       .section-content-editor:focus {
@@ -1697,12 +1699,49 @@
 
       .section-content-editor p {
         margin-bottom: 1em;
+        margin-top: 0;
+      }
+
+      .section-content-editor p:last-child {
+        margin-bottom: 0;
+      }
+
+      .section-content-editor br {
+        display: block;
+        content: "";
+        margin: 0.5em 0;
       }
 
       .section-content-editor:empty::before {
         content: 'Start writing your story here...';
         color: var(--text-secondary);
         font-style: italic;
+      }
+
+      .section-generate-btn {
+        display: block;
+        width: 100%;
+        padding: 12px 20px;
+        margin: 10px 0;
+        background: var(--bg-card-inner);
+        color: var(--text-primary);
+        border: 2px solid var(--border-color);
+        border-radius: var(--border-radius);
+        font-size: 0.95em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .section-generate-btn:hover:not(:disabled) {
+        background: var(--hover-bg);
+        border-color: var(--text-secondary);
+        transform: translateY(-1px);
+      }
+
+      .section-generate-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
       }
 
       /* Scrollbar styling */

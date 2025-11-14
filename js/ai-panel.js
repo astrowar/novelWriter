@@ -39,6 +39,9 @@ class AIPanelManager {
     // Initialize LLM Manager
     this.llmManager = new LLMManager();
 
+    // Expose LLM Manager globally for other modules
+    window.llmManager = this.llmManager;
+
     // Load configuration from LLM Manager
     this.loadConfiguration();
 

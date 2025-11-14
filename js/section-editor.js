@@ -188,7 +188,19 @@ class SectionEditor {
     const contentDiv = document.createElement('div');
     contentDiv.className = 'section-content-editor';
     contentDiv.contentEditable = true;
-    contentDiv.innerHTML = section.content || '';
+
+    // Format existing content if it's plain text
+    if (section.content) {
+      // Check if content is already formatted (has HTML tags)
+      if (section.content.includes('<p>') || section.content.includes('<br>')) {
+        contentDiv.innerHTML = section.content;
+      } else {
+        // Format plain text content
+        contentDiv.innerHTML = this._formatTextContent(section.content);
+      }
+    } else {
+      contentDiv.innerHTML = '';
+    }
 
     contentDiv.addEventListener('blur', () => {
       section.content = contentDiv.innerHTML;
@@ -203,6 +215,16 @@ class SectionEditor {
     });
 
     mainContent.appendChild(contentDiv);
+
+    // Add AI Generate button
+    const generateBtn = document.createElement('button');
+    generateBtn.className = 'section-generate-btn';
+    generateBtn.innerHTML = section.content && section.content.trim() ? '🤖 Regenerate Scene' : '✨ Generate Scene';
+    generateBtn.addEventListener('click', async () => {
+      await this.generateSectionText(section, contentDiv, generateBtn);
+    });
+    mainContent.appendChild(generateBtn);
+
     leftColumn.appendChild(mainContent);
     block.appendChild(leftColumn);
 
@@ -437,6 +459,254 @@ class SectionEditor {
       }
     }, 100);
     // Note: onUpdate() is called only when closing the editor
+  }
+
+  async generateSectionText(section, contentDiv, generateBtn) {
+    try {
+      // Get LLM manager instance
+      const llmManager = window.llmManager;
+      if (!llmManager) {
+        console.error('LLM Manager not initialized');
+        return;
+      }
+
+      // Check if API is configured
+      const config = llmManager.getConfig();
+      if (!config.apiUrl || !config.model) {
+        alert('Please configure the AI Assistant first (Tools → AI Assistant)');
+        return;
+      }
+
+      // Update button to show loading state
+      const originalText = generateBtn.innerHTML;
+      generateBtn.disabled = true;
+      generateBtn.innerHTML = '⏳ Generating...';
+
+      // Prepare context for the LLM
+      const bookData = this.bookData.data || this.bookData;
+      const bookTitle = bookData.title || 'Untitled Book';
+
+      // Find current chapter and act
+      const act = this.bookData.findAct(this.currentActId);
+      const chapter = this.bookData.findChapter(this.currentActId, this.currentChapterId);
+
+      if (!chapter) {
+        throw new Error('Chapter not found');
+      }
+
+      const chapterTitle = chapter.title || 'Unknown Chapter';
+      const actTitle = act ? act.title : 'Unknown Act';
+      const sectionSummary = section.summary || 'No summary provided';
+      const sectionTags = section.tags && section.tags.length > 0
+        ? section.tags.join(', ')
+        : 'No tags';
+
+      // Build complete book structure with all summaries
+      const bookStructure = this._buildBookStructure();
+
+      // Find current section index
+      const currentSectionIndex = chapter.sections.findIndex(s => s.id === section.id);
+
+      // Get adjacent sections context (2 before, 2 after)
+      const adjacentContext = this._getAdjacentSectionsContext(chapter, currentSectionIndex);
+
+      // Build enhanced system prompt
+      const enhancedSystemPrompt = `Você é um escritor criativo especializado em narrativas envolventes e coerentes.
+
+CONTEXTO DO LIVRO COMPLETO:
+${bookStructure}
+
+CONTEXTO DAS SEÇÕES ADJACENTES:
+${adjacentContext}
+
+INSTRUÇÕES IMPORTANTES:
+1. Mantenha a continuidade lógica e narrativa entre as seções
+2. Se houver texto das seções anteriores, certifique-se de que a transição seja natural e fluida
+3. Se houver texto das seções posteriores, prepare uma transição adequada que se conecte com elas
+4. Respeite os eventos e desenvolvimentos estabelecidos nos resumos de todas as seções
+5. Mantenha consistência de personagens, tom e estilo narrativo
+6. Use os resumos como guia para garantir que a narrativa flui logicamente através do livro`;
+
+      // Build enhanced user prompt
+      const enhancedUserPrompt = `Com base no contexto completo fornecido, gere o texto narrativo detalhado para a seguinte seção:
+
+LIVRO: ${bookTitle}
+ATO: ${actTitle}
+CAPÍTULO: ${chapterTitle}
+
+SEÇÃO ATUAL:
+Resumo: ${sectionSummary}
+Tags/Temas: ${sectionTags}
+
+ATENÇÃO:
+- Certifique-se de que o texto gerado se conecta naturalmente com as seções anteriores (se fornecidas)
+- Prepare o terreno para as seções seguintes (se fornecidas)
+- Mantenha fidelidade ao resumo da seção atual
+- Preserve a continuidade narrativa e lógica temporal
+- Use um estilo envolvente e detalhado
+
+Gere agora o texto completo desta seção:`;
+
+      // Clear content div and prepare for streaming
+      contentDiv.innerHTML = '';
+      let accumulatedContent = '';
+
+      // Call the API with streaming
+      await llmManager.callAPIStream(
+        enhancedSystemPrompt,
+        enhancedUserPrompt,
+        // onChunk - called for each piece of text
+        (chunk, fullContent) => {
+          accumulatedContent = fullContent;
+          // Format text properly: convert double line breaks to paragraphs
+          const formattedContent = this._formatTextContent(fullContent);
+          contentDiv.innerHTML = formattedContent;
+          // Auto-scroll to bottom as content arrives
+          contentDiv.scrollTop = contentDiv.scrollHeight;
+        },
+        // onComplete - called when stream finishes
+        (fullContent) => {
+          section.content = this._formatTextContent(fullContent);
+          contentDiv.innerHTML = section.content;
+          generateBtn.innerHTML = '🤖 Regenerate Scene';
+          generateBtn.disabled = false;
+        },
+        // onError - called on error
+        (error) => {
+          console.error('Error generating section text:', error);
+          alert('Error generating text: ' + error.message);
+          generateBtn.innerHTML = section.content ? '🤖 Regenerate Scene' : '✨ Generate Scene';
+          generateBtn.disabled = false;
+        }
+      );
+
+    } catch (error) {
+      console.error('Error generating section text:', error);
+      alert('Error generating text: ' + error.message);
+      // Restore original button text
+      generateBtn.innerHTML = section.content ? '🤖 Regenerate Scene' : '✨ Generate Scene';
+      generateBtn.disabled = false;
+    }
+  }
+
+  /**
+   * Build complete book structure with all summaries
+   * @private
+   * @returns {string} Formatted book structure
+   */
+  _buildBookStructure() {
+    let structure = '';
+
+    // Access the data object from BookData instance
+    const bookData = this.bookData.data || this.bookData;
+
+    if (!bookData.acts || !Array.isArray(bookData.acts)) {
+      return 'Estrutura do livro não disponível.';
+    }
+
+    bookData.acts.forEach((act, actIndex) => {
+      structure += `\n=== ATO ${actIndex + 1}: ${act.title} ===\n`;
+
+      if (act.chapters && Array.isArray(act.chapters)) {
+        act.chapters.forEach((chapter, chapterIndex) => {
+          structure += `\n  CAPÍTULO ${chapterIndex + 1}: ${chapter.title}\n`;
+
+          if (chapter.sections && chapter.sections.length > 0) {
+            chapter.sections.forEach((section, sectionIndex) => {
+              const tags = section.tags && section.tags.length > 0
+                ? ` [Tags: ${section.tags.join(', ')}]`
+                : '';
+              structure += `    ${sectionIndex + 1}. ${section.title || 'Seção ' + (sectionIndex + 1)}: ${section.summary || 'Sem resumo'}${tags}\n`;
+            });
+          }
+        });
+      }
+    });
+
+    return structure;
+  }
+
+  /**
+   * Get context from adjacent sections (2 before, 2 after)
+   * @private
+   * @param {Object} chapter - Current chapter
+   * @param {number} currentIndex - Current section index
+   * @returns {string} Formatted adjacent sections context
+   */
+  _getAdjacentSectionsContext(chapter, currentIndex) {
+    let context = '';
+
+    // Get 2 sections before
+    for (let i = Math.max(0, currentIndex - 2); i < currentIndex; i++) {
+      const section = chapter.sections[i];
+      const position = currentIndex - i === 2 ? 'SEÇÃO ANTERIOR 2' : 'SEÇÃO ANTERIOR 1';
+
+      context += `\n--- ${position}: ${section.title || 'Seção ' + (i + 1)} ---\n`;
+      context += `Resumo: ${section.summary || 'Sem resumo'}\n`;
+
+      if (section.content && section.content.trim()) {
+        context += `Texto completo:\n${section.content}\n`;
+      } else {
+        context += `(Texto ainda não gerado - use apenas o resumo)\n`;
+      }
+    }
+
+    context += `\n--- SEÇÃO ATUAL (A SER GERADA) ---\n`;
+    context += `Esta é a seção que você deve gerar agora.\n`;
+
+    // Get 2 sections after
+    for (let i = currentIndex + 1; i < Math.min(chapter.sections.length, currentIndex + 3); i++) {
+      const section = chapter.sections[i];
+      const position = i - currentIndex === 1 ? 'SEÇÃO SEGUINTE 1' : 'SEÇÃO SEGUINTE 2';
+
+      context += `\n--- ${position}: ${section.title || 'Seção ' + (i + 1)} ---\n`;
+      context += `Resumo: ${section.summary || 'Sem resumo'}\n`;
+
+      if (section.content && section.content.trim()) {
+        context += `Texto completo:\n${section.content}\n`;
+      } else {
+        context += `(Texto ainda não gerado - use o resumo para preparar a transição)\n`;
+      }
+    }
+
+    if (context === '') {
+      context = 'Nenhuma seção adjacente disponível.';
+    }
+
+    return context;
+  }
+
+  /**
+   * Format text content for proper display in contentEditable div
+   * Converts line breaks to paragraphs for better readability
+   * @private
+   * @param {string} text - Raw text from API
+   * @returns {string} Formatted HTML
+   */
+  _formatTextContent(text) {
+    if (!text) return '';
+
+    // Remove excessive whitespace
+    text = text.trim();
+
+    // Split into paragraphs (double line break or more)
+    const paragraphs = text.split(/\n\s*\n+/);
+
+    // Wrap each paragraph in <p> tags and handle single line breaks within paragraphs
+    const formatted = paragraphs
+      .map(para => {
+        para = para.trim();
+        if (!para) return '';
+
+        // Replace single line breaks within paragraph with <br>
+        para = para.replace(/\n/g, '<br>');
+
+        return `<p>${para}</p>`;
+      })
+      .filter(para => para !== '')
+      .join('');
+
+    return formatted;
   }
 
   close() {
