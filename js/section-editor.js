@@ -129,7 +129,9 @@ class SectionEditor {
     configBtn.title = 'Scene Settings';
     configBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      alert('Scene settings coming soon!');
+      e.preventDefault();
+      console.log('Scene settings clicked - feature coming soon!');
+      // TODO: Implement scene settings modal/panel
     });
     controlsDiv.appendChild(configBtn);
 

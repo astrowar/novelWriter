@@ -3,6 +3,81 @@ class BookData {
   constructor() {
     this.data = {
       title: "My Novel",
+      codex: {
+        categories: ['Character', 'Locals', 'Plots', 'Object', 'Lore', 'Other'],
+        entries: [
+          {
+            id: 1,
+            name: "Elena Blackwood",
+            category: "Character",
+            description: "The protagonist. A skilled detective with a mysterious past. Known for her sharp wit and unorthodox methods.",
+            tags: ["protagonist", "detective", "mystery"]
+          },
+          {
+            id: 2,
+            name: "Marcus Stone",
+            category: "Character",
+            description: "Elena's mentor and former partner. A wise veteran detective who taught her everything she knows.",
+            tags: ["mentor", "wisdom", "guidance"]
+          },
+          {
+            id: 3,
+            name: "The Shadow Syndicate",
+            category: "Plots",
+            description: "A mysterious criminal organization that operates in the city's underbelly. Their true motives remain unknown.",
+            tags: ["betrayal", "conflict", "mystery", "drama"]
+          },
+          {
+            id: 4,
+            name: "The Ancient Amulet",
+            category: "Object",
+            description: "A mystical artifact that holds the key to great power. Many seek to possess it.",
+            tags: ["mystery", "plot-point", "discovery"]
+          },
+          {
+            id: 5,
+            name: "Riverside District",
+            category: "Locals",
+            description: "The old industrial area of the city. Now mostly abandoned, it serves as a meeting place for shady dealings.",
+            tags: ["action", "battle", "conflict"]
+          },
+          {
+            id: 6,
+            name: "Sarah Chen",
+            category: "Character",
+            description: "A tech-savvy ally who helps Elena with digital investigations. Loyal and resourceful.",
+            tags: ["character", "friendship", "teamwork"]
+          },
+          {
+            id: 7,
+            name: "The Night of Betrayal",
+            category: "Lore",
+            description: "A legendary event from the past that set everything in motion. Few know the true story.",
+            tags: ["betrayal", "loss", "emotional", "foreshadowing"]
+          },
+          {
+            id: 8,
+            name: "The Crimson Key",
+            category: "Object",
+            description: "A mysterious key that opens a secret vault. Its location has been lost for decades.",
+            tags: ["mystery", "discovery", "plot-point"]
+          },
+          {
+            id: 9,
+            name: "Victor Blackwood",
+            category: "Character",
+            description: "Elena's estranged father. His disappearance years ago is shrouded in mystery.",
+            tags: ["mystery", "emotional", "foreshadowing"]
+          },
+          {
+            id: 10,
+            name: "The Grand Library",
+            category: "Locals",
+            description: "An ancient library that holds forbidden knowledge. Access is restricted to a select few.",
+            tags: ["wisdom", "knowledge", "discovery"]
+          }
+        ]
+      },
       acts: [
         {
           id: 1,
