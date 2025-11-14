@@ -253,12 +253,25 @@ class SectionEditor {
     dropdown.className = 'tag-dropdown';
     dropdown.style.display = 'none';
 
-    // Get all codex entries as tag options
+    // Get all codex entries and tags as tag options
     const getCodexEntries = () => {
       if (!this.bookData.data.codex || !this.bookData.data.codex.entries) {
         return [];
       }
-      return this.bookData.data.codex.entries.map(entry => entry.name);
+
+      const entryNames = this.bookData.data.codex.entries.map(entry => entry.name);
+
+      // Collect all unique tags from all codex entries
+      const allTags = new Set();
+      this.bookData.data.codex.entries.forEach(entry => {
+        if (entry.tags && Array.isArray(entry.tags)) {
+          entry.tags.forEach(tag => allTags.add(tag));
+        }
+      });
+
+      // Combine entry names and tags, remove duplicates
+      const combined = [...new Set([...entryNames, ...Array.from(allTags)])];
+      return combined.sort();
     };
 
     const updateDropdown = (filter = '') => {
@@ -310,8 +323,9 @@ class SectionEditor {
         if (newTag && entries.includes(newTag) && !section.tags.includes(newTag)) {
           section.tags.push(newTag);
           this.renderTags(container, section);
+          addInput.value = '';
         } else if (newTag && !entries.includes(newTag)) {
-          alert('Tag must be a codex entry. Please add it to the codex first.');
+          alert('Tag must be a codex entry or tag. Please add it to the codex first.');
         }
       } else if (e.key === 'Escape') {
         dropdown.style.display = 'none';

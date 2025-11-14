@@ -71,12 +71,7 @@ class InlineEditor {
         const input = document.createElement('input');
         input.type = 'text';
         input.value = titleElement.textContent;
-        input.className = 'act-title';
-        input.style.width = '100%';
-        input.style.border = '2px solid white';
-        input.style.padding = '4px 8px';
-        input.style.borderRadius = '3px';
-        input.style.fontSize = '1.3em';
+        input.className = 'act-title-input';
 
         titleElement.style.display = 'none';
         titleElement.parentNode.insertBefore(input, titleElement);

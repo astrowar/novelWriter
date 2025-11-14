@@ -43,6 +43,7 @@ class NovelWriterApp {
   init() {
     this.render();
     this.setupCodexEvents();
+    this.setupBookTitleEditing();
   }
 
   // Full render - renders UI and sets up all event listeners
@@ -64,6 +65,66 @@ class NovelWriterApp {
     this.inlineEditor.setupActTitleEditing();
     this.sectionEditor.setup();
     this.eventHandlers.setup();
+
+    // Animate moved cards after re-render using FLIP technique
+    this.dragDropManager.animateMovedCards();
+  }
+
+  // Setup book title editing
+  setupBookTitleEditing() {
+    const bookTitleElement = document.getElementById('book-title');
+
+    // Set initial title from data
+    bookTitleElement.textContent = this.bookData.data.title || '📚 Book Structure';
+
+    bookTitleElement.addEventListener('dblclick', (e) => {
+      e.stopPropagation();
+
+      const currentTitle = this.bookData.data.title || 'My Novel';
+      const displayText = bookTitleElement.textContent;
+
+      // Create input element
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.value = currentTitle;
+      input.className = 'book-title-input';
+
+      // Replace title with input
+      bookTitleElement.style.display = 'none';
+      bookTitleElement.parentElement.insertBefore(input, bookTitleElement);
+      input.focus();
+      input.select();
+
+      // Function to finish editing
+      const finishEditing = () => {
+        const newTitle = input.value.trim();
+
+        if (newTitle && newTitle !== currentTitle) {
+          // Update the book title in data
+          this.bookData.data.title = newTitle;
+          bookTitleElement.textContent = `📚 ${newTitle}`;
+        }
+
+        // Remove input and show title again
+        input.remove();
+        bookTitleElement.style.display = '';
+      };
+
+      // Handle Enter key
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          finishEditing();
+        } else if (e.key === 'Escape') {
+          input.remove();
+          bookTitleElement.style.display = '';
+        }
+      });
+
+      // Handle blur (clicking outside)
+      input.addEventListener('blur', () => {
+        setTimeout(finishEditing, 100);
+      });
+    });
   }
 
   // Setup codex-specific events
@@ -76,23 +137,34 @@ class NovelWriterApp {
 
     // Add entry button
     document.getElementById('codex-add-btn').addEventListener('click', () => {
-      this.codex.openAddEntryModal();
+      this.codex.openEntryPanel();
     });
 
     // Config button
     document.getElementById('codex-config-btn').addEventListener('click', () => {
-      this.codex.openConfigModal();
+      this.codex.openConfigPanel();
     });
 
-    // Add entry modal events
-    document.getElementById('codex-entry-cancel').addEventListener('click', () => {
-      document.getElementById('codex-entry-modal').style.display = 'none';
+    // Config panel collapse button
+    document.getElementById('codex-config-collapse').addEventListener('click', () => {
+      this.codex.closeConfigPanel();
     });
 
-    document.getElementById('codex-entry-save').addEventListener('click', () => {
-      const name = document.getElementById('codex-entry-name').value;
-      const category = document.getElementById('codex-entry-category').value;
-      const description = document.getElementById('codex-entry-description').value;
+    // Entry panel collapse button
+    document.getElementById('codex-entry-collapse').addEventListener('click', () => {
+      this.codex.closeEntryPanel();
+    });
+
+    // Entry panel cancel button
+    document.getElementById('codex-entry-panel-cancel').addEventListener('click', () => {
+      this.codex.closeEntryPanel();
+    });
+
+    // Entry panel save button
+    document.getElementById('codex-entry-panel-save').addEventListener('click', () => {
+      const name = document.getElementById('codex-entry-panel-name').value;
+      const category = document.getElementById('codex-entry-panel-category').value;
+      const description = document.getElementById('codex-entry-panel-description').value;
       const tags = this.codex.currentEntryTags || [];
 
       if (!name || name.trim() === '') {
@@ -113,25 +185,22 @@ class NovelWriterApp {
         this.codex.addEntry(name, category, description, tags);
       }
 
-      document.getElementById('codex-entry-modal').style.display = 'none';
+      this.codex.closeEntryPanel();
       this.update();
     });
 
-    document.getElementById('codex-entry-delete').addEventListener('click', () => {
+    // Entry panel delete button
+    document.getElementById('codex-entry-panel-delete').addEventListener('click', () => {
       if (this.codex.currentEntry) {
         if (confirm(`Are you sure you want to delete "${this.codex.currentEntry.name}"?`)) {
           this.codex.deleteEntry(this.codex.currentEntry.id);
-          document.getElementById('codex-entry-modal').style.display = 'none';
+          this.codex.closeEntryPanel();
           this.update();
         }
       }
     });
 
-    // Config modal events
-    document.getElementById('codex-config-close').addEventListener('click', () => {
-      document.getElementById('codex-config-modal').style.display = 'none';
-    });
-
+    // Config panel events
     document.getElementById('codex-add-category').addEventListener('click', () => {
       const categoryName = document.getElementById('codex-new-category').value;
       if (this.codex.addCategory(categoryName)) {
@@ -145,19 +214,6 @@ class NovelWriterApp {
     document.getElementById('codex-new-category').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         document.getElementById('codex-add-category').click();
-      }
-    });
-
-    // Close modals on overlay click
-    document.getElementById('codex-entry-modal').addEventListener('click', (e) => {
-      if (e.target.id === 'codex-entry-modal') {
-        document.getElementById('codex-entry-modal').style.display = 'none';
-      }
-    });
-
-    document.getElementById('codex-config-modal').addEventListener('click', (e) => {
-      if (e.target.id === 'codex-config-modal') {
-        document.getElementById('codex-config-modal').style.display = 'none';
       }
     });
   }

@@ -198,6 +198,114 @@
         border-left-color: var(--color-darkest);
       }
 
+      .codex-config-panel {
+        width: 0;
+        background: var(--bg-tertiary);
+        border-right: 2px solid var(--border-tertiary);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        transition: width 0.3s ease;
+        z-index: 3000;
+        position: relative;
+      }
+
+      .codex-config-panel.expanded {
+        width: 320px;
+      }
+
+      .codex-config-header {
+        padding: var(--spacing-lg);
+        border-bottom: 2px solid var(--border-tertiary);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .codex-config-header h3 {
+        margin: 0;
+        font-size: 1.2em;
+        color: var(--text-primary);
+      }
+
+      .codex-config-collapse-btn {
+        background: var(--bg-card-inner);
+        border: 1px solid var(--border-tertiary);
+        border-radius: var(--border-radius);
+        padding: 6px 10px;
+        cursor: pointer;
+        font-size: 1em;
+        transition: background 0.2s;
+      }
+
+      .codex-config-collapse-btn:hover {
+        background: var(--hover-bg);
+      }
+
+      .codex-config-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: var(--spacing-lg);
+      }
+
+      .codex-config-section {
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .codex-config-section label {
+        display: block;
+        margin-bottom: var(--spacing-sm);
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .codex-categories-list {
+        max-height: 400px;
+        overflow-y: auto;
+        border: 1px solid var(--border-tertiary);
+        border-radius: var(--border-radius);
+        padding: var(--spacing-sm);
+        background: var(--bg-card-inner);
+      }
+
+      .codex-category-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 8px;
+        margin: 2px 0;
+        background: var(--bg-tertiary);
+        border-radius: var(--border-radius);
+      }
+
+      .codex-category-item span {
+        flex: 1;
+        color: var(--text-primary);
+      }
+
+      .codex-category-delete-btn {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: 1.1em;
+        padding: 2px 6px;
+        transition: opacity 0.2s;
+        opacity: 0.6;
+      }
+
+      .codex-category-delete-btn:hover {
+        opacity: 1;
+      }
+
+      .codex-config-add-section {
+        display: flex;
+        gap: var(--spacing-sm);
+      }
+
+      .codex-config-add-section input {
+        flex: 1;
+      }
+
       .main-content-area {
         flex: 1;
         display: flex;
@@ -219,6 +327,32 @@
         font-size: 1.8em;
       }
 
+      .book-title-editable {
+        cursor: pointer;
+        padding: 8px 16px;
+        border-radius: 8px;
+        transition: background 0.2s;
+        display: inline-block;
+      }
+
+      .book-title-editable:hover {
+        background: var(--hover-bg);
+      }
+
+      .book-title-input {
+        text-align: center;
+        font-size: 1.8em;
+        font-weight: bold;
+        color: var(--text-primary);
+        border: 2px solid var(--border-primary);
+        border-radius: 8px;
+        padding: 8px 16px;
+        outline: none;
+        background: var(--bg-tertiary);
+        width: 100%;
+        max-width: 500px;
+      }
+
       .act-section {
         margin-bottom: 25px;
       }
@@ -232,12 +366,29 @@
         background: var(--bg-secondary);
         border-radius: var(--border-radius-lg);
         border: 1px solid var(--border-secondary);
+        gap: 10px;
       }
 
       .act-title {
         color: var(--text-primary);
         font-size: 1.3em;
         margin: 0;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .act-title-input {
+        color: var(--text-primary);
+        font-size: 1.3em;
+        margin: 0;
+        flex: 1;
+        min-width: 0;
+        max-width: 100%;
+        border: 2px solid white;
+        padding: 4px 8px;
+        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.2);
+        outline: none;
       }
 
       .add-chapter-btn {
@@ -250,6 +401,8 @@
         font-weight: 600;
         cursor: pointer;
         transition: background 0.2s;
+        flex-shrink: 0;
+        white-space: nowrap;
       }
 
       .add-chapter-btn:hover {
@@ -295,6 +448,7 @@
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
         gap: 12px;
         margin-bottom: 15px;
+        position: relative;
       }
 
       .chapter-card {
@@ -302,7 +456,7 @@
         border-radius: var(--border-radius-lg);
         padding: var(--spacing-sm);
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s, box-shadow 0.2s;
+        transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
         cursor: pointer;
         position: relative;
         border: 1px solid var(--border-secondary);
@@ -576,10 +730,81 @@
         </div>
       </div>
 
+      <!-- Codex Config Panel (Expandable) -->
+      <div class="codex-config-panel" id="codex-config-panel">
+        <div class="codex-config-header">
+          <h3>Configure Categories</h3>
+          <button class="codex-config-collapse-btn" id="codex-config-collapse">◀</button>
+        </div>
+        <div class="codex-config-content">
+          <div class="codex-config-section">
+            <label>Categories</label>
+            <div class="codex-categories-list" id="codex-categories-list">
+              <!-- Categories will be listed here -->
+            </div>
+          </div>
+          <div class="codex-config-section">
+            <label>Add New Category</label>
+            <div class="codex-config-add-section">
+              <input type="text" class="modal-input" id="codex-new-category" placeholder="New category name..." style="margin-bottom: 0;">
+              <button class="codex-btn" id="codex-add-category" style="flex: none; padding: 8px 16px;">Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Codex Entry Editor Panel (Expandable) -->
+      <div class="codex-config-panel" id="codex-entry-panel">
+        <div class="codex-config-header">
+          <h3 id="codex-entry-panel-title">Edit Entry</h3>
+          <button class="codex-config-collapse-btn" id="codex-entry-collapse">◀</button>
+        </div>
+        <div class="codex-config-content">
+          <div class="codex-config-section">
+            <label>Entry Name</label>
+            <input type="text" class="modal-input" id="codex-entry-panel-name" placeholder="Entry name..." style="margin-bottom: 0;">
+          </div>
+
+          <div class="codex-config-section">
+            <label>Category</label>
+            <select id="codex-entry-panel-category" class="modal-input" style="cursor: pointer; margin-bottom: 0;">
+              <!-- Categories will be populated dynamically -->
+            </select>
+          </div>
+
+          <div class="codex-config-section">
+            <label>Tags</label>
+            <div id="codex-entry-panel-tags" style="min-height: 30px; padding: 6px; border: 1px solid var(--border-tertiary); border-radius: 6px; background: var(--bg-card-inner); display: flex; flex-wrap: wrap; gap: 4px; align-items: center;">
+              <!-- Tags will be rendered here -->
+            </div>
+          </div>
+
+          <div class="codex-config-section">
+            <label>Description</label>
+            <textarea id="codex-entry-panel-description" class="modal-input" rows="10" placeholder="Enter description..." style="resize: vertical; font-family: inherit; margin-bottom: 0;"></textarea>
+          </div>
+
+          <div class="codex-config-section">
+            <button class="codex-btn" id="codex-entry-panel-delete" style="width: 100%; background: var(--color-danger); color: white; border: 1px solid var(--color-danger); display: none;">
+              Delete Entry
+            </button>
+          </div>
+
+          <div class="codex-config-section" style="display: flex; gap: 8px;">
+            <button class="codex-btn" id="codex-entry-panel-cancel" style="flex: 1;">
+              Cancel
+            </button>
+            <button class="codex-btn" id="codex-entry-panel-save" style="flex: 1; background: var(--bg-card-inner); border: 1px solid var(--border-primary);">
+              Save Entry
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Main Content Area -->
       <div class="main-content-area">
         <div class="container">
-          <h1>📚 Book Structure</h1>
+          <h1 id="book-title" class="book-title-editable">📚 Book Structure</h1>
           <div id="book-structure"></div>
         </div>
       </div>
@@ -680,37 +905,14 @@
       </div>
     </div>
 
-    <!-- Modal for configuring categories -->
-    <div id="codex-config-modal" class="modal-overlay">
-      <div class="modal" style="min-width: 500px;">
-        <h3 class="modal-title">Configure Categories</h3>
-
-        <div style="margin-bottom: 15px;">
-          <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Categories</label>
-          <div id="codex-categories-list" style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; border-radius: 6px; padding: 8px; background: #f9f9f9;">
-            <!-- Categories will be listed here -->
-          </div>
-        </div>
-
-        <div style="margin-bottom: 15px; display: flex; gap: 8px;">
-          <input type="text" id="codex-new-category" class="modal-input" placeholder="New category name..." style="margin-bottom: 0; flex: 1;">
-          <button class="modal-btn modal-btn-primary" id="codex-add-category" style="padding: 8px 16px;">Add</button>
-        </div>
-
-        <div class="modal-buttons">
-          <button class="modal-btn modal-btn-primary" id="codex-config-close">Close</button>
-        </div>
-      </div>
-    </div>
-
     <!-- Chapter Editor -->
     <div id="chapter-editor" class="chapter-editor" style="display: none;">
       <div class="editor-header">
+        <button class="editor-close-btn" id="editor-close">◀</button>
         <div class="editor-title">
           <h2 id="editor-chapter-title"></h2>
           <span id="editor-breadcrumb"></span>
         </div>
-        <button class="editor-close-btn" id="editor-close">✕</button>
       </div>
 
       <div class="editor-content">
@@ -732,6 +934,22 @@
         z-index: 2000;
         display: flex;
         flex-direction: column;
+        transition: left 0.3s ease;
+      }
+
+      /* Adjust editor when config panel is open */
+      body:has(#codex-config-panel.expanded) .chapter-editor {
+        left: 600px; /* 280px (codex) + 320px (config panel) */
+      }
+
+      /* Adjust editor when entry panel is open */
+      body:has(#codex-entry-panel.expanded) .chapter-editor {
+        left: 600px; /* 280px (codex) + 320px (entry panel) */
+      }
+
+      /* Adjust editor when both panels are open */
+      body:has(#codex-config-panel.expanded):has(#codex-entry-panel.expanded) .chapter-editor {
+        left: 920px; /* 280px (codex) + 320px (config) + 320px (entry) */
       }
 
       /* Hide body overflow when editor is open */
@@ -748,6 +966,11 @@
         align-items: center;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         border-bottom: 2px solid var(--border-primary);
+        gap: 15px;
+      }
+
+      .editor-title {
+        flex: 1;
       }
 
       .editor-title h2 {
@@ -763,20 +986,24 @@
       }
 
       .editor-close-btn {
-        background: var(--bg-secondary);
+        background: var(--bg-card-inner);
         border: 1px solid var(--border-primary);
         color: var(--text-primary);
-        font-size: 1.5em;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
+        font-size: 1.2em;
+        width: 36px;
+        height: 36px;
+        border-radius: 6px;
         cursor: pointer;
-        transition: background 0.2s;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
       }
 
       .editor-close-btn:hover {
         background: var(--hover-bg);
-        transform: scale(1.1);
+        transform: translateX(-3px);
       }
 
       .editor-content {
