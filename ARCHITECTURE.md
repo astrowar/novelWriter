@@ -1,7 +1,8 @@
-# Novel Writer - Refactored Architecture
+# Novel Writer - Architecture Documentation
 
 ## Overview
-This is an Electron-based novel writing application with a modular, component-based architecture.
+Electron-based novel writing application with modular, component-based architecture.
+Features include drag-and-drop organization, codex system for worldbuilding, and tag-based filtering.
 
 ## Project Structure
 
@@ -11,9 +12,13 @@ novelWriter/
 ├── main.js                 # Electron main process
 ├── renderer.js             # (Legacy - can be removed)
 ├── package.json            # Project dependencies
+├── data/                   # Data files
+│   └── book-data.json      # Book content (title, codex, acts, chapters)
 └── js/                     # Modular JavaScript components
-    ├── app.js              # Main application entry point
+    ├── app.js              # Main application controller
     ├── data.js             # Data model and state management
+    ├── codex.js            # Codex/worldbuilding system
+    ├── filter.js           # Tag-based filtering system
     ├── renderer.js         # UI rendering logic
     ├── dragdrop.js         # Drag and drop functionality
     ├── modals.js           # Modal dialogs management
@@ -24,29 +29,45 @@ novelWriter/
 
 ## Architecture
 
-### 1. Data Layer (`data.js`)
-- **BookData Class**: Manages the entire book structure
-- Methods for CRUD operations on acts, chapters, and sections
+### 1. Main Controller (`app.js`)
+- **NovelWriterApp Class**: Application entry point and coordinator
+- Initializes and coordinates all sub-modules
+- Manages application lifecycle
+- Handles book title editing
+- Setup codex and filter event handlers
+- **Lines of code**: ~242 lines
+
+### 2. Data Layer (`data.js` + `data/book-data.json`) ✨ REFACTORED
+- **BookData Class**: Manages entire book structure
+- **Separation of concerns**: Data separated from code
+- Loads book data from external JSON file (`book-data.json`)
+- Persists changes to localStorage (browser limitation)
+- CRUD operations for acts, chapters, and sections
 - Centralized data access and manipulation
-- Singleton pattern for global access
+- **Benefits**:
+  - Easy to edit book content without touching code
+  - Better version control for content vs code
+  - Possibility to load different books
+  - Data portability
 
-### 2. Presentation Layer (`renderer.js`)
-- **UIRenderer Class**: Handles all HTML generation
+### 3. Presentation Layer (`renderer.js`)
+- **UIRenderer Class**: HTML generation and DOM manipulation
 - Separates rendering logic from business logic
-- Methods for rendering acts, chapters, and sections
 - Pure rendering functions (no side effects)
+- Methods for rendering acts, chapters, sections
 
-### 3. Interaction Layer
+### 4. Filter System (`filter.js`) ✨ NEW
+- **FilterManager Class**: Tag-based filtering with autocomplete
+- Features:
+  - Autocomplete dropdown for available tags
+  - Multiple tag selection with AND logic
+  - Keyboard navigation (↑↓ Enter Esc)
+  - Visual feedback with selected tag badges
+  - Integration with codex system
+- **Lines of code**: ~300 lines
 
-#### Drag & Drop (`dragdrop.js`)
-- **DragDropManager Class**: Handles chapter reordering
-- Supports drag and drop within and between acts
-- Smart positioning logic
-
-#### Modals (`modals.js`)
-- **ModalManager Class**: Generic text input modal
-- **ChapterPropertiesModal Class**: Chapter settings dialog
-- Event handling and cleanup
+### 5. Codex System (`codex.js`)
+- **Codex Class**: Worldbuilding and reference management
 
 #### Inline Editing (`editor.js`)
 - **InlineEditor Class**: Double-click editing
