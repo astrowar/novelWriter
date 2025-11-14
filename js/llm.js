@@ -47,83 +47,83 @@ class LLMManager {
   _initializeDefaultPrompts() {
     return {
       generate: {
-        name: 'Gerar Texto da Seção',
-        systemPrompt: 'Você é um escritor criativo especializado em narrativas envolventes.',
-        userPrompt: `Com base no seguinte resumo, escreva o texto completo da seção narrativa:
+        name: 'Generate Section Text',
+        systemPrompt: 'You are a creative writer specialized in engaging narratives.',
+        userPrompt: `Based on the following summary, write the complete text for the narrative section:
 
-Resumo: {summary}
+Summary: {summary}
 
-Contexto do Livro:
-Título: {bookTitle}
-Capítulo: {chapterTitle}
-Seção: {sectionTitle}
+Book Context:
+Title: {bookTitle}
+Chapter: {chapterTitle}
+Section: {sectionTitle}
 
-Tags/Temas: {tags}
+Tags/Themes: {tags}
 
-Escreva um texto narrativo detalhado e envolvente que desenvolva este resumo.`
+Write a detailed and engaging narrative text that develops this summary.`
       },
       summarize: {
-        name: 'Resumir Texto',
-        systemPrompt: 'Você é um assistente que cria resumos concisos e informativos.',
-        userPrompt: `Crie um resumo conciso do seguinte texto, capturando os pontos principais:
+        name: 'Summarize Text',
+        systemPrompt: 'You are an assistant who creates concise and informative summaries.',
+        userPrompt: `Create a concise summary of the following text, capturing the main points:
 
 {text}
 
-Crie um resumo em um único parágrafo.`
+Create a summary in a single paragraph.`
       },
       expand: {
-        name: 'Expandir Texto',
-        systemPrompt: 'Você é um escritor criativo que adiciona detalhes e profundidade às narrativas.',
-        userPrompt: `Expanda o seguinte texto, adicionando mais detalhes, descrições e desenvolvimento:
+        name: 'Expand Text',
+        systemPrompt: 'You are a creative writer who adds details and depth to narratives.',
+        userPrompt: `Expand the following text, adding more details, descriptions, and development:
 
 {text}
 
-Mantenha o estilo e o tom originais, mas torne a narrativa mais rica e detalhada.`
+Maintain the original style and tone, but make the narrative richer and more detailed.`
       },
       rewrite: {
-        name: 'Reescrever Texto',
-        systemPrompt: 'Você é um editor experiente que melhora a qualidade da escrita.',
-        userPrompt: `Reescreva o seguinte texto melhorando a clareza, o fluxo e o impacto narrativo:
+        name: 'Rewrite Text',
+        systemPrompt: 'You are an experienced editor who improves writing quality.',
+        userPrompt: `Rewrite the following text improving clarity, flow, and narrative impact:
 
 {text}
 
-Mantenha a mesma informação e tom, mas melhore a qualidade da escrita.`
+Keep the same information and tone, but improve the writing quality.`
       },
       changePOV: {
-        name: 'Mudar Ponto de Vista',
-        systemPrompt: 'Você é especialista em narrativa e pontos de vista literários.',
-        userPrompt: `Reescreva o seguinte texto mudando o ponto de vista para: {targetPOV}
+        name: 'Change Point of View',
+        systemPrompt: 'You are an expert in narrative and literary points of view.',
+        userPrompt: `Rewrite the following text changing the point of view to: {targetPOV}
 
-Texto original:
+Original text:
 {text}
 
-Mantenha o conteúdo e os eventos, mas adapte a perspectiva narrativa.`
+Keep the content and events, but adapt the narrative perspective.`
       },
       continueStory: {
-        name: 'Continuar História',
-        systemPrompt: 'Você é um escritor criativo que dá continuidade natural às narrativas.',
-        userPrompt: `Continue a seguinte história de forma natural e envolvente:
+        name: 'Continue Story',
+        systemPrompt: 'You are a creative writer who naturally continues narratives.',
+        userPrompt: `Continue the following story in a natural and engaging way:
 
 {text}
 
-Escreva o próximo parágrafo ou seção, mantendo o estilo e o tom.`
+Write the next paragraph or section, maintaining the style and tone.`
       },
       addDialogue: {
-        name: 'Adicionar Diálogo',
-        systemPrompt: 'Você é especialista em escrever diálogos naturais e envolventes.',
-        userPrompt: `Adicione diálogo natural ao seguinte texto narrativo:
+        name: 'Add Dialogue',
+        systemPrompt: 'You are an expert at writing natural and engaging dialogue.',
+        userPrompt: `Add natural dialogue to the following narrative text:
 
 {text}
 
-Insira diálogos entre os personagens que sejam relevantes e naturais ao contexto.`
+Insert dialogues between characters that are relevant and natural to the context.`
       },
       improveDescription: {
-        name: 'Melhorar Descrições',
-        systemPrompt: 'Você é especialista em criar descrições vívidas e sensoriais.',
-        userPrompt: `Melhore as descrições no seguinte texto, adicionando mais detalhes sensoriais:
+        name: 'Improve Descriptions',
+        systemPrompt: 'You are an expert at creating vivid and sensory descriptions.',
+        userPrompt: `Improve the descriptions in the following text, adding more sensory details:
 
 {text}
-Adicione descrições mais vívidas de cenários, personagens e ambientes.`
+Add more vivid descriptions of settings, characters, and environments.`
       }
     };
   }

@@ -1868,6 +1868,12 @@
         transition: max-height 0.3s ease, opacity 0.3s ease;
       }
 
+      .settings-row {
+        display: flex;
+        gap: var(--spacing-lg);
+        align-items: flex-end;
+      }
+
       .settings-group {
         margin-bottom: var(--spacing-lg);
         display: flex;
@@ -1877,6 +1883,19 @@
 
       .settings-group:last-child {
         margin-bottom: 0;
+      }
+
+      .settings-group-inline {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        flex: 1;
+        min-width: 0;
+      }
+
+      .narrator-group {
+        flex: 0.6;
+        transition: opacity 0.2s ease;
       }
 
       .settings-label {
@@ -2174,6 +2193,7 @@
     <script src="js/data.js"></script>
     <script src="js/codex.js"></script>
     <script src="js/filter.js"></script>
+    <script src="js/i18n-config.js"></script>
     <script src="js/llm.js"></script>
     <script src="js/ai-panel.js"></script>
     <script src="js/renderer.js"></script>

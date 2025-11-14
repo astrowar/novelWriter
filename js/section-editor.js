@@ -439,9 +439,17 @@ class SectionEditor {
       };
     }
 
+    // Get character list from codex
+    const characters = this.getCharactersFromCodex();
+    console.log('Characters available for narrator selection:', characters);
+
+    // Settings row (horizontal layout)
+    const settingsRow = document.createElement('div');
+    settingsRow.className = 'settings-row';
+
     // POV Selection
     const povGroup = document.createElement('div');
-    povGroup.className = 'settings-group';
+    povGroup.className = 'settings-group-inline';
 
     const povLabel = document.createElement('label');
     povLabel.textContent = 'Point of View:';
@@ -458,33 +466,93 @@ class SectionEditor {
       <option value="third-person-omniscient">Third Person Omniscient</option>
     `;
     povSelect.value = section.settings.pov || 'third-person';
-    povSelect.addEventListener('change', () => {
-      section.settings.pov = povSelect.value;
-    });
     povGroup.appendChild(povSelect);
-    panel.appendChild(povGroup);
+    settingsRow.appendChild(povGroup);
 
-    // Narrator Selection
+    // Narrator Selection (conditionally visible)
     const narratorGroup = document.createElement('div');
-    narratorGroup.className = 'settings-group';
+    narratorGroup.className = 'settings-group-inline narrator-group';
 
     const narratorLabel = document.createElement('label');
-    narratorLabel.textContent = 'Narrator/Character:';
+    narratorLabel.textContent = 'Narrator:';
     narratorLabel.className = 'settings-label';
     narratorGroup.appendChild(narratorLabel);
 
-    const narratorInput = document.createElement('input');
-    narratorInput.type = 'text';
-    narratorInput.className = 'settings-input';
-    narratorInput.placeholder = 'Character name (optional)';
-    narratorInput.value = section.settings.narrator || '';
-    narratorInput.addEventListener('blur', () => {
-      section.settings.narrator = narratorInput.value.trim();
-    });
-    narratorGroup.appendChild(narratorInput);
-    panel.appendChild(narratorGroup);
+    // Create wrapper for select + filter input
+    const narratorSelectWrapper = document.createElement('div');
+    narratorSelectWrapper.className = 'narrator-select-wrapper';
 
+    const narratorSelect = document.createElement('select');
+    narratorSelect.className = 'settings-select narrator-select';
+
+    // Build options
+    let optionsHTML = '<option value="">Select character...</option>';
+    characters.forEach(char => {
+      const selected = char === section.settings.narrator ? ' selected' : '';
+      optionsHTML += `<option value="${char}"${selected}>${char}</option>`;
+    });
+    narratorSelect.innerHTML = optionsHTML;
+
+    narratorSelect.addEventListener('change', () => {
+      section.settings.narrator = narratorSelect.value;
+    });
+
+    narratorSelectWrapper.appendChild(narratorSelect);
+    narratorGroup.appendChild(narratorSelectWrapper);
+    settingsRow.appendChild(narratorGroup);
+
+    // Function to show/hide narrator based on POV
+    const updateNarratorVisibility = () => {
+      const needsNarrator = ['first-person', 'third-person-limited'].includes(povSelect.value);
+      narratorGroup.style.display = needsNarrator ? 'flex' : 'none';
+      if (!needsNarrator) {
+        narratorSelect.value = '';
+        section.settings.narrator = '';
+      }
+    };
+
+    povSelect.addEventListener('change', () => {
+      section.settings.pov = povSelect.value;
+      updateNarratorVisibility();
+    });
+
+    // Set initial visibility
+    updateNarratorVisibility();
+
+    panel.appendChild(settingsRow);
     return panel;
+  }
+
+  /**
+   * Get list of characters from codex entries
+   */
+  getCharactersFromCodex() {
+    if (!this.bookData.data.codex || !this.bookData.data.codex.entries) {
+      console.log('No codex data available');
+      return [];
+    }
+
+    console.log('Total codex entries:', this.bookData.data.codex.entries.length);
+    console.log('Codex categories:', this.bookData.data.codex.categories);
+
+    // Use I18nHelper to filter character entries
+    const characterEntries = I18nHelper.filterByType(
+      this.bookData.data.codex.entries,
+      'character'
+    );
+
+    console.log('Found character entries:', characterEntries.length);
+
+    // Extract names and sort
+    const characters = characterEntries
+      .map(entry => {
+        console.log('Character:', entry.name, '- Category:', entry.category, '- Tags:', entry.tags);
+        return entry.name;
+      })
+      .sort();
+
+    console.log('Filtered characters:', characters);
+    return characters;
   }
 
   /**
@@ -697,59 +765,59 @@ class SectionEditor {
       let settingsInstructions = '';
       if (section.settings) {
         const povMap = {
-          'first-person': 'primeira pessoa (eu)',
-          'second-person': 'segunda pessoa (você)',
-          'third-person': 'terceira pessoa (ele/ela)',
-          'third-person-limited': 'terceira pessoa limitada',
-          'third-person-omniscient': 'terceira pessoa onisciente'
+          'first-person': 'first person (I/we)',
+          'second-person': 'second person (you)',
+          'third-person': 'third person (he/she/they)',
+          'third-person-limited': 'third person limited',
+          'third-person-omniscient': 'third person omniscient'
         };
 
-        const povText = povMap[section.settings.pov] || 'terceira pessoa';
-        settingsInstructions = `\n\nCONFIGURAÇÕES DA CENA:
-- Ponto de Vista: Escreva em ${povText}`;
+        const povText = povMap[section.settings.pov] || 'third person';
+        settingsInstructions = `\n\nSCENE SETTINGS:
+- Point of View: Write in ${povText}`;
 
         if (section.settings.narrator && section.settings.narrator.trim()) {
-          settingsInstructions += `\n- Narrador/Personagem: ${section.settings.narrator}`;
+          settingsInstructions += `\n- Narrator/Character: ${section.settings.narrator}`;
         }
       }
 
       // Build enhanced system prompt
-      const enhancedSystemPrompt = `Você é um escritor criativo especializado em narrativas envolventes e coerentes.
+      const enhancedSystemPrompt = `You are a creative writer specialized in engaging and coherent narratives.
 
-CONTEXTO DO LIVRO COMPLETO:
+COMPLETE BOOK CONTEXT:
 ${bookStructure}
 
-CONTEXTO DAS SEÇÕES ADJACENTES:
+ADJACENT SECTIONS CONTEXT:
 ${adjacentContext}
 
-INSTRUÇÕES IMPORTANTES:
-1. Mantenha a continuidade lógica e narrativa entre as seções
-2. Se houver texto das seções anteriores, certifique-se de que a transição seja natural e fluida
-3. Se houver texto das seções posteriores, prepare uma transição adequada que se conecte com elas
-4. Respeite os eventos e desenvolvimentos estabelecidos nos resumos de todas as seções
-5. Mantenha consistência de personagens, tom e estilo narrativo
-6. Use os resumos como guia para garantir que a narrativa flui logicamente através do livro${specialInstructions ? '\n\nINSTRUÇÕES ESPECIAIS PARA ESTA SEÇÃO:\n' + specialInstructions : ''}${settingsInstructions}`;
+IMPORTANT INSTRUCTIONS:
+1. Maintain logical and narrative continuity between sections
+2. If there is text from previous sections, ensure the transition is natural and fluid
+3. If there is text from following sections, prepare an appropriate transition that connects to them
+4. Respect the events and developments established in the summaries of all sections
+5. Maintain consistency of characters, tone, and narrative style
+6. Use the summaries as a guide to ensure the narrative flows logically through the book${specialInstructions ? '\n\nSPECIAL INSTRUCTIONS FOR THIS SECTION:\n' + specialInstructions : ''}${settingsInstructions}`;
 
       // Build enhanced user prompt
-      const enhancedUserPrompt = `Com base no contexto completo fornecido, gere o texto narrativo detalhado para a seguinte seção:
+      const enhancedUserPrompt = `Based on the complete context provided, generate the detailed narrative text for the following section:
 
-LIVRO: ${bookTitle}
-ATO: ${actTitle}
-CAPÍTULO: ${chapterTitle}
+BOOK: ${bookTitle}
+ACT: ${actTitle}
+CHAPTER: ${chapterTitle}
 
-SEÇÃO ATUAL:
-Resumo: ${sectionSummary}
-Tags/Temas: ${sectionTags}
-${section.notes && section.notes.length > 0 ? '\nNotas do Autor:\n' + section.notes.filter(n => n.trim()).map((n, i) => `${i + 1}. ${n}`).join('\n') : ''}
+CURRENT SECTION:
+Summary: ${sectionSummary}
+Tags/Themes: ${sectionTags}
+${section.notes && section.notes.length > 0 ? '\nAuthor Notes:\n' + section.notes.filter(n => n.trim()).map((n, i) => `${i + 1}. ${n}`).join('\n') : ''}
 
-ATENÇÃO:
-- Certifique-se de que o texto gerado se conecta naturalmente com as seções anteriores (se fornecidas)
-- Prepare o terreno para as seções seguintes (se fornecidas)
-- Mantenha fidelidade ao resumo da seção atual
-- Preserve a continuidade narrativa e lógica temporal
-- Use um estilo envolvente e detalhado
+ATTENTION:
+- Ensure the generated text connects naturally with previous sections (if provided)
+- Set the stage for following sections (if provided)
+- Remain faithful to the current section's summary
+- Preserve narrative continuity and temporal logic
+- Use an engaging and detailed style
 
-Gere agora o texto completo desta seção:`;
+Generate the complete text for this section now:`;
 
       // Clear content div and prepare for streaming
       contentDiv.innerHTML = '';
@@ -809,22 +877,22 @@ Gere agora o texto completo desta seção:`;
     const bookData = this.bookData.data || this.bookData;
 
     if (!bookData.acts || !Array.isArray(bookData.acts)) {
-      return 'Estrutura do livro não disponível.';
+      return 'Book structure not available.';
     }
 
     bookData.acts.forEach((act, actIndex) => {
-      structure += `\n=== ATO ${actIndex + 1}: ${act.title} ===\n`;
+      structure += `\n=== ACT ${actIndex + 1}: ${act.title} ===\n`;
 
       if (act.chapters && Array.isArray(act.chapters)) {
         act.chapters.forEach((chapter, chapterIndex) => {
-          structure += `\n  CAPÍTULO ${chapterIndex + 1}: ${chapter.title}\n`;
+          structure += `\n  CHAPTER ${chapterIndex + 1}: ${chapter.title}\n`;
 
           if (chapter.sections && chapter.sections.length > 0) {
             chapter.sections.forEach((section, sectionIndex) => {
               const tags = section.tags && section.tags.length > 0
                 ? ` [Tags: ${section.tags.join(', ')}]`
                 : '';
-              structure += `    ${sectionIndex + 1}. ${section.title || 'Seção ' + (sectionIndex + 1)}: ${section.summary || 'Sem resumo'}${tags}\n`;
+              structure += `    ${sectionIndex + 1}. ${section.title || 'Section ' + (sectionIndex + 1)}: ${section.summary || 'No summary'}${tags}\n`;
             });
           }
         });
@@ -847,38 +915,38 @@ Gere agora o texto completo desta seção:`;
     // Get 2 sections before
     for (let i = Math.max(0, currentIndex - 2); i < currentIndex; i++) {
       const section = chapter.sections[i];
-      const position = currentIndex - i === 2 ? 'SEÇÃO ANTERIOR 2' : 'SEÇÃO ANTERIOR 1';
+      const position = currentIndex - i === 2 ? 'PREVIOUS SECTION 2' : 'PREVIOUS SECTION 1';
 
-      context += `\n--- ${position}: ${section.title || 'Seção ' + (i + 1)} ---\n`;
-      context += `Resumo: ${section.summary || 'Sem resumo'}\n`;
+      context += `\n--- ${position}: ${section.title || 'Section ' + (i + 1)} ---\n`;
+      context += `Summary: ${section.summary || 'No summary'}\n`;
 
       if (section.content && section.content.trim()) {
-        context += `Texto completo:\n${section.content}\n`;
+        context += `Full text:\n${section.content}\n`;
       } else {
-        context += `(Texto ainda não gerado - use apenas o resumo)\n`;
+        context += `(Text not yet generated - use only the summary)\n`;
       }
     }
 
-    context += `\n--- SEÇÃO ATUAL (A SER GERADA) ---\n`;
-    context += `Esta é a seção que você deve gerar agora.\n`;
+    context += `\n--- CURRENT SECTION (TO BE GENERATED) ---\n`;
+    context += `This is the section you should generate now.\n`;
 
     // Get 2 sections after
     for (let i = currentIndex + 1; i < Math.min(chapter.sections.length, currentIndex + 3); i++) {
       const section = chapter.sections[i];
-      const position = i - currentIndex === 1 ? 'SEÇÃO SEGUINTE 1' : 'SEÇÃO SEGUINTE 2';
+      const position = i - currentIndex === 1 ? 'NEXT SECTION 1' : 'NEXT SECTION 2';
 
-      context += `\n--- ${position}: ${section.title || 'Seção ' + (i + 1)} ---\n`;
-      context += `Resumo: ${section.summary || 'Sem resumo'}\n`;
+      context += `\n--- ${position}: ${section.title || 'Section ' + (i + 1)} ---\n`;
+      context += `Summary: ${section.summary || 'No summary'}\n`;
 
       if (section.content && section.content.trim()) {
-        context += `Texto completo:\n${section.content}\n`;
+        context += `Full text:\n${section.content}\n`;
       } else {
-        context += `(Texto ainda não gerado - use o resumo para preparar a transição)\n`;
+        context += `(Text not yet generated - use the summary to prepare the transition)\n`;
       }
     }
 
     if (context === '') {
-      context = 'Nenhuma seção adjacente disponível.';
+      context = 'No adjacent sections available.';
     }
 
     return context;
@@ -952,7 +1020,7 @@ Gere agora o texto completo desta seção:`;
       const noteLower = noteTrimmed.toLowerCase();
 
       // Check for specific instruction types
-      let instructionType = 'geral';
+      let instructionType = 'general';
 
       for (const [type, words] of Object.entries(keywords)) {
         if (words.some(word => noteLower.includes(word))) {
@@ -964,22 +1032,22 @@ Gere agora o texto completo desta seção:`;
       // Format instruction based on type
       switch (instructionType) {
         case 'tone':
-          instructions.push(`• TOM/ATMOSFERA: ${noteTrimmed}`);
+          instructions.push(`• TONE/ATMOSPHERE: ${noteTrimmed}`);
           break;
         case 'pov':
-          instructions.push(`• PONTO DE VISTA: ${noteTrimmed}`);
+          instructions.push(`• POINT OF VIEW: ${noteTrimmed}`);
           break;
         case 'style':
-          instructions.push(`• ESTILO DE ESCRITA: ${noteTrimmed}`);
+          instructions.push(`• WRITING STYLE: ${noteTrimmed}`);
           break;
         case 'pace':
-          instructions.push(`• RITMO NARRATIVO: ${noteTrimmed}`);
+          instructions.push(`• NARRATIVE PACE: ${noteTrimmed}`);
           break;
         case 'emotion':
-          instructions.push(`• EMOÇÃO/TENSÃO: ${noteTrimmed}`);
+          instructions.push(`• EMOTION/TENSION: ${noteTrimmed}`);
           break;
         case 'description':
-          instructions.push(`• DESCRIÇÃO: ${noteTrimmed}`);
+          instructions.push(`• DESCRIPTION: ${noteTrimmed}`);
           break;
         default:
           instructions.push(`• ${noteTrimmed}`);
