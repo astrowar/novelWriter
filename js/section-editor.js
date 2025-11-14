@@ -22,7 +22,7 @@ class SectionEditor {
     });
   }
 
-  openChapterEditor(actId, chapterId) {
+  openChapterEditor(actId, chapterId, scrollToSectionId = null) {
     const chapter = this.bookData.findChapter(actId, chapterId);
     const act = this.bookData.findAct(actId);
 
@@ -47,6 +47,16 @@ class SectionEditor {
 
     // Show editor
     this.editorElement.style.display = 'flex';
+
+    // Scroll to specific section if requested
+    if (scrollToSectionId !== null) {
+      setTimeout(() => {
+        const sectionBlock = editorMain.querySelector(`[data-section-id="${scrollToSectionId}"]`);
+        if (sectionBlock) {
+          sectionBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
 
     // Setup close handler
     closeBtn.onclick = () => this.close();

@@ -13,6 +13,7 @@ class EventHandlers {
     this.setupAddActButton();
     this.setupChapterSettingsButtons();
     this.setupChapterCardClicks();
+    this.setupSectionEditButtons();
   }
 
   setupAddChapterButtons() {
@@ -85,6 +86,21 @@ class EventHandlers {
 
       // Add visual feedback
       card.style.cursor = 'pointer';
+    });
+  }
+
+  setupSectionEditButtons() {
+    const editButtons = document.querySelectorAll('.section-edit-btn');
+
+    editButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const sectionId = parseInt(btn.getAttribute('data-section-id'));
+        const chapterId = parseInt(btn.getAttribute('data-chapter-id'));
+        const actId = parseInt(btn.getAttribute('data-act-id'));
+
+        this.sectionEditor.openChapterEditor(actId, chapterId, sectionId);
+      });
     });
   }
 }

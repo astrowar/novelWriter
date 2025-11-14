@@ -13,6 +13,50 @@
     />
     <title>Novel Writer - Book Structure</title>
     <style>
+      :root {
+        /* Color Palette */
+        --color-darkest: #283618;        /* Darkest Forest */
+        --color-ash-gray: #B7B7A4;       /* Ash Gray */
+        --color-light-gray: #D4D4D4;     /* Light Gray */
+        --color-light: #F0EFEB;          /* White Picket Fence */
+        --color-white: #ffffff;
+        --color-danger: #dc3545;
+
+        /* Semantic Colors */
+        --bg-primary: var(--color-light);
+        --bg-secondary: var(--color-light-gray);
+        --bg-tertiary: var(--color-white);
+        --bg-card-outer: var(--color-light-gray);
+        --bg-card-inner: var(--color-light);
+        --bg-header: var(--color-light);
+        --bg-section-header: var(--color-light-gray);
+        --bg-side-notes: var(--color-light);
+
+        --text-primary: var(--color-darkest);
+        --text-secondary: var(--color-ash-gray);
+        --text-light: var(--color-light);
+
+        --border-primary: var(--color-darkest);
+        --border-secondary: var(--color-ash-gray);
+        --border-tertiary: var(--color-light-gray);
+
+        --hover-bg: var(--color-light-gray);
+        --hover-bg-light: var(--color-white);
+
+        /* Spacing */
+        --spacing-xs: 2px;
+        --spacing-sm: 4px;
+        --spacing-md: 6px;
+        --spacing-lg: 10px;
+        --spacing-xl: 20px;
+        --spacing-xxl: 30px;
+
+        /* Sizing */
+        --btn-size-sm: 22px;
+        --border-radius: 4px;
+        --border-radius-lg: 8px;
+      }
+
       * {
         margin: 0;
         padding: 0;
@@ -21,19 +65,155 @@
 
       body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: #F0EFEB;
+        background: var(--bg-primary);
         min-height: 100vh;
-        padding: 15px;
+        padding: 0;
         font-size: 14px;
+        display: flex;
+        overflow: hidden;
+      }
+
+      .app-layout {
+        display: flex;
+        width: 100%;
+        height: 100vh;
+      }
+
+      .codex-panel {
+        width: 280px;
+        background: var(--bg-tertiary);
+        border-right: 2px solid var(--border-tertiary);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .codex-header {
+        padding: var(--spacing-lg);
+        border-bottom: 1px solid var(--border-tertiary);
+      }
+
+      .codex-search {
+        width: 100%;
+        padding: 6px 10px;
+        border: 1px solid var(--border-tertiary);
+        border-radius: var(--border-radius);
+        font-size: 0.9em;
+        margin-bottom: var(--spacing-md);
+      }
+
+      .codex-search:focus {
+        outline: none;
+        border-color: var(--border-secondary);
+      }
+
+      .codex-actions {
+        display: flex;
+        gap: var(--spacing-sm);
+      }
+
+      .codex-btn {
+        flex: 1;
+        padding: 6px;
+        background: var(--bg-card-inner);
+        border: 1px solid var(--border-tertiary);
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        font-size: 0.85em;
+        transition: background 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+      }
+
+      .codex-btn:hover {
+        background: var(--hover-bg);
+      }
+
+      .codex-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: var(--spacing-sm);
+      }
+
+      .codex-category {
+        margin-bottom: var(--spacing-md);
+      }
+
+      .codex-category-header {
+        padding: 4px 8px;
+        background: var(--bg-secondary);
+        border-radius: var(--border-radius);
+        font-weight: 600;
+        font-size: 0.85em;
+        color: var(--text-primary);
+        margin-bottom: 2px;
+        cursor: pointer;
+        user-select: none;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .codex-category-header:hover {
+        background: var(--hover-bg);
+      }
+
+      .codex-category-arrow {
+        font-size: 0.7em;
+        transition: transform 0.2s;
+      }
+
+      .codex-category.collapsed .codex-category-arrow {
+        transform: rotate(-90deg);
+      }
+
+      .codex-category-entries {
+        margin-left: 8px;
+      }
+
+      .codex-category.collapsed .codex-category-entries {
+        display: none;
+      }
+
+      .codex-entry {
+        padding: 4px 8px;
+        margin: 2px 0;
+        background: var(--bg-card-inner);
+        border-radius: var(--border-radius);
+        font-size: 0.85em;
+        cursor: pointer;
+        transition: background 0.2s;
+        border-left: 3px solid var(--border-tertiary);
+      }
+
+      .codex-entry:hover {
+        background: var(--hover-bg-light);
+        border-left-color: var(--border-secondary);
+      }
+
+      .codex-entry.active {
+        background: var(--bg-secondary);
+        border-left-color: var(--color-darkest);
+      }
+
+      .main-content-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
       }
 
       .container {
-        max-width: 1400px;
-        margin: 0 auto;
+        width: 100%;
+        padding: 15px;
+        overflow-y: auto;
+        height: 100%;
       }
 
       h1 {
-        color: #283618;
+        color: var(--text-primary);
         text-align: center;
         margin-bottom: 20px;
         font-size: 1.8em;
@@ -49,31 +229,31 @@
         align-items: center;
         margin-bottom: 12px;
         padding: 8px 15px;
-        background: #D4D4D4;
-        border-radius: 8px;
-        border: 1px solid #B7B7A4;
+        background: var(--bg-secondary);
+        border-radius: var(--border-radius-lg);
+        border: 1px solid var(--border-secondary);
       }
 
       .act-title {
-        color: #283618;
+        color: var(--text-primary);
         font-size: 1.3em;
         margin: 0;
       }
 
       .add-chapter-btn {
-        background: #F0EFEB;
-        color: #283618;
+        background: var(--bg-card-inner);
+        color: var(--text-primary);
         border: none;
         padding: 6px 14px;
         border-radius: 6px;
         font-size: 0.9em;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: background 0.2s;
       }
 
       .add-chapter-btn:hover {
-        background: white;
+        background: var(--hover-bg-light);
         transform: scale(1.05);
       }
 
@@ -88,21 +268,21 @@
       }
 
       .add-act-btn {
-        background: #F0EFEB;
-        color: #283618;
-        border: 2px solid #283618;
+        background: var(--bg-card-inner);
+        color: var(--text-primary);
+        border: 2px solid var(--border-primary);
         padding: 12px 30px;
-        border-radius: 8px;
+        border-radius: var(--border-radius-lg);
         font-size: 1.1em;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: background 0.2s;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       }
 
       .add-act-btn:hover {
-        background: white;
-        color: #283618;
+        background: var(--hover-bg-light);
+        color: var(--text-primary);
         transform: scale(1.05);
       }
 
@@ -118,20 +298,20 @@
       }
 
       .chapter-card {
-        background: #D4D4D4;
-        border-radius: 8px;
-        padding: 12px;
+        background: var(--bg-card-outer);
+        border-radius: var(--border-radius-lg);
+        padding: var(--spacing-sm);
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         transition: transform 0.2s, box-shadow 0.2s;
         cursor: pointer;
         position: relative;
-        border: 1px solid #B7B7A4;
+        border: 1px solid var(--border-secondary);
       }
 
       .chapter-card:hover {
         transform: translateY(-3px);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        border-color: #283618;
+        border-color: var(--border-primary);
       }
 
       .chapter-card.dragging {
@@ -140,8 +320,8 @@
       }
 
       .chapter-card.drag-over {
-        border: 2px dashed #283618;
-        background: #B7B7A4;
+        border: 2px dashed var(--border-primary);
+        background: var(--border-secondary);
       }
 
       .drag-handle {
@@ -165,21 +345,21 @@
       .drag-handle-dot {
         width: 3px;
         height: 3px;
-        background: #B7B7A4;
+        background: var(--text-secondary);
         border-radius: 50%;
       }
 
       .drag-handle:hover .drag-handle-dot {
-        background: #283618;
+        background: var(--text-primary);
       }
 
       .chapter-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-bottom: 2px solid #283618;
-        padding-bottom: 8px;
-        margin-bottom: 10px;
+        border-bottom: 2px solid var(--border-primary);
+        padding-bottom: var(--spacing-sm);
+        margin-bottom: var(--spacing-md);
       }
 
       .chapter-title-container {
@@ -187,31 +367,31 @@
       }
 
       .chapter-title {
-        color: #283618;
+        color: var(--text-primary);
         font-size: 1.1em;
         font-weight: bold;
-        margin-bottom: 4px;
+        margin-bottom: var(--spacing-sm);
       }
 
       .chapter-number {
-        color: #B7B7A4;
+        color: var(--text-secondary);
         font-size: 0.8em;
       }
 
       .chapter-settings-btn {
         background: transparent;
         border: none;
-        color: #283618;
+        color: var(--text-primary);
         font-size: 1.3em;
         cursor: pointer;
-        padding: 4px 8px;
-        border-radius: 4px;
-        transition: all 0.2s;
+        padding: var(--spacing-sm) 8px;
+        border-radius: var(--border-radius);
+        transition: background 0.2s;
         line-height: 1;
       }
 
       .chapter-settings-btn:hover {
-        background: #B7B7A4;
+        background: var(--hover-bg);
         transform: rotate(90deg);
       }
 
@@ -224,11 +404,11 @@
       }
 
       .section-item {
-        margin-bottom: 8px;
-        padding: 8px;
-        background: #F0EFEB;
+        margin-bottom: var(--spacing-sm);
+        padding: var(--spacing-sm);
+        background: var(--bg-card-inner);
         border-radius: 6px;
-        border-left: 3px solid #283618;
+        border-left: 3px solid var(--border-primary);
       }
 
       .section-header {
@@ -241,19 +421,18 @@
       .section-edit-btn {
         background: transparent;
         border: none;
-        color: #283618;
+        color: var(--text-primary);
         font-size: 1.1em;
         cursor: pointer;
-        padding: 2px 6px;
-        border-radius: 4px;
-        transition: all 0.2s;
+        padding: var(--spacing-xs) var(--spacing-sm);
+        border-radius: var(--border-radius);
+        transition: background 0.2s;
         line-height: 1;
         flex-shrink: 0;
       }
 
       .section-edit-btn:hover {
-        background: #B7B7A4;
-        transform: scale(1.1);
+        background: var(--hover-bg);
       }
 
       .section-edit-btn:active {
@@ -261,7 +440,7 @@
       }
 
       .section-summary {
-        color: #283618;
+        color: var(--text-primary);
         font-size: 0.85em;
         line-height: 1.4;
         flex: 1;
@@ -270,15 +449,15 @@
       .section-tags {
         display: flex;
         flex-wrap: wrap;
-        gap: 4px;
+        gap: var(--spacing-sm);
         margin-top: 6px;
       }
 
       .section-tag {
         display: inline-block;
-        padding: 2px 8px;
-        background: #F0EFEB;
-        color: #283618;
+        padding: var(--spacing-xs) 8px;
+        background: var(--bg-card-inner);
+        color: var(--text-primary);
         font-size: 0.75em;
         border-radius: 10px;
         font-weight: 500;
@@ -286,12 +465,12 @@
 
       .empty-state {
         text-align: center;
-        color: #283618;
+        color: var(--text-primary);
         font-size: 0.95em;
         padding: 25px;
-        background: #D4D4D4;
-        border-radius: 8px;
-        border: 1px solid #B7B7A4;
+        background: var(--bg-secondary);
+        border-radius: var(--border-radius-lg);
+        border: 1px solid var(--border-secondary);
       }
 
       /* Modal styles */
@@ -357,29 +536,53 @@
       }
 
       .modal-btn-primary {
-        background: #F0EFEB;
-        color: #283618;
-        border: 1px solid #283618;
+        background: var(--bg-card-inner);
+        color: var(--text-primary);
+        border: 1px solid var(--border-primary);
       }
 
       .modal-btn-primary:hover {
-        background: white;
+        background: var(--hover-bg-light);
       }
 
       .modal-btn-secondary {
-        background: #D4D4D4;
-        color: #283618;
+        background: var(--bg-secondary);
+        color: var(--text-primary);
       }
 
       .modal-btn-secondary:hover {
-        background: #B7B7A4;
+        background: var(--hover-bg);
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <h1>📚 Book Structure</h1>
-      <div id="book-structure"></div>
+    <div class="app-layout">
+      <!-- Left Codex Panel -->
+      <div class="codex-panel">
+        <div class="codex-header">
+          <input type="text" class="codex-search" id="codex-search" placeholder="🔍 Filter entries...">
+          <div class="codex-actions">
+            <button class="codex-btn" id="codex-add-btn" title="Add New Entry">
+              <span>➕</span>
+              <span>New</span>
+            </button>
+            <button class="codex-btn" id="codex-config-btn" title="Configure Categories">
+              <span>⚙️</span>
+            </button>
+          </div>
+        </div>
+        <div class="codex-content" id="codex-content">
+          <!-- Codex entries will be rendered here -->
+        </div>
+      </div>
+
+      <!-- Main Content Area -->
+      <div class="main-content-area">
+        <div class="container">
+          <h1>📚 Book Structure</h1>
+          <div id="book-structure"></div>
+        </div>
+      </div>
     </div>
 
     <!-- Modal for adding chapter -->
@@ -440,6 +643,58 @@
       </div>
     </div>
 
+    <!-- Modal for adding codex entry -->
+    <div id="codex-entry-modal" class="modal-overlay">
+      <div class="modal" style="min-width: 500px;">
+        <h3 class="modal-title">Add Codex Entry</h3>
+
+        <div style="margin-bottom: 15px;">
+          <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Entry Name</label>
+          <input type="text" id="codex-entry-name" class="modal-input" placeholder="Enter entry name...">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+          <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Category</label>
+          <select id="codex-entry-category" class="modal-input" style="cursor: pointer;">
+            <!-- Categories will be populated dynamically -->
+          </select>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+          <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Description</label>
+          <textarea id="codex-entry-description" class="modal-input" rows="6" placeholder="Enter description..." style="resize: vertical; font-family: inherit;"></textarea>
+        </div>
+
+        <div class="modal-buttons">
+          <button class="modal-btn modal-btn-secondary" id="codex-entry-cancel">Cancel</button>
+          <button class="modal-btn modal-btn-primary" id="codex-entry-save">Add Entry</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for configuring categories -->
+    <div id="codex-config-modal" class="modal-overlay">
+      <div class="modal" style="min-width: 500px;">
+        <h3 class="modal-title">Configure Categories</h3>
+
+        <div style="margin-bottom: 15px;">
+          <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Categories</label>
+          <div id="codex-categories-list" style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; border-radius: 6px; padding: 8px; background: #f9f9f9;">
+            <!-- Categories will be listed here -->
+          </div>
+        </div>
+
+        <div style="margin-bottom: 15px; display: flex; gap: 8px;">
+          <input type="text" id="codex-new-category" class="modal-input" placeholder="New category name..." style="margin-bottom: 0; flex: 1;">
+          <button class="modal-btn modal-btn-primary" id="codex-add-category" style="padding: 8px 16px;">Add</button>
+        </div>
+
+        <div class="modal-buttons">
+          <button class="modal-btn modal-btn-primary" id="codex-config-close">Close</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Chapter Editor -->
     <div id="chapter-editor" class="chapter-editor" style="display: none;">
       <div class="editor-header">
@@ -462,7 +717,7 @@
       .chapter-editor {
         position: fixed;
         top: 0;
-        left: 0;
+        left: 280px;
         right: 0;
         bottom: 0;
         background: white;
@@ -477,14 +732,14 @@
       }
 
       .editor-header {
-        background: #F0EFEB;
-        color: #283618;
-        padding: 15px 30px;
+        background: var(--bg-header);
+        color: var(--text-primary);
+        padding: 15px var(--spacing-xxl);
         display: flex;
         justify-content: space-between;
         align-items: center;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        border-bottom: 2px solid #283618;
+        border-bottom: 2px solid var(--border-primary);
       }
 
       .editor-title h2 {
@@ -495,43 +750,43 @@
       .editor-breadcrumb {
         font-size: 0.85em;
         opacity: 0.9;
-        margin-top: 4px;
+        margin-top: var(--spacing-sm);
         display: block;
       }
 
       .editor-close-btn {
-        background: #D4D4D4;
-        border: 1px solid #283618;
-        color: #283618;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-primary);
+        color: var(--text-primary);
         font-size: 1.5em;
         width: 40px;
         height: 40px;
         border-radius: 50%;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: background 0.2s;
       }
 
       .editor-close-btn:hover {
-        background: #B7B7A4;
+        background: var(--hover-bg);
         transform: scale(1.1);
       }
 
       .editor-content {
         flex: 1;
         overflow-y: auto;
-        background: #F0EFEB;
+        background: var(--bg-primary);
       }
 
       .editor-main {
         width: 100%;
-        padding: 40px;
+        padding: var(--spacing-xxl);
       }
 
       .section-editor-block {
         background: white;
         border-radius: 8px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        margin-bottom: 30px;
+        margin-bottom: 20px;
         overflow: visible;
         display: flex;
         flex-direction: row;
@@ -558,71 +813,71 @@
         flex: 0 0 20%;
         background: #F0EFEB;
         border-left: 1px solid #D4D4D4;
-        padding: 15px;
+        padding: 10px;
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 8px;
       }
 
       .section-note {
-        background: white;
-        border: 1px solid #283618;
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-primary);
         border-radius: 6px;
-        padding: 10px;
-        font-size: 0.85em;
+        padding: 8px;
+        font-size: 0.8em;
         line-height: 1.5;
         outline: none;
-        min-height: 60px;
+        min-height: 50px;
         resize: vertical;
       }
 
       .section-note:focus {
-        border-color: #283618;
+        border-color: var(--border-primary);
         box-shadow: 0 0 0 2px rgba(40, 54, 24, 0.2);
       }
 
       .add-note-btn {
-        background: #F0EFEB;
-        color: #283618;
-        border: 1px solid #283618;
-        padding: 6px 12px;
-        border-radius: 4px;
-        font-size: 0.8em;
+        background: var(--bg-card-inner);
+        color: var(--text-primary);
+        border: 1px solid var(--border-primary);
+        padding: var(--spacing-sm) var(--spacing-lg);
+        border-radius: var(--border-radius);
+        font-size: 0.75em;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: background 0.2s;
       }
 
       .add-note-btn:hover {
-        background: #D4D4D4;
+        background: var(--hover-bg);
       }
 
       .section-info-header {
-        background: #D4D4D4;
-        color: #283618;
-        padding: 12px 16px;
-        border-bottom: 2px solid #283618;
+        background: var(--bg-section-header);
+        color: var(--text-primary);
+        padding: var(--spacing-xs) var(--spacing-xs);
+        border-bottom: 2px solid var(--border-primary);
       }
 
       .section-header-top {
         display: flex;
         align-items: center;
-        gap: 8px;
-        margin-bottom: 8px;
+        gap: 2px;
+        margin-bottom: 2px;
       }
 
       .section-collapse-btn {
         background: rgba(255,255,255,0.2);
         border: none;
         color: white;
-        width: 28px;
-        height: 28px;
+        width: 22px;
+        height: 22px;
         border-radius: 4px;
         cursor: pointer;
-        font-size: 0.9em;
+        font-size: 0.75em;
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: all 0.2s;
+        transition: background 0.2s;
         flex-shrink: 0;
       }
 
@@ -631,9 +886,9 @@
       }
 
       .section-info-label {
-        font-size: 0.75em;
+        font-size: 0.7em;
         font-weight: 600;
-        color: #283618;
+        color: var(--text-primary);
         text-transform: uppercase;
         letter-spacing: 1.5px;
         flex: 1;
@@ -641,34 +896,32 @@
 
       .section-controls {
         display: flex;
-        gap: 8px;
+        gap: var(--spacing-sm);
       }
 
       .section-config-btn,
       .section-delete-btn {
         background: transparent;
-        border: 1px solid #283618;
-        color: #283618;
-        width: 32px;
-        height: 32px;
-        border-radius: 4px;
+        border: 1px solid var(--border-primary);
+        color: var(--text-primary);
+        width: var(--btn-size-sm);
+        height: var(--btn-size-sm);
+        border-radius: var(--border-radius);
         cursor: pointer;
-        font-size: 1em;
+        font-size: 0.75em;
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: all 0.2s;
+        transition: background 0.2s;
       }
 
       .section-config-btn:hover {
-        background: #D4D4D4;
-        transform: rotate(90deg);
+        background: var(--hover-bg);
       }
 
       .section-delete-btn:hover {
-        background: #D4D4D4;
-        color: #dc3545;
-        transform: scale(1.1);
+        background: var(--hover-bg);
+        color: var(--color-danger);
       }
 
       .section-editor-block.collapsed .section-info-summary,
@@ -679,79 +932,87 @@
       }
 
       .section-editor-block.collapsed {
+        margin-right: 20%;
         margin-bottom: 10px;
+        display: block;
+      }
+
+      .section-editor-block.collapsed .section-left-column {
+        margin-right: 20%;
+        width: 100%;
+
       }
 
       .section-editor-block.collapsed .section-info-header {
-        padding: 10px 20px;
+        padding: 2px 2px;
         border-bottom: none;
       }
 
       .section-info-summary {
-        font-size: 0.9em;
+        font-size: 0.85em;
         opacity: 0.95;
-        line-height: 1.5;
-        margin-bottom: 8px;
+        line-height: 1.4;
+        margin-bottom: 2px;
       }
 
       .section-info-summary textarea {
         width: 100%;
-        background: white;
-        border: 1px solid #283618;
-        padding: 6px 10px;
-        border-radius: 4px;
-        font-size: 0.9em;
-        color: #283618;
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-primary);
+        padding: var(--spacing-sm) 8px;
+        border-radius: var(--border-radius);
+        font-size: 0.85em;
+        color: var(--text-primary);
         font-family: inherit;
         resize: vertical;
-        min-height: 60px;
+        min-height: 50px;
       }
 
       .section-info-tags {
         display: flex;
         flex-wrap: wrap;
-        gap: 6px;
+        gap: var(--spacing-sm);
       }
 
       .section-info-tag {
-        background: #F0EFEB;
-        padding: 4px 10px;
+        background: var(--bg-card-inner);
+        padding: var(--spacing-xs) 8px;
         border-radius: 12px;
-        font-size: 0.8em;
+        font-size: 0.75em;
         font-weight: 500;
         cursor: pointer;
-        transition: all 0.2s;
-        border: 1px solid #283618;
-        color: #283618;
+        transition: background 0.2s;
+        border: 1px solid var(--border-primary);
+        color: var(--text-primary);
       }
 
       .section-info-tag:hover {
-        background: #D4D4D4;
+        background: var(--hover-bg);
       }
 
       .section-info-tag.removable::after {
         content: ' ✕';
         opacity: 0.7;
-        margin-left: 4px;
+        margin-left: var(--spacing-sm);
       }
 
       .tag-add-input {
-        background: white;
-        border: 1px solid #283618;
-        padding: 4px 10px;
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-primary);
+        padding: var(--spacing-xs) 8px;
         border-radius: 12px;
-        font-size: 0.8em;
-        width: 100px;
-        color: #283618;
+        font-size: 0.75em;
+        width: 90px;
+        color: var(--text-primary);
       }
 
       .section-content-editor {
-        padding: 30px;
-        min-height: 300px;
+        padding: var(--spacing-xl);
+        min-height: 250px;
         font-size: 1em;
         line-height: 1.8;
         outline: none;
-        color: #283618;
+        color: var(--text-primary);
       }
 
       .section-content-editor:focus {
@@ -764,7 +1025,7 @@
 
       .section-content-editor:empty::before {
         content: 'Start writing your story here...';
-        color: #B7B7A4;
+        color: var(--text-secondary);
         font-style: italic;
       }
 
@@ -776,18 +1037,18 @@
 
       .editor-main::-webkit-scrollbar-track,
       .editor-sidenotes::-webkit-scrollbar-track {
-        background: #F0EFEB;
+        background: var(--bg-primary);
       }
 
       .editor-main::-webkit-scrollbar-thumb,
       .editor-sidenotes::-webkit-scrollbar-thumb {
-        background: #B7B7A4;
-        border-radius: 4px;
+        background: var(--text-secondary);
+        border-radius: var(--border-radius);
       }
 
       .editor-main::-webkit-scrollbar-thumb:hover,
       .editor-sidenotes::-webkit-scrollbar-thumb:hover {
-        background: #283618;
+        background: var(--text-primary);
       }
 
       /* New Scene Button */
@@ -796,11 +1057,11 @@
         width: 100%;
         max-width: 600px;
         margin: 40px auto;
-        padding: 20px;
-        background: #F0EFEB;
-        border: 2px dashed #283618;
-        border-radius: 8px;
-        color: #283618;
+        padding: var(--spacing-xl);
+        background: var(--bg-card-inner);
+        border: 2px dashed var(--border-primary);
+        border-radius: var(--border-radius-lg);
+        color: var(--text-primary);
         font-size: 1.1em;
         font-weight: 600;
         cursor: pointer;
@@ -808,8 +1069,8 @@
       }
 
       .new-scene-btn:hover {
-        background: white;
-        border-color: #283618;
+        background: var(--hover-bg-light);
+        border-color: var(--border-primary);
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(40, 54, 24, 0.2);
       }
@@ -821,6 +1082,7 @@
 
     <!-- Load all modules in order -->
     <script src="js/data.js"></script>
+    <script src="js/codex.js"></script>
     <script src="js/renderer.js"></script>
     <script src="js/dragdrop.js"></script>
     <script src="js/modals.js"></script>
