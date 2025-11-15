@@ -1,0 +1,54 @@
+{
+  "title": "A Story of Acceptance",
+  "language": "en-US",
+  "codex": {
+    "categories": ["Character", "Locals", "Plots", "Object", "Lore", "Other"],
+    "entries": [
+      {
+        "id": 1,
+        "name": "John",
+        "category": "Character",
+        "description": "A charming and kind-hearted man in his thirties who works at an art gallery. He is observant, patient, and deeply compassionate.",
+        "tags": ["Main", "Protagonist", "Romantic"]
+      },
+      {
+        "id": 2,
+        "name": "Emma",
+        "category": "Character",
+        "description": "A young woman with a lovely face, but visibly self-conscious about her weight. She has a brilliant personality and is quite intelligent.",
+        "tags": ["Main", "Romantic", "Self-image"]
+      },
+      {
+        "id": 3,
+        "name": "The Café",
+        "category": "Locals",
+        "description": "A cozy, well-lit café where John and Emma regularly meet. It is the main setting where their relationship develops.",
+        "tags": ["Café", "Meeting", "Setting"]
+      }
+    ]
+  },
+  "acts": [
+    {
+      "id": 1,
+      "title": "First Encounters",
+      "chapters": [
+        {
+          "id": 1,
+          "title": "The Café Meeting",
+          "sections": [
+            {
+              "id": 1,
+              "content": "The story begins in a cozy, well-lit café where John is enjoying his morning coffee. He notices a young woman named Emma sitting across the room.",
+              "tags": ["John", "Emma", "Café"]
+            },
+            {
+              "id": 2,
+              "content": "John and Emma have an accidental encounter when they both reach for the last muffin on the counter. They share a smile and John instinctively apologizes.",
+              "tags": ["John", "Emma", "Café"]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

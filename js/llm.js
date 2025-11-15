@@ -29,10 +29,24 @@ class LLMManager {
 
   constructor() {
     this.config = { ...LLMManager.DEFAULT_CONFIG };
-    this.defaultPrompts = this._initializeDefaultPrompts();
-    this.prompts = this._clonePrompts(this.defaultPrompts);
+    this.promptsLibrary = new PromptsLibrary();
+    this.currentLanguage = 'pt-BR'; // Default language
+    this.defaultPrompts = null;
+    this.prompts = null;
+    this.initialized = false;
 
     this._loadConfiguration();
+  }
+
+  /**
+   * Initialize prompts asynchronously
+   * @returns {Promise<void>}
+   */
+  async initialize() {
+    if (this.initialized) return;
+    
+    await this._initializePromptsForLanguage(this.currentLanguage);
+    this.initialized = true;
   }
 
   // ============================================================================
@@ -40,7 +54,45 @@ class LLMManager {
   // ============================================================================
 
   /**
-   * Initialize default prompt templates
+   * Initialize prompts for a specific language
+   * @private
+   * @param {string} language - Language code (pt-BR, en-US, etc.)
+   */
+  async _initializePromptsForLanguage(language) {
+    this.currentLanguage = language;
+    this.defaultPrompts = await this.promptsLibrary.getPromptsForLanguage(language);
+    this.prompts = this._clonePrompts(this.defaultPrompts);
+    
+    // Load any custom prompts on top
+    this._loadCustomPrompts();
+  }
+
+  /**
+   * Change the language for prompts
+   * @param {string} language - Language code (pt-BR, en-US, etc.)
+   */
+  async setLanguage(language) {
+    await this._initializePromptsForLanguage(language);
+  }
+
+  /**
+   * Get current language
+   * @returns {string} Current language code
+   */
+  getLanguage() {
+    return this.currentLanguage;
+  }
+
+  /**
+   * Get available languages
+   * @returns {Array} Array of language objects
+   */
+  getAvailableLanguages() {
+    return this.promptsLibrary.getAvailableLanguages();
+  }
+
+  /**
+   * Initialize default prompt templates (DEPRECATED - now uses PromptsLibrary)
    * @private
    * @returns {Object} Default prompts object
    */

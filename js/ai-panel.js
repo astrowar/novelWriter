@@ -5,7 +5,6 @@
 class AIPanelManager {
   constructor() {
     this.panel = document.getElementById('ai-panel');
-    this.closeBtn = document.getElementById('ai-panel-close');
     this.saveConfigBtn = document.getElementById('ai-save-config-btn');
     this.testBtn = document.getElementById('ai-test-btn');
     this.fetchModelsBtn = document.getElementById('ai-fetch-models-btn');
@@ -35,9 +34,10 @@ class AIPanelManager {
     this.init();
   }
 
-  init() {
+  async init() {
     // Initialize LLM Manager
     this.llmManager = new LLMManager();
+    await this.llmManager.initialize();
 
     // Expose LLM Manager globally for other modules
     window.llmManager = this.llmManager;
@@ -49,7 +49,6 @@ class AIPanelManager {
     this.renderPrompts();
 
     // Event listeners
-    this.closeBtn.addEventListener('click', () => this.close());
     this.saveConfigBtn.addEventListener('click', () => this.saveConfiguration());
     this.testBtn.addEventListener('click', () => this.testAPI());
     this.fetchModelsBtn.addEventListener('click', () => this.fetchModels());
@@ -59,13 +58,11 @@ class AIPanelManager {
     this.promptCancelBtn.addEventListener('click', () => this.closePromptModal());
     this.promptResetBtn.addEventListener('click', () => this.resetPrompt());
 
-    // Handle ESC key to close
+    // Handle ESC key to close prompt modal
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         if (this.promptModal.classList.contains('active')) {
           this.closePromptModal();
-        } else if (this.panel.style.display === 'flex') {
-          this.close();
         }
       }
     });

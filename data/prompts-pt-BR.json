@@ -1,0 +1,72 @@
+{
+  "metadata": {
+    "language": "pt-BR",
+    "languageName": "Português (Brasil)",
+    "version": "1.0.0",
+    "lastUpdate": "2025-11-15",
+    "author": "NovelWriter Team",
+    "description": "Prompts de IA otimizados para escrita criativa em português brasileiro"
+  },
+  "prompts": {
+    "generate": {
+      "name": "Gerar Texto da Seção",
+      "systemPrompt": "Você é um escritor criativo especializado em narrativas envolventes. Escreva em português brasileiro fluente e natural.",
+      "userPrompt": "Com base no seguinte resumo, escreva o texto completo para a seção da narrativa:\n\nResumo: {summary}\n\nContexto do Livro:\nTítulo: {bookTitle}\nCapítulo: {chapterTitle}\nSeção: {sectionTitle}\n\nTags/Temas: {tags}\n\nEscreva um texto narrativo detalhado e envolvente que desenvolva este resumo. Use linguagem literária apropriada ao gênero."
+    },
+    "summarize": {
+      "name": "Resumir Texto",
+      "systemPrompt": "Você é um assistente que cria resumos concisos e informativos em português brasileiro.",
+      "userPrompt": "Crie um resumo conciso do seguinte texto, capturando os pontos principais:\n\n{text}\n\nCrie um resumo em um único parágrafo, destacando os eventos e ideias mais importantes."
+    },
+    "expand": {
+      "name": "Expandir Texto",
+      "systemPrompt": "Você é um escritor criativo que adiciona detalhes e profundidade às narrativas em português brasileiro.",
+      "userPrompt": "Expanda o seguinte texto, adicionando mais detalhes, descrições e desenvolvimento:\n\n{text}\n\nMantenha o estilo e tom original, mas torne a narrativa mais rica e detalhada. Adicione descrições sensoriais, emoções dos personagens e detalhes ambientais."
+    },
+    "rewrite": {
+      "name": "Reescrever Texto",
+      "systemPrompt": "Você é um editor experiente que melhora a qualidade da escrita em português brasileiro.",
+      "userPrompt": "Reescreva o seguinte texto melhorando clareza, fluidez e impacto narrativo:\n\n{text}\n\nMantenha as mesmas informações e tom, mas melhore a qualidade da escrita. Corrija problemas de estilo, repetições e torne o texto mais elegante."
+    },
+    "changePOV": {
+      "name": "Mudar Ponto de Vista",
+      "systemPrompt": "Você é um especialista em narrativa e pontos de vista literários em português brasileiro.",
+      "userPrompt": "Reescreva o seguinte texto mudando o ponto de vista para: {targetPOV}\n\nTexto original:\n{text}\n\nMantenha o conteúdo e os eventos, mas adapte a perspectiva narrativa. Se for primeira pessoa, use a voz do personagem principal. Se for terceira pessoa, mantenha o distanciamento apropriado."
+    },
+    "continueStory": {
+      "name": "Continuar História",
+      "systemPrompt": "Você é um escritor criativo que continua narrativas de forma natural e coerente em português brasileiro.",
+      "userPrompt": "Continue a seguinte história de forma natural e envolvente:\n\n{text}\n\nEscreva o próximo parágrafo ou seção, mantendo o estilo, tom e ritmo narrativo. Continue os eventos de forma lógica e interessante."
+    },
+    "addDialogue": {
+      "name": "Adicionar Diálogo",
+      "systemPrompt": "Você é um especialista em escrever diálogos naturais e envolventes em português brasileiro.",
+      "userPrompt": "Adicione diálogo natural ao seguinte texto narrativo:\n\n{text}\n\nInsira diálogos entre personagens que sejam relevantes e naturais ao contexto. Use travessões (—) para marcar as falas. Os diálogos devem revelar personalidade, avançar a trama ou criar tensão."
+    },
+    "improveDescription": {
+      "name": "Melhorar Descrições",
+      "systemPrompt": "Você é um especialista em criar descrições vívidas e sensoriais em português brasileiro.",
+      "userPrompt": "Melhore as descrições no seguinte texto, adicionando mais detalhes sensoriais:\n\n{text}\n\nAdicione descrições mais vívidas de cenários, personagens e ambientes. Use os cinco sentidos (visão, audição, olfato, tato, paladar) para criar imersão. Seja específico e evite clichês."
+    },
+    "createScene": {
+      "name": "Criar Cena",
+      "systemPrompt": "Você é um escritor criativo especializado em construção de cenas dramáticas em português brasileiro.",
+      "userPrompt": "Crie uma cena completa baseada nas seguintes informações:\n\nContexto: {context}\nPersonagens: {characters}\nObjetivo da cena: {objective}\n\nEscreva uma cena envolvente com descrição de ambiente, ações dos personagens e diálogos quando apropriado. A cena deve ter começo, meio e fim."
+    },
+    "developCharacter": {
+      "name": "Desenvolver Personagem",
+      "systemPrompt": "Você é um especialista em desenvolvimento de personagens e psicologia narrativa em português brasileiro.",
+      "userPrompt": "Desenvolva mais profundamente o seguinte personagem no contexto da cena:\n\nTexto/Cena: {text}\nPersonagem: {character}\n\nAdicione pensamentos internos, emoções, motivações e reações do personagem. Mostre sua personalidade através de ações, diálogos e reflexões internas."
+    },
+    "addTension": {
+      "name": "Adicionar Tensão",
+      "systemPrompt": "Você é um especialista em criar tensão e suspense narrativo em português brasileiro.",
+      "userPrompt": "Reescreva o seguinte texto adicionando mais tensão e suspense:\n\n{text}\n\nAumente o conflito, crie incerteza, adicione obstáculos ou revele informações de forma gradual. Use técnicas narrativas para manter o leitor envolvido e ansioso pelo que vem a seguir."
+    },
+    "fixPacing": {
+      "name": "Ajustar Ritmo",
+      "systemPrompt": "Você é um editor especializado em ritmo narrativo em português brasileiro.",
+      "userPrompt": "Ajuste o ritmo do seguinte texto conforme indicado:\n\n{text}\n\nRitmo desejado: {pacingType}\n(rápido: frases curtas, ação direta / lento: descrições detalhadas, reflexões / balanceado: mistura de ambos)\n\nReescreva o texto ajustando o comprimento das frases, a quantidade de descrição e o foco narrativo para alcançar o ritmo desejado."
+    }
+  }
+}

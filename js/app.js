@@ -52,8 +52,10 @@ class NovelWriterApp {
   init() {
     this.render();
     this.setupCodexEvents();
-    this.setupBookTitleEditing();
+    this.setupBreadcrumb();
+    this.setupInfoPanel();
     this.filterManager.setup();
+    this.updateMainTitle();
   }
 
   /**
@@ -78,48 +80,46 @@ class NovelWriterApp {
   }
 
   /**
-   * Setup book title editing (double-click to edit)
+   * Update main title display (non-editable, only updated from Info panel)
    */
-  setupBookTitleEditing() {
+  updateMainTitle() {
     const bookTitleElement = document.getElementById('book-title');
-    bookTitleElement.textContent = this.bookData.data.title || '📚 Book Structure';
+    const title = this.bookData.data.title || 'Untitled Book';
+    bookTitleElement.textContent = title;
+  }
 
-    bookTitleElement.addEventListener('dblclick', (e) => {
-      e.stopPropagation();
-
-      const currentTitle = this.bookData.data.title || 'My Novel';
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.value = currentTitle;
-      input.className = 'book-title-input';
-
-      bookTitleElement.style.display = 'none';
-      bookTitleElement.parentElement.insertBefore(input, bookTitleElement);
-      input.focus();
-      input.select();
-
-      const finishEditing = () => {
-        const newTitle = input.value.trim();
-        if (newTitle && newTitle !== currentTitle) {
-          this.bookData.data.title = newTitle;
-          bookTitleElement.textContent = `📚 ${newTitle}`;
+  /**
+   * Setup language selector
+   */
+  setupLanguageSelector() {
+    const languageSelect = document.getElementById('book-language');
+    
+    // Set current language
+    const currentLanguage = this.bookData.getLanguage();
+    languageSelect.value = currentLanguage;
+    
+    // Update LLM Manager language if available
+    if (window.llmManager) {
+      window.llmManager.setLanguage(currentLanguage);
+    }
+    
+    // Handle language change
+    languageSelect.addEventListener('change', async (e) => {
+      const newLanguage = e.target.value;
+      
+      // Update book data
+      this.bookData.setLanguage(newLanguage);
+      
+      // Update LLM Manager prompts
+      if (window.llmManager) {
+        await window.llmManager.setLanguage(newLanguage);
+        console.log(`Language changed to: ${newLanguage}`);
+        
+        // Refresh AI panel if it's open
+        if (window.aiPanelManager) {
+          window.aiPanelManager.renderPrompts();
         }
-        input.remove();
-        bookTitleElement.style.display = '';
-      };
-
-      input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          finishEditing();
-        } else if (e.key === 'Escape') {
-          input.remove();
-          bookTitleElement.style.display = '';
-        }
-      });
-
-      input.addEventListener('blur', () => {
-        setTimeout(finishEditing, 100);
-      });
+      }
     });
   }
 
@@ -222,6 +222,220 @@ class NovelWriterApp {
         document.getElementById('codex-add-category').click();
       }
     });
+  }
+
+  /**
+   * Setup breadcrumb navigation
+   */
+  setupBreadcrumb() {
+    const breadcrumbItems = document.querySelectorAll('.breadcrumb-item');
+    
+    breadcrumbItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const section = item.dataset.section;
+        this.navigateToSection(section);
+      });
+    });
+    
+    // Set initial active state
+    this.updateBreadcrumb('structure');
+  }
+
+  /**
+   * Update breadcrumb active state
+   * @param {string} section - Section to highlight
+   */
+  updateBreadcrumb(section) {
+    const breadcrumbItems = document.querySelectorAll('.breadcrumb-item');
+    breadcrumbItems.forEach(item => {
+      if (item.dataset.section === section) {
+        item.classList.add('active');
+      } else {
+        item.classList.remove('active');
+      }
+    });
+  }
+
+  /**
+   * Navigate to different sections of the application
+   * @param {string} section - Section to navigate to
+   */
+  navigateToSection(section) {
+    console.log(`Navigating to section: ${section}`);
+    
+    // Update breadcrumb highlight
+    this.updateBreadcrumb(section);
+    
+    // Hide all panels first
+    const allPanels = document.querySelectorAll('.app-panel');
+    allPanels.forEach(panel => panel.classList.remove('active'));
+    
+    // Show the selected panel
+    const sectionMap = {
+      'info': 'info-panel',
+      'structure': 'structure-panel',
+      'writer': 'writer-panel',
+      'ia': 'ai-panel',
+      'publish': 'publisher-panel'
+    };
+    
+    const panelId = sectionMap[section];
+    if (panelId) {
+      const panel = document.getElementById(panelId);
+      if (panel) {
+        panel.classList.add('active');
+        
+        // Special actions for specific panels
+        if (section === 'info') {
+          this.updateInfoPanelData();
+        } else if (section === 'structure') {
+          this.update();
+        }
+      }
+    } else {
+      console.warn(`Unknown section: ${section}`);
+    }
+  }
+
+  /**
+   * Update info panel data
+   */
+  updateInfoPanelData() {
+    const bookTitle = this.bookData.data.title || 'Untitled Book';
+    document.getElementById('info-book-title').textContent = bookTitle;
+    document.getElementById('info-modified').textContent = new Date().toLocaleDateString();
+    this.loadInfoData();
+    this.updateInfoStats();
+  }
+
+  /**
+   * Setup info panel
+   */
+  setupInfoPanel() {
+    // Setup editable fields
+    const titleField = document.getElementById('info-title');
+    const subtitleField = document.getElementById('info-subtitle');
+    const authorField = document.getElementById('info-author');
+    const genreField = document.getElementById('info-genre');
+    const languageSelector = document.getElementById('info-language-selector');
+    const createdField = document.getElementById('info-created');
+    const synopsisField = document.getElementById('info-synopsis');
+    const notesField = document.getElementById('info-notes');
+
+    // Load data from localStorage or bookData
+    this.loadInfoData();
+
+    // Save on change
+    [titleField, subtitleField, authorField, genreField, createdField, synopsisField, notesField].forEach(field => {
+      field.addEventListener('change', () => this.saveInfoData());
+      field.addEventListener('blur', () => this.saveInfoData());
+    });
+
+    // Update info-book-title when title field changes
+    titleField.addEventListener('input', () => {
+      const newTitle = titleField.value.trim() || 'Untitled Book';
+      document.getElementById('info-book-title').textContent = newTitle;
+    });
+
+    // Language selector
+    languageSelector.addEventListener('change', async () => {
+      const newLanguage = languageSelector.value;
+      await this.bookData.setLanguage(newLanguage);
+      this.saveInfoData();
+      // Update UI
+      this.update();
+    });
+  }
+
+  /**
+   * Load info panel data
+   */
+  loadInfoData() {
+    const data = JSON.parse(localStorage.getItem('bookInfo') || '{}');
+    
+    document.getElementById('info-title').value = data.title || this.bookData.data.title || '';
+    document.getElementById('info-subtitle').value = data.subtitle || '';
+    document.getElementById('info-author').value = data.author || '';
+    document.getElementById('info-genre').value = data.genre || '';
+    document.getElementById('info-language-selector').value = this.bookData.getLanguage();
+    document.getElementById('info-created').value = data.created || '';
+    document.getElementById('info-synopsis').value = data.synopsis || '';
+    document.getElementById('info-notes').value = data.notes || '';
+  }
+
+  /**
+   * Save info panel data
+   */
+  saveInfoData() {
+    const newTitle = document.getElementById('info-title').value.trim();
+    const data = {
+      title: newTitle,
+      subtitle: document.getElementById('info-subtitle').value,
+      author: document.getElementById('info-author').value,
+      genre: document.getElementById('info-genre').value,
+      created: document.getElementById('info-created').value,
+      synopsis: document.getElementById('info-synopsis').value,
+      notes: document.getElementById('info-notes').value
+    };
+    
+    localStorage.setItem('bookInfo', JSON.stringify(data));
+    
+    // Always update book title in main data
+    if (newTitle) {
+      this.bookData.data.title = newTitle;
+      this.bookData.save();
+      // Update main title display
+      this.updateMainTitle();
+    }
+  }
+
+  /**
+   * Open info panel (deprecated - use navigateToSection('info'))
+   */
+  openInfoPanel() {
+    this.navigateToSection('info');
+  }
+
+  /**
+   * Close info panel (deprecated - use navigateToSection('structure'))
+   */
+  closeInfoPanel() {
+    // No longer needed - panels close automatically when switching
+  }
+
+  /**
+   * Update info panel statistics
+   */
+  updateInfoStats() {
+    const acts = this.bookData.data.acts || [];
+    let chapters = 0;
+    let sections = 0;
+    let words = 0;
+
+    acts.forEach(act => {
+      if (act.chapters) {
+        chapters += act.chapters.length;
+        act.chapters.forEach(chapter => {
+          if (chapter.sections) {
+            sections += chapter.sections.length;
+            chapter.sections.forEach(section => {
+              if (section.content) {
+                words += section.content.split(/\s+/).filter(w => w.length > 0).length;
+              }
+            });
+          }
+        });
+      }
+    });
+
+    const codexEntries = (this.bookData.data.codex?.entries || []).length;
+
+    document.getElementById('stat-acts').textContent = acts.length;
+    document.getElementById('stat-chapters').textContent = chapters;
+    document.getElementById('stat-sections').textContent = sections;
+    document.getElementById('stat-words').textContent = words.toLocaleString();
+    document.getElementById('stat-characters').textContent = codexEntries;
+    document.getElementById('stat-codex').textContent = codexEntries;
   }
 
   /**

@@ -71,7 +71,9 @@
         color: var(--text-primary);
         line-height: 1.5;
         display: flex;
+        flex-direction: column;
         overflow: hidden;
+        height: 100vh;
       }
 
       a {
@@ -117,12 +119,25 @@
         width: 100%;
       }
 
-      .main-wrapper {
+      /* Breadcrumb fixed at top */
+      .breadcrumb-container {
+        background: var(--bg-primary);
+        border-bottom: var(--border-width) solid var(--border-light);
+        padding: var(--spacing-md) var(--spacing-lg);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      /* App Container - Holds Codex + Panels */
+      .app-container {
         display: flex;
         flex: 1;
         overflow: hidden;
+        position: relative;
       }
 
+      /* Shared Codex Panel (Always Visible) */
       .codex-panel {
         width: 160px;
         background: var(--bg-primary);
@@ -131,6 +146,42 @@
         flex-direction: column;
         overflow: hidden;
         padding: var(--spacing-sm);
+        flex-shrink: 0;
+        z-index: 40;
+      }
+
+      /* Panels Container - Holds all 5 panels */
+      .panels-container {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* App Panel Structure - All 5 panels use same structure */
+      .app-panel {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: none;
+        overflow-y: auto;
+        background: var(--bg-secondary);
+        z-index: 50;
+      }
+
+      .app-panel.active {
+        display: block;
+      }
+
+      /* Info Panel Special Styles */
+      #info-panel {
+        background: #E8E4DC;
+        padding: var(--spacing-xl);
+      }
+
+      .main-wrapper {
+        display: none; /* Deprecated */
       }
 
       .codex-header {
@@ -438,6 +489,42 @@
         border-color: var(--border-light);
       }
 
+      /* Breadcrumb Navigation */
+      .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+        margin: 0;
+        padding: 0;
+        font-size: var(--font-size-base);
+        color: var(--text-secondary);
+      }
+
+      .breadcrumb-item {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+        cursor: pointer;
+        transition: color 0.2s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: normal;
+      }
+
+      .breadcrumb-item:hover {
+        color: var(--text-primary);
+      }
+
+      .breadcrumb-item.active {
+        color: var(--text-primary);
+        font-weight: bold;
+      }
+
+      .breadcrumb-separator {
+        color: var(--text-secondary);
+        user-select: none;
+      }
+
       .title-filter-row {
         display: flex;
         align-items: center;
@@ -448,29 +535,43 @@
         border-bottom: var(--border-dotted);
       }
 
-      .book-title-editable {
+      .title-section {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+        flex: 1 1 auto;
+      }
+
+      .language-selector {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+        padding: var(--spacing-xs) var(--spacing-sm);
+        border: var(--border-width) solid var(--border-light);
+        background: var(--bg-primary);
         cursor: pointer;
-        padding: 0;
-        transition: opacity 0.2s;
-        flex: 0 0 auto;
-        margin: 0;
+        transition: border-color 0.2s;
+        font-size: var(--font-size-xs);
       }
 
-      .book-title-editable:hover {
-        opacity: 0.7;
+      .language-selector:hover {
+        border-color: var(--border-primary);
       }
 
-      .book-title-input {
-        font-size: var(--font-size-xxl);
-        font-weight: normal;
-        color: var(--text-primary);
+      .language-selector select {
         border: none;
-        border-bottom: var(--border-width) solid var(--border-primary);
-        border-radius: 0;
-        padding: 0 0 var(--spacing-xs) 0;
-        outline: none;
         background: transparent;
-        min-width: 300px;
+        font-size: var(--font-size-xs);
+        font-family: var(--font-primary);
+        color: var(--text-primary);
+        cursor: pointer;
+        outline: none;
+        padding: 0;
+      }
+
+      .language-selector select option {
+        background: var(--bg-primary);
+        color: var(--text-primary);
       }
 
       .filter-section {
@@ -1118,18 +1219,196 @@
   </head>
   <body>
     <div class="app-layout">
+      <!-- Breadcrumb Navigation (Always Visible) -->
+      <div class="breadcrumb-container">
+        <nav class="breadcrumb">
+          <span class="breadcrumb-item" data-section="info">Info</span>
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-item active" data-section="structure">Structure</span>
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-item" data-section="writer">Writer</span>
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-item" data-section="ia">IA</span>
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-item" data-section="publish">Publish</span>
+        </nav>
+      </div>
+
+      <!-- Main Application Container -->
+      <div class="app-container">
+        <!-- Shared Codex Panel (Always Visible) -->
+        <div class="codex-panel">
+          <div class="codex-header">
+            <h3>Codex</h3>
+          </div>
+          <div class="codex-content" id="codex-content"></div>
+          <div class="codex-actions">
+            <button class="codex-btn" id="codex-add-btn" title="Add New Entry">New Entry</button>
+            <button class="codex-btn" id="codex-config-btn" title="Configure Categories">Config</button>
+          </div>
+          <input type="text" class="codex-search" id="codex-search" placeholder="Filter...">
+        </div>
+
+        <!-- Panels Container -->
+        <div class="panels-container">
+          <!-- Info Panel -->
+          <div id="info-panel" class="app-panel">
+            <div class="info-panel-content">
+              <h1 class="info-book-title" id="info-book-title">Book Title</h1>
+
+              <div class="info-section">
+                <div class="info-section-number">01</div>
+                <h3 class="info-section-title">Basic Information</h3>
+                <div class="info-section-content">
+                  <div class="info-label">Title</div>
+                  <input type="text" class="info-editable-field" id="info-title" placeholder="Book title">
+
+                  <div class="info-label">Subtitle</div>
+                  <input type="text" class="info-editable-field" id="info-subtitle" placeholder="Book subtitle (optional)">
+
+                  <div class="info-label">Author</div>
+                  <input type="text" class="info-editable-field" id="info-author" placeholder="Author name">
+
+                  <div class="info-label">Genre</div>
+                  <input type="text" class="info-editable-field" id="info-genre" placeholder="Genre">
+
+                  <div class="info-label">Language</div>
+                  <select class="info-editable-field" id="info-language-selector">
+                    <option value="pt-BR">🇧🇷 Português (Brasil)</option>
+                    <option value="en-US">🇺🇸 English (United States)</option>
+                  </select>
+
+                  <div class="info-label">Created</div>
+                  <input type="date" class="info-editable-field" id="info-created">
+
+                  <div class="info-label">Last Modified</div>
+                  <div class="info-value" id="info-modified">—</div>
+                </div>
+              </div>
+
+              <div class="info-section">
+                <div class="info-section-number">02</div>
+                <h3 class="info-section-title">Synopsis</h3>
+                <div class="info-section-content" style="grid-template-columns: 1fr;">
+                  <textarea class="info-textarea" id="info-synopsis" placeholder="Write a brief synopsis of your book..."></textarea>
+                </div>
+              </div>
+
+              <div class="info-section">
+                <div class="info-section-number">03</div>
+                <h3 class="info-section-title">Statistics</h3>
+                <div class="info-stats-grid">
+                  <div class="info-stat-item">
+                    <div class="info-stat-number" id="stat-acts">0</div>
+                    <div class="info-stat-label">Acts</div>
+                  </div>
+                  <div class="info-stat-item">
+                    <div class="info-stat-number" id="stat-chapters">0</div>
+                    <div class="info-stat-label">Chapters</div>
+                  </div>
+                  <div class="info-stat-item">
+                    <div class="info-stat-number" id="stat-sections">0</div>
+                    <div class="info-stat-label">Sections</div>
+                  </div>
+                  <div class="info-stat-item">
+                    <div class="info-stat-number" id="stat-words">0</div>
+                    <div class="info-stat-label">Total Words</div>
+                  </div>
+                  <div class="info-stat-item">
+                    <div class="info-stat-number" id="stat-characters">0</div>
+                    <div class="info-stat-label">Characters</div>
+                  </div>
+                  <div class="info-stat-item">
+                    <div class="info-stat-number" id="stat-codex">0</div>
+                    <div class="info-stat-label">Codex Entries</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="info-section">
+                <div class="info-section-number">04</div>
+                <h3 class="info-section-title">Notes</h3>
+                <div class="info-section-content" style="grid-template-columns: 1fr;">
+                  <textarea class="info-textarea" id="info-notes" placeholder="Additional notes, ideas, or reminders..."></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Structure Panel -->
+          <div id="structure-panel" class="app-panel active">
+            <div class="container">
+              <!-- Title and Filter Row -->
+              <div class="title-filter-row">
+                <div class="title-section">
+                  <h1 id="book-title">📚 Book Structure</h1>
+                </div>
+
+                <div class="filter-section">
+                  <label class="filter-label">Filter:</label>
+                  <div class="filter-input-wrapper">
+                    <input
+                      type="text"
+                      id="filter-tag-input"
+                      class="filter-tag-input"
+                      placeholder="Type to search tags..."
+                      autocomplete="off"
+                    />
+                    <button id="filter-clear-btn" class="filter-clear-icon" title="Clear filters" style="display: none;">×</button>
+                    <div id="filter-autocomplete" class="filter-autocomplete" style="display: none;">
+                      <!-- Autocomplete suggestions will appear here -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Selected Tags -->
+              <div id="filter-selected-tags" class="filter-selected-tags" style="display: none;">
+                <!-- Selected tags will be displayed here -->
+              </div>
+
+              <div id="book-structure"></div>
+            </div>
+          </div>
+
+          <!-- Writer Panel -->
+          <div id="writer-panel" class="app-panel">
+            <div class="container">
+              <h2>Writer View</h2>
+              <p>Writer view coming soon...</p>
+            </div>
+          </div>
+
+          <!-- AI Panel -->
+          <div id="ai-panel" class="app-panel">
+            <div class="container">
+              <h2>AI Assistant</h2>
+              <p>AI panel will be integrated here...</p>
+            </div>
+          </div>
+
+          <!-- Publisher Panel -->
+          <div id="publisher-panel" class="app-panel">
+            <div class="container">
+              <h2>Publisher</h2>
+              <p>Publisher view coming soon...</p>
+            </div>
+          </div>
+        </div> <!-- .panels-container -->
+      </div> <!-- .app-container -->
+
       <div class="main-wrapper">
-      <!-- Left Codex Panel -->
-      <div class="codex-panel">
+      <!-- This is now deprecated, kept for compatibility -->
+      <div class="codex-panel" style="display: none;">
         <div class="codex-header">
           <h3>Codex</h3>
         </div>
-        <div class="codex-content" id="codex-content"></div>
+        <div class="codex-content" id="codex-content-old"></div>
         <div class="codex-actions">
-          <button class="codex-btn" id="codex-add-btn" title="Add New Entry">New Entry</button>
-          <button class="codex-btn" id="codex-config-btn" title="Configure Categories">Config</button>
+          <button class="codex-btn" id="codex-add-btn-old" title="Add New Entry">New Entry</button>
+          <button class="codex-btn" id="codex-config-btn-old" title="Configure Categories">Config</button>
         </div>
-        <input type="text" class="codex-search" id="codex-search" placeholder="Filter...">
+        <input type="text" class="codex-search" id="codex-search-old" placeholder="Filter...">
       </div>
 
       <!-- Codex Config Panel (Expandable) -->
@@ -1209,7 +1488,6 @@
       <!-- AI Assistant Panel -->
       <div id="ai-panel" class="ai-panel" style="display: none;">
         <div class="ai-panel-header">
-          <button class="ai-panel-close-btn" id="ai-panel-close">◀</button>
           <h2>AI Assistant Configuration</h2>
         </div>
 
@@ -1280,7 +1558,9 @@
         <div class="container">
           <!-- Title and Filter Row -->
           <div class="title-filter-row">
-            <h1 id="book-title" class="book-title-editable">📚 Book Structure</h1>
+            <div class="title-section">
+              <h1 id="book-title">📚 Book Structure</h1>
+            </div>
 
             <div class="filter-section">
               <label class="filter-label">Filter:</label>
@@ -1453,12 +1733,12 @@
       /* Chapter Editor Styles */
       .chapter-editor {
         position: fixed;
-        top: 0;
+        top: 60px;
         left: 160px;
         right: 0;
         bottom: 0;
         background: var(--bg-primary);
-        z-index: 2000;
+        z-index: 50;
         display: flex;
         flex-direction: column;
         transition: left 0.3s ease;
@@ -2051,20 +2331,153 @@
       /* AI Panel Styles */
       .ai-panel {
         position: fixed;
-        top: 0;
-        left: 280px;
+        top: 60px;
+        left: 0;
         right: 0;
         bottom: 0;
         background: var(--bg-primary);
-        z-index: 2000;
+        z-index: 50;
         display: flex;
         flex-direction: column;
         transition: left 0.3s ease;
       }
 
+      /* Info Panel Styles - Editorial Design */
+      #info-panel .panel-content {
+        background: #E8E4DC;
+        padding: var(--spacing-xl);
+      }
+
+      .info-panel-content {
+        max-width: 900px;
+        margin: 0 auto;
+        width: 100%;
+      }
+
+      .info-book-title {
+        font-size: 72px;
+        font-weight: bold;
+        line-height: 0.9;
+        margin: 0 0 var(--spacing-xl) 0;
+        color: var(--text-primary);
+        letter-spacing: -2px;
+      }
+
+      .info-section {
+        margin-bottom: var(--spacing-xl);
+        padding-bottom: var(--spacing-xl);
+        border-bottom: 1px solid #000;
+      }
+
+      .info-section:last-child {
+        border-bottom: none;
+      }
+
+      .info-section-number {
+        font-size: 48px;
+        font-weight: bold;
+        line-height: 1;
+        margin: 0 0 var(--spacing-sm) 0;
+        color: var(--text-primary);
+      }
+
+      .info-section-title {
+        font-size: var(--font-size-sm);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin: 0 0 var(--spacing-md) 0;
+        color: var(--text-primary);
+        font-weight: normal;
+      }
+
+      .info-section-content {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: var(--spacing-lg);
+        font-size: var(--font-size-sm);
+        line-height: 1.6;
+      }
+
+      .info-label {
+        font-weight: normal;
+        color: var(--text-primary);
+      }
+
+      .info-value {
+        color: var(--text-primary);
+      }
+
+      .info-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-lg);
+      }
+
+      .info-stat-item {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .info-stat-number {
+        font-size: 32px;
+        font-weight: bold;
+        line-height: 1;
+        margin-bottom: var(--spacing-xs);
+      }
+
+      .info-stat-label {
+        font-size: var(--font-size-xs);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .info-editable-field {
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid transparent;
+        padding: var(--spacing-xs) 0;
+        font-family: var(--font-primary);
+        font-size: inherit;
+        color: var(--text-primary);
+        width: 100%;
+        transition: border-color 0.2s;
+      }
+
+      .info-editable-field:hover {
+        border-bottom-color: var(--text-secondary);
+      }
+
+      .info-editable-field:focus {
+        outline: none;
+        border-bottom-color: var(--text-primary);
+      }
+
+      .info-textarea {
+        background: transparent;
+        border: 1px solid transparent;
+        padding: var(--spacing-sm);
+        font-family: var(--font-primary);
+        font-size: inherit;
+        color: var(--text-primary);
+        width: 100%;
+        min-height: 100px;
+        resize: vertical;
+        line-height: 1.6;
+        transition: border-color 0.2s;
+      }
+
+      .info-textarea:hover {
+        border-color: var(--text-secondary);
+      }
+
+      .info-textarea:focus {
+        outline: none;
+        border-color: var(--text-primary);
+      }
+
       /* Adjust AI panel when config panel is open */
       body:has(#codex-config-panel.expanded) .ai-panel {
-        left: 430px;
+        left: 250px;
       }
 
       body:has(#codex-entry-panel.expanded) .ai-panel {
@@ -2086,26 +2499,6 @@
         margin: 0;
         font-size: var(--font-size-lg);
         font-weight: normal;
-      }
-
-      .ai-panel-close-btn {
-        background: transparent;
-        border: var(--border-width) solid var(--border-light);
-        color: var(--text-primary);
-        font-size: var(--font-size-base);
-        width: 28px;
-        height: 28px;
-        border-radius: 0;
-        cursor: pointer;
-        transition: all 0.2s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-      }
-
-      .ai-panel-close-btn:hover {
-        text-decoration: line-through;
       }
 
       .ai-panel-content {
@@ -2316,6 +2709,7 @@
     <script src="js/codex.js"></script>
     <script src="js/filter.js"></script>
     <script src="js/i18n-config.js"></script>
+    <script src="js/prompts.js"></script>
     <script src="js/llm.js"></script>
     <script src="js/ai-panel.js"></script>
     <script src="js/renderer.js"></script>

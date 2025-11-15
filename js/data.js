@@ -17,12 +17,20 @@ class BookData {
     try {
       const response = await fetch(this.dataFile);
       this.data = await response.json();
+      
+      // Ensure language field exists (default to pt-BR if not set)
+      if (!this.data.language) {
+        this.data.language = 'pt-BR';
+        this.saveData();
+      }
+      
       return this.data;
     } catch (error) {
       console.error('Error loading book data:', error);
       // Fallback to empty structure
       this.data = {
         title: "Novo Livro",
+        language: "pt-BR",
         codex: {
           categories: ['Character', 'Locals', 'Plots', 'Object', 'Lore', 'Other'],
           entries: []
@@ -169,6 +177,20 @@ class BookData {
     if (!act) return false;
 
     act.title = title;
+    this.saveData();
+    return true;
+  }
+
+  // Get book language
+  getLanguage() {
+    return this.data?.language || 'pt-BR';
+  }
+
+  // Set book language
+  setLanguage(language) {
+    if (!this.data) return false;
+    
+    this.data.language = language;
     this.saveData();
     return true;
   }

@@ -1,0 +1,72 @@
+{
+  "metadata": {
+    "language": "en-US",
+    "languageName": "English (United States)",
+    "version": "1.0.0",
+    "lastUpdate": "2025-11-15",
+    "author": "NovelWriter Team",
+    "description": "AI prompts optimized for creative writing in American English"
+  },
+  "prompts": {
+    "generate": {
+      "name": "Generate Section Text",
+      "systemPrompt": "You are a creative writer specialized in engaging narratives. Write in fluent and natural English.",
+      "userPrompt": "Based on the following summary, write the complete text for the narrative section:\n\nSummary: {summary}\n\nBook Context:\nTitle: {bookTitle}\nChapter: {chapterTitle}\nSection: {sectionTitle}\n\nTags/Themes: {tags}\n\nWrite a detailed and engaging narrative text that develops this summary. Use literary language appropriate to the genre."
+    },
+    "summarize": {
+      "name": "Summarize Text",
+      "systemPrompt": "You are an assistant who creates concise and informative summaries in English.",
+      "userPrompt": "Create a concise summary of the following text, capturing the main points:\n\n{text}\n\nCreate a summary in a single paragraph, highlighting the most important events and ideas."
+    },
+    "expand": {
+      "name": "Expand Text",
+      "systemPrompt": "You are a creative writer who adds details and depth to narratives in English.",
+      "userPrompt": "Expand the following text, adding more details, descriptions, and development:\n\n{text}\n\nMaintain the original style and tone, but make the narrative richer and more detailed. Add sensory descriptions, character emotions, and environmental details."
+    },
+    "rewrite": {
+      "name": "Rewrite Text",
+      "systemPrompt": "You are an experienced editor who improves writing quality in English.",
+      "userPrompt": "Rewrite the following text improving clarity, flow, and narrative impact:\n\n{text}\n\nKeep the same information and tone, but improve the writing quality. Fix style issues, repetitions, and make the text more elegant."
+    },
+    "changePOV": {
+      "name": "Change Point of View",
+      "systemPrompt": "You are an expert in narrative and literary points of view in English.",
+      "userPrompt": "Rewrite the following text changing the point of view to: {targetPOV}\n\nOriginal text:\n{text}\n\nKeep the content and events, but adapt the narrative perspective. If first person, use the main character's voice. If third person, maintain appropriate distance."
+    },
+    "continueStory": {
+      "name": "Continue Story",
+      "systemPrompt": "You are a creative writer who naturally and coherently continues narratives in English.",
+      "userPrompt": "Continue the following story in a natural and engaging way:\n\n{text}\n\nWrite the next paragraph or section, maintaining the style, tone, and narrative rhythm. Continue events in a logical and interesting manner."
+    },
+    "addDialogue": {
+      "name": "Add Dialogue",
+      "systemPrompt": "You are an expert at writing natural and engaging dialogue in English.",
+      "userPrompt": "Add natural dialogue to the following narrative text:\n\n{text}\n\nInsert dialogues between characters that are relevant and natural to the context. Use quotation marks for speech. Dialogues should reveal personality, advance the plot, or create tension."
+    },
+    "improveDescription": {
+      "name": "Improve Descriptions",
+      "systemPrompt": "You are an expert at creating vivid and sensory descriptions in English.",
+      "userPrompt": "Improve the descriptions in the following text, adding more sensory details:\n\n{text}\n\nAdd more vivid descriptions of settings, characters, and environments. Use all five senses (sight, hearing, smell, touch, taste) to create immersion. Be specific and avoid clichés."
+    },
+    "createScene": {
+      "name": "Create Scene",
+      "systemPrompt": "You are a creative writer specialized in building dramatic scenes in English.",
+      "userPrompt": "Create a complete scene based on the following information:\n\nContext: {context}\nCharacters: {characters}\nScene objective: {objective}\n\nWrite an engaging scene with environment description, character actions, and dialogue when appropriate. The scene should have a beginning, middle, and end."
+    },
+    "developCharacter": {
+      "name": "Develop Character",
+      "systemPrompt": "You are an expert in character development and narrative psychology in English.",
+      "userPrompt": "Develop the following character more deeply within the scene context:\n\nText/Scene: {text}\nCharacter: {character}\n\nAdd internal thoughts, emotions, motivations, and character reactions. Show their personality through actions, dialogue, and internal reflections."
+    },
+    "addTension": {
+      "name": "Add Tension",
+      "systemPrompt": "You are an expert in creating narrative tension and suspense in English.",
+      "userPrompt": "Rewrite the following text adding more tension and suspense:\n\n{text}\n\nIncrease conflict, create uncertainty, add obstacles, or reveal information gradually. Use narrative techniques to keep the reader engaged and anxious about what comes next."
+    },
+    "fixPacing": {
+      "name": "Adjust Pacing",
+      "systemPrompt": "You are an editor specialized in narrative pacing in English.",
+      "userPrompt": "Adjust the pacing of the following text as indicated:\n\n{text}\n\nDesired pacing: {pacingType}\n(fast: short sentences, direct action / slow: detailed descriptions, reflections / balanced: mix of both)\n\nRewrite the text adjusting sentence length, amount of description, and narrative focus to achieve the desired pacing."
+    }
+  }
+}
