@@ -18,7 +18,7 @@ class UIRenderer {
       html += `
         <div class="act-section">
           <div class="structure-item act-item">
-            <div class="structure-number">${actNumber}</div>
+            <div class="structure-number"><button class="structure-action-btn act-collapse-btn" data-act-id="${act.id}" title="Collapse Act">▼</button>${actNumber}</div>
             <div class="structure-content">
               <div class="structure-title act-title" data-act-id="${act.id}">${act.title}</div>
               <button class="structure-action-btn add-chapter-btn" data-act-id="${act.id}">+ Add Chapter</button>

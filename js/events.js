@@ -17,6 +17,30 @@ class EventHandlers {
     this.setupTagButtons();
     this.setupChapterWriteButtons();
     this.setupChapterCollapseButtons();
+    this.setupActCollapseButtons();
+  }
+  setupActCollapseButtons() {
+    const actCollapseButtons = document.querySelectorAll('.act-collapse-btn');
+    actCollapseButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const actId = btn.getAttribute('data-act-id');
+        const actSection = btn.closest('.act-section');
+        if (!actSection) return;
+        const chapterRows = actSection.querySelectorAll('.chapter-row');
+        const isCollapsed = btn.textContent === '▼' ? false : true;
+        chapterRows.forEach(row => {
+          if (isCollapsed) {
+            row.classList.remove('collapsed');
+            row.querySelector('.chapter-collapse-btn').textContent = '▼';
+          } else {
+            row.classList.add('collapsed');
+            row.querySelector('.chapter-collapse-btn').textContent = '▶';
+          }
+        });
+        btn.textContent = isCollapsed ? '▼' : '▶';
+      });
+    });
   }
 
   setupAddChapterButtons() {

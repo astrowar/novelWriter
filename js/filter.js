@@ -249,7 +249,7 @@ class FilterManager {
       if (!act) return; // Safety check
 
       let actHasVisibleChapters = false;
-      const chapterCards = actSection.querySelectorAll('.chapter-card');
+      const chapterCards = actSection.querySelectorAll('.chapter-section');
 
       chapterCards.forEach((chapterCard) => {
         const chapterId = parseInt(chapterCard.dataset.chapterId);
