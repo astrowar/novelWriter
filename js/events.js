@@ -1,5 +1,7 @@
 // Event Handlers Module
 class EventHandlers {
+  // Memorize last opened chapter
+  static lastWriterContext = null;
   constructor(bookData, modalManager, chapterPropertiesModal, sectionEditor, onUpdate) {
     this.bookData = bookData;
     this.modalManager = modalManager;
@@ -18,6 +20,7 @@ class EventHandlers {
     this.setupChapterWriteButtons();
     this.setupChapterCollapseButtons();
     this.setupActCollapseButtons();
+    this.setupSectionSummaryDblClick();
   }
   setupActCollapseButtons() {
     const actCollapseButtons = document.querySelectorAll('.act-collapse-btn');
@@ -178,20 +181,66 @@ class EventHandlers {
 
   setupChapterWriteButtons() {
     const writeButtons = document.querySelectorAll('.chapter-write-btn');
-    
     writeButtons.forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const actId = parseInt(btn.getAttribute('data-act-id'));
         const chapterId = parseInt(btn.getAttribute('data-chapter-id'));
         const chapterNumber = btn.getAttribute('data-chapter-number');
-        
         const chapter = this.bookData.findChapter(actId, chapterId);
         if (chapter) {
+          // Memorize last opened chapter context
+          EventHandlers.lastWriterContext = { actId, chapterId, chapterNumber };
           this.openWriterPanel(chapter, chapterNumber);
         }
       });
     });
+    // Setup Writer menu (breadcrumb) click
+    const writerMenu = document.querySelector('.breadcrumb-item[data-section="writer"]');
+    if (writerMenu) {
+      writerMenu.addEventListener('click', (e) => {
+        e.preventDefault();
+        // Try to restore last context
+        let ctx = EventHandlers.lastWriterContext;
+        let chapter = null, chapterNumber = null;
+        if (ctx) {
+          chapter = this.bookData.findChapter(ctx.actId, ctx.chapterId);
+          chapterNumber = ctx.chapterNumber;
+        }
+        if (!chapter) {
+          // Fallback: first chapter with empty section, or last chapter
+          let found = false;
+          for (const act of this.bookData.data.acts) {
+            if (act.chapters && act.chapters.length > 0) {
+              for (let i = 0; i < act.chapters.length; ++i) {
+                const ch = act.chapters[i];
+                if (ch.sections && ch.sections.length === 0) {
+                  chapter = ch;
+                  chapterNumber = String(i + 1).padStart(2, '0');
+                  found = true;
+                  break;
+                }
+              }
+              if (found) break;
+            }
+          }
+          if (!chapter) {
+            // Fallback: last chapter of last act
+            const acts = this.bookData.data.acts;
+            if (acts.length > 0) {
+              const lastAct = acts[acts.length - 1];
+              if (lastAct.chapters && lastAct.chapters.length > 0) {
+                chapter = lastAct.chapters[lastAct.chapters.length - 1];
+                chapterNumber = String(lastAct.chapters.length).padStart(2, '0');
+              }
+            }
+          }
+        }
+        if (chapter) {
+          this.openWriterPanel(chapter, chapterNumber);
+        }
+      });
+    }
   }
 
   setupChapterCollapseButtons() {
@@ -213,39 +262,55 @@ class EventHandlers {
     });
   }
 
-  openWriterPanel(chapter, chapterNumber) {
+  setupSectionSummaryDblClick() {
+    // Double click on section-summary in structure panel
+    const sectionSummaries = document.querySelectorAll('.section-summary[data-section-id]');
+    sectionSummaries.forEach(el => {
+      el.addEventListener('dblclick', (e) => {
+        e.stopPropagation();
+        const sectionId = parseInt(el.getAttribute('data-section-id'));
+        const chapterId = parseInt(el.getAttribute('data-chapter-id'));
+        const actId = parseInt(el.getAttribute('data-act-id'));
+        // Find chapter and section
+        const chapter = this.bookData.findChapter(actId, chapterId);
+        if (chapter) {
+          const sectionIndex = chapter.sections.findIndex(s => s.id === sectionId);
+          const chapterNumber = (typeof sectionIndex === 'number' && sectionIndex >= 0)
+            ? String(sectionIndex + 1).padStart(2, '0') : '01';
+          // Memorize context
+          EventHandlers.lastWriterContext = { actId, chapterId, chapterNumber };
+          this.openWriterPanel(chapter, chapterNumber, sectionId);
+        }
+      });
+    });
+  }
+
+  openWriterPanel(chapter, chapterNumber, sectionIdToFocus) {
     // Switch to writer panel
     document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
     document.querySelector('[data-section="writer"]').classList.add('active');
-    
     document.querySelectorAll('.app-panel').forEach(panel => panel.classList.remove('active'));
     document.getElementById('writer-panel').classList.add('active');
-    
     // Populate writer panel
-    this.populateWriterPanel(chapter, chapterNumber);
+    this.populateWriterPanel(chapter, chapterNumber, sectionIdToFocus);
   }
 
-  populateWriterPanel(chapter, chapterNumber) {
+  populateWriterPanel(chapter, chapterNumber, sectionIdToFocus) {
     const writerPanel = document.getElementById('writer-panel');
-    
-    // Store chapter context for saving
     writerPanel.dataset.chapterId = chapter.id;
     writerPanel.dataset.actId = this.findActIdByChapter(chapter.id);
-    
-    // Build sections HTML
     let sectionsHtml = '';
     if (chapter.sections && chapter.sections.length > 0) {
       chapter.sections.forEach((section, index) => {
         const summary = section.summary || `Section ${index + 1}`;
         const content = section.content || 'Start writing here...';
-        // Convert \n to <br> for display
         const contentHtml = content.replace(/\n/g, '<br>');
-        
+        const focusAttr = (sectionIdToFocus && section.id === sectionIdToFocus) ? ' data-focus="true"' : '';
         sectionsHtml += `
           <div class="writer-section">
             <div class="section-summary">${summary}</div>
             <div class="section-content">
-              <p contenteditable="true" data-section-id="${section.id}">${contentHtml}</p>
+              <p contenteditable="true" data-section-id="${section.id}"${focusAttr}>${contentHtml}</p>
             </div>
           </div>
         `;
@@ -260,28 +325,28 @@ class EventHandlers {
         </div>
       `;
     }
-    
-    // Update the writer panel HTML
     const html = `
       <div class="writer-container">
         <div class="writer-grid">
           <div class="writer-number">${String(chapterNumber).padStart(2, '0')}</div>
           <h1 class="writer-title" contenteditable="true" data-chapter-id="${chapter.id}">${chapter.title}</h1>
         </div>
-        
         <div class="writer-sections">
           ${sectionsHtml}
         </div>
-        
         <div class="writer-footer">
           <button class="writer-save-btn" data-chapter-id="${chapter.id}">Save Chapter</button>
         </div>
       </div>
     `;
-    
     writerPanel.innerHTML = html;
-    
-    // Setup save functionality
+    // Focus the section if requested
+    if (sectionIdToFocus) {
+      const el = writerPanel.querySelector('.section-content [data-section-id="' + sectionIdToFocus + '"]');
+      if (el) {
+        el.focus();
+      }
+    }
     this.setupWriterSave();
   }
 

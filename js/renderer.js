@@ -46,7 +46,7 @@ class UIRenderer {
                 <div class="section-row">
                   <div class="section-number">${sectionNum}</div>
                   <div class="section-content">
-                    <div class="section-summary">${summaryHtml}</div>
+                    <div class="section-summary" data-section-id="${section.id}" data-chapter-id="${chapter.id}" data-act-id="${act.id}">${summaryHtml}</div>
                     <div class="section-tags">
                       ${tagsHtml}
                       <button class="tag-add-btn" data-section-id="${section.id}" data-chapter-id="${chapter.id}" data-act-id="${act.id}" title="Add tag">+ Tag</button>
