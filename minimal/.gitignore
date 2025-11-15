@@ -1,9 +1,0 @@
-node_modules
-dist
-dist-electron
-build
-release
-*.local
-.DS_Store
-Thumbs.db
-*.log

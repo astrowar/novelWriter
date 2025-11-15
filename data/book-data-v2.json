@@ -11,7 +11,6 @@
     ],
     "entries": [
       {
-        "id": 1,
         "name": "John",
         "category": "Character",
         "description": "Um homem encantador e de coração gentil na casa dos trinta anos, que trabalha em uma galeria de arte. Ele é observador, paciente e profundamente compassivo.",
@@ -19,7 +18,8 @@
           "Principal",
           "Protagonista",
           "Romântico"
-        ]
+        ],
+        "id": 1
       },
       {
         "name": "Emma",
