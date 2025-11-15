@@ -1,100 +1,63 @@
 {
   "title": "Uma História de Aceitação",
   "codex": {
-    "categories": [
-      "Character",
-      "Locals",
-      "Plots",
-      "Object",
-      "Lore",
-      "Other"
-    ],
+    "categories": ["Character", "Locals", "Plots", "Object", "Lore", "Other"],
     "entries": [
       {
         "id": 1,
         "name": "John",
         "category": "Character",
         "description": "Um homem encantador e de coração gentil na casa dos trinta anos, que trabalha em uma galeria de arte. Ele é observador, paciente e profundamente compassivo.",
-        "tags": [
-          "Principal",
-          "Protagonista",
-          "Romântico"
-        ]
+        "tags": ["Principal", "Protagonista", "Romântico"]
       },
       {
+        "id": 2,
         "name": "Emma",
         "category": "Character",
         "description": "Uma jovem com um rosto encantador, mas visivelmente autoconsciente sobre seu peso. Ela tem uma personalidade brilhante e é bastante inteligente.",
-        "tags": [
-          "Principal",
-          "Romântica",
-          "Autoimagem"
-        ],
-        "id": 2
+        "tags": ["Principal", "Romântica", "Autoimagem"]
+      },
+      {
+        "id": 3,
+        "name": "Café",
+        "category": "Locals",
+        "description": "Um café aconchegante e bem iluminado onde John e Emma se encontram regularmente. É o cenário principal onde seu relacionamento se desenvolve.",
+        "tags": ["Café", "Encontro", "Cenário"]
       },
       {
         "id": 4,
         "name": "O Bilhete",
         "category": "Object",
         "description": "Um bilhete tocante que John deixa para Emma no café, expressando sua admiração por ela sem mencionar uma vez seu peso. Esse pequeno ato de gentileza toca profundamente Emma.",
-        "tags": [
-          "Bilhete",
-          "Romântico",
-          "Turning Point"
-        ]
+        "tags": ["Bilhete", "Romântico", "Turning Point"]
       },
       {
+        "id": 5,
         "name": "Jornada de Autoaceitação",
         "category": "Plots",
         "description": "Emma luta contra seus próprios demônios de autoimagem, muitas vezes se sentindo indigna de amor devido ao seu peso. Com o apoio de John, ela aprende a se aceitar.",
-        "tags": [
-          "Autoimagem",
-          "Crescimento",
-          "Romance",
-          "aaa",
-          "aa",
-          "aaaaaa"
-        ],
-        "id": 5
+        "tags": ["Autoimagem", "Crescimento", "Romance"]
       },
       {
+        "id": 6,
         "name": "Dilema de John",
         "category": "Plots",
         "description": "John luta para encontrar o equilíbrio entre demonstrar seus sentimentos por Emma e respeitar seu espaço, sem focar em aspectos físicos.",
-        "tags": [
-          "Dilema",
-          "Relacionamento",
-          "Apoio",
-          "topography",
-          "aster",
-          "wilist",
-          "ghghghg",
-          "dfdf"
-        ],
-        "id": 6
+        "tags": ["Dilema", "Relacionamento", "Apoio"]
       },
       {
+        "id": 7,
         "name": "Carreira de Emma",
         "category": "Plots",
         "description": "Emma luta para equilibrar suas inseguranças pessoais com sua ambição profissional. Ela está tentando avançar em sua carreira, mas seu problema com autoimagem muitas vezes a impede.",
-        "tags": [
-          "Carreira",
-          "Autoimagem",
-          "Crescimento",
-          "alistame"
-        ],
-        "id": 7
+        "tags": ["Carreira", "Autoimagem", "Crescimento"]
       },
       {
         "id": 8,
         "name": "Família de John",
         "category": "Plots",
         "description": "John vem de uma família tradicional que tem expectativas claras sobre o casamento e a vida. Ele luta para equilibrar suas próprias aspirações com as esperanças de sua família.",
-        "tags": [
-          "Família",
-          "Expectativa",
-          "Conflito"
-        ]
+        "tags": ["Família", "Expectativa", "Conflito"]
       }
     ]
   },
@@ -114,33 +77,21 @@
               "title": "O Café da Manhã",
               "summary": "A história começa em um café aconchegante e bem iluminado, onde John está desfrutando de seu café da manhã. Ele nota uma jovem chamada Emma sentada do outro lado do salão.",
               "content": "",
-              "tags": [
-                "John",
-                "Emma",
-                "Café"
-              ]
+              "tags": ["John", "Emma", "Café"]
             },
             {
               "id": 2,
               "title": "O Bolinho",
               "summary": "John e Emma têm um encontro acidental quando ambos estendem a mão para pegar o último bolinho no balcão. Eles compartilham um sorriso e John se desculpa instintivamente.",
               "content": "",
-              "tags": [
-                "John",
-                "Emma",
-                "Café"
-              ]
+              "tags": ["John", "Emma", "Café"]
             },
             {
               "id": 3,
               "title": "A Primeira Conversa",
               "summary": "Intrigado pela beleza de Emma, apesar de seus esforços para se esconder atrás de um grande livro, John inicia uma conversa com ela. Eles começam a falar sobre suas vidas e interesses.",
               "content": "",
-              "tags": [
-                "John",
-                "Emma",
-                "Conversa"
-              ]
+              "tags": ["John", "Emma", "Conversa"]
             }
           ]
         },
@@ -155,34 +106,21 @@
               "title": "Conhecendo-se Melhor",
               "summary": "Nos dias seguintes, John e Emma continuam se encontrando no café, desenvolvendo uma amizade baseada em conversas profundas. Eles compartilham histórias pessoais e descobrem afinidades.",
               "content": "",
-              "tags": [
-                "John",
-                "Emma",
-                "Café",
-                "Amizade"
-              ]
+              "tags": ["John", "Emma", "Café", "Amizade"]
             },
             {
               "id": 2,
               "title": "A Carreira de Emma",
               "summary": "Embora se concentre em seu trabalho na galeria, John percebe que Emma está lutando para equilibrar suas inseguranças pessoais com sua ambição profissional. Ela revela seus medos sobre não ser boa o suficiente.",
               "content": "",
-              "tags": [
-                "Emma",
-                "Carreira",
-                "Insegurança"
-              ]
+              "tags": ["Emma", "Carreira", "Insegurança"]
             },
             {
               "id": 3,
               "title": "Expectativas Familiares",
               "summary": "John, por outro lado, enfrenta a pressão de sua família tradicional que tem expectativas claras sobre o casamento e a vida. Ele luta para equilibrar suas próprias aspirações com as esperanças de sua família.",
               "content": "",
-              "tags": [
-                "John",
-                "Família",
-                "Expectativa"
-              ]
+              "tags": ["John", "Família", "Expectativa"]
             }
           ]
         },
@@ -197,34 +135,21 @@
               "title": "Sinais de Desconforto",
               "summary": "John começa a notar que Emma frequentemente desvia elogios e parece desconfortável quando o assunto é ela mesma. Ele percebe que há algo mais profundo segurando-a.",
               "content": "",
-              "tags": [
-                "John",
-                "Emma",
-                "Autoimagem"
-              ]
+              "tags": ["John", "Emma", "Autoimagem"]
             },
             {
               "id": 2,
               "title": "Resistência ao Romance",
               "summary": "À medida que seu relacionamento avança, John quer levar as coisas mais a sério, sugerindo sair para jantar ou dar um passeio no parque. Emma sempre recusa, alegando não estar pronta.",
               "content": "",
-              "tags": [
-                "John",
-                "Emma",
-                "Data",
-                "Relacionamento"
-              ]
+              "tags": ["John", "Emma", "Data", "Relacionamento"]
             },
             {
               "id": 3,
               "title": "A Revelação Acidental",
               "summary": "Um dia, John acidentalmente ouve Emma falando ao telefone com uma amiga sobre se sentir pouco atraente e como seu peso a faz se considerar indigna de amor. Isso o faz entender os problemas de autoimagem dela.",
               "content": "",
-              "tags": [
-                "John",
-                "Emma",
-                "Autoimagem"
-              ]
+              "tags": ["John", "Emma", "Autoimagem"]
             }
           ]
         }
@@ -245,33 +170,21 @@
               "title": "Decisão de Apoiar",
               "summary": "John luta internamente sobre enfrentar o assunto ou respeitar o espaço dela. Ele decide apoiar Emma sem fazê-la se sentir mais desconfortável ao pressioná-la por respostas que ela ainda não está pronta para dar.",
               "content": "",
-              "tags": [
-                "John",
-                "Emma",
-                "Decisão"
-              ]
+              "tags": ["John", "Emma", "Decisão"]
             },
             {
               "id": 2,
               "title": "Pressão Familiar",
               "summary": "John enfrenta mais pressão de sua família, que começa a questionar por que ele ainda não está em um relacionamento sério. Ele sente o peso das expectativas, mas mantém seu foco em apoiar Emma.",
               "content": "",
-              "tags": [
-                "John",
-                "Família",
-                "Pressão"
-              ]
+              "tags": ["John", "Família", "Pressão"]
             },
             {
               "id": 3,
               "title": "Carreira de Emma: Um Obstáculo",
               "summary": "Emma está tentando avançar em sua carreira, mas suas inseguranças pessoais muitas vezes a impedem. Ela luta para encontrar o equilíbrio entre suas aspirações e seus medos.",
               "content": "",
-              "tags": [
-                "Emma",
-                "Carreira",
-                "Insegurança"
-              ]
+              "tags": ["Emma", "Carreira", "Insegurança"]
             }
           ]
         },
@@ -286,33 +199,21 @@
               "title": "Reunindo Coragem",
               "summary": "Emma começa a perceber que John realmente se importa com ela, e não apenas com sua aparência. Ela lentamente começa a abrir-se sobre suas lutas com autoestima.",
               "content": "",
-              "tags": [
-                "John",
-                "Emma",
-                "Autoimagem"
-              ]
+              "tags": ["John", "Emma", "Autoimagem"]
             },
             {
               "id": 2,
               "title": "Conflito Familiar",
               "summary": "John tem uma discussão intensa com sua família sobre suas escolhas de vida e seu relacionamento com Emma. Ele defende suas ações, mas sente a tensão crescente.",
               "content": "",
-              "tags": [
-                "John",
-                "Família",
-                "Conflito"
-              ]
+              "tags": ["John", "Família", "Conflito"]
             },
             {
               "id": 3,
               "title": "Avancando na Carreira",
               "summary": "Emma recebe uma oportunidade de promoção em seu trabalho, mas suas inseguranças ameaçam sabotar seus esforços. John a encoraja a ir atrás do que ela realmente quer.",
               "content": "",
-              "tags": [
-                "Emma",
-                "Carreira",
-                "Oportunidade"
-              ]
+              "tags": ["Emma", "Carreira", "Oportunidade"]
             }
           ]
         },
@@ -327,33 +228,21 @@
               "title": "Conexão Verdadeira",
               "summary": "John continua demonstrando um interesse genuíno pelos pensamentos e sonhos de Emma, nunca focando na aparência dela, mas celebrando quem ela é como pessoa. Gradualmente, Emma começa a abrir-se sobre suas lutas com autoestima.",
               "content": "",
-              "tags": [
-                "John",
-                "Emma",
-                "Autoimagem"
-              ]
+              "tags": ["John", "Emma", "Autoimagem"]
             },
             {
               "id": 2,
               "title": "O Bilhete Tocante",
               "summary": "Um momento crucial ocorre quando John deixa um bilhete tocante para Emma no café, expressando sua admiração por ela sem mencionar uma vez seu peso. Esse pequeno ato de gentileza toca profundamente Emma.",
               "content": "",
-              "tags": [
-                "John",
-                "Emma",
-                "Bilhete"
-              ]
+              "tags": ["John", "Emma", "Bilhete"]
             },
             {
               "id": 3,
               "title": "Nova Intimidade",
               "summary": "Com o tempo, Emma começa a se aceitar mais e seu vínculo com John se aprofunda. Eles continuam se encontrando no café, mas agora há uma nova camada de intimidade em suas conversas.",
               "content": "",
-              "tags": [
-                "John",
-                "Emma",
-                "Café"
-              ]
+              "tags": ["John", "Emma", "Café"]
             }
           ]
         }
@@ -374,33 +263,21 @@
               "title": "Confrontando Medos",
               "summary": "Emma começa a confrontar seus medos e inseguranças de frente, graças ao apoio constante de John. Ela começa a ver que seu valor não depende apenas de sua aparência.",
               "content": "",
-              "tags": [
-                "John",
-                "Emma",
-                "Autoimagem"
-              ]
+              "tags": ["John", "Emma", "Autoimagem"]
             },
             {
               "id": 2,
               "title": "Conflito Resolvido",
               "summary": "John finalmente consegue explicar suas escolhas para sua família, que começa a ver Emma sob uma nova luz. A tensão familiar diminui, permitindo que John se concentre mais em seu relacionamento com Emma.",
               "content": "",
-              "tags": [
-                "John",
-                "Família",
-                "Conflito"
-              ]
+              "tags": ["John", "Família", "Conflito"]
             },
             {
               "id": 3,
               "title": "Promoção Conquistada",
               "summary": "Emma consegue a promoção em seu trabalho, superando suas inseguranças. Ela começa a ver que pode equilibrar sua carreira e sua vida pessoal.",
               "content": "",
-              "tags": [
-                "Emma",
-                "Carreira",
-                "Sucesso"
-              ]
+              "tags": ["Emma", "Carreira", "Sucesso"]
             }
           ]
         },
@@ -415,33 +292,21 @@
               "title": "Aprofundando a Conneção",
               "summary": "John e Emma continuam se encontrando no café, mas agora há uma nova camada de intimidade em suas conversas. Eles compartilham mais sobre seus sonhos e medos.",
               "content": "",
-              "tags": [
-                "John",
-                "Emma",
-                "Café"
-              ]
+              "tags": ["John", "Emma", "Café"]
             },
             {
               "id": 2,
               "title": "Família Aceitando",
               "summary": "A família de John começa a aceitar Emma, vendo o impacto positivo que ela tem na vida dele. A tensão familiar diminui ainda mais.",
               "content": "",
-              "tags": [
-                "John",
-                "Família",
-                "Aceitação"
-              ]
+              "tags": ["John", "Família", "Aceitação"]
             },
             {
               "id": 3,
               "title": "Crescimento Profissional",
               "summary": "Emma continua a crescer em sua carreira, encontrando um equilíbrio entre seu trabalho e sua vida pessoal. Ela se sente mais confiante e realizada.",
               "content": "",
-              "tags": [
-                "Emma",
-                "Carreira",
-                "Growth"
-              ]
+              "tags": ["Emma", "Carreira", "Growth"]
             }
           ]
         },
@@ -456,37 +321,26 @@
               "title": "O Primeiro Passo",
               "summary": "John finalmente convida Emma para um encontro fora do café, e ela aceita. Eles caminham juntos, conversando animadamente.",
               "content": "",
-              "tags": [
-                "John",
-                "Emma",
-                "Data"
-              ]
+              "tags": ["John", "Emma", "Data"]
             },
             {
               "id": 2,
               "title": "Família Reunida",
               "summary": "A história termina com John e Emma conhecendo a família dele. Eles caminham juntos, conversando animadamente.",
               "content": "",
-              "tags": [
-                "John",
-                "Emma",
-                "Família"
-              ]
+              "tags": ["John", "Emma", "Família"]
             },
             {
               "id": 3,
               "title": "Carreira e Relacionamento",
               "summary": "Emma continua a crescer em sua carreira, encontrando um equilíbrio entre seu trabalho e sua vida pessoal. Ela se sente mais confiante e realizada.",
               "content": "",
-              "tags": [
-                "John",
-                "Emma",
-                "Relacionamento"
-              ]
+              "tags": ["John", "Emma", "Relacionamento"]
             }
           ]
-        }
-      ]
+        }]
     }
-  ]
+]
 }
+
+
