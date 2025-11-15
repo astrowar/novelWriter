@@ -37,7 +37,7 @@
         --border-dotted: 1px dotted var(--color-black);
 
         /* Typography - Swiss Style */
-        --font-primary: Helvetica, Arial, sans-serif;
+        --font-primary: Garamond, "EB Garamond", Georgia, serif;
         --font-editor: Garamond, "EB Garamond", Georgia, serif;
         --font-size-xs: 12px;
         --font-size-sm: 13px;
@@ -178,6 +178,191 @@
       #info-panel {
         background: #E8E4DC;
         padding: var(--spacing-xl);
+      }
+
+      /* Writer Panel - Swiss Design Grid Layout */
+      #writer-panel {
+        background: #D9D6D0;
+        overflow-y: auto;
+      }
+
+      .writer-container {
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 30px 20px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+      }
+
+      .writer-grid {
+        grid-column: 1 / -1;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 30px;
+      }
+
+      .writer-number {
+        font-size: 120px;
+        font-weight: 700;
+        line-height: 0.9;
+        color: #000000;
+        font-family: var(--font-primary);
+        letter-spacing: -0.02em;
+      }
+
+      .writer-content {
+        flex: 1;
+      }
+
+      .writer-header {
+        margin-bottom: 0;
+      }
+
+      .writer-title {
+        font-size: 32px;
+        font-weight: 700;
+        line-height: 1.2;
+        margin: 0;
+        color: #000000;
+        font-family: var(--font-primary);
+      }
+
+      .writer-title:focus {
+        outline: 1px solid #000000;
+        outline-offset: 4px;
+      }
+
+      .writer-columns {
+        grid-column: 1 / -1;
+        display: contents;
+      }
+
+      .writer-column {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .writer-column p {
+        font-size: 11px;
+        line-height: 1.6;
+        color: #000000;
+        margin: 0;
+        text-align: justify;
+        font-family: var(--font-primary);
+      }
+
+      .writer-column p:focus {
+        outline: 1px solid #000000;
+        outline-offset: 2px;
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      .writer-sections {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        margin-bottom: 60px;
+      }
+
+      .writer-section {
+        display: grid;
+        grid-template-columns: 0.7fr 1.3fr;
+        gap: 30px;
+        padding: 30px 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.3);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+      }
+
+      .writer-section:last-child {
+        border-bottom: none;
+      }
+
+      .writer-section + .writer-section {
+        border-top: none;
+      }
+
+      .section-summary {
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1.4;
+        margin: 0;
+        color: #000000;
+        font-family: var(--font-primary);
+      }
+
+      .section-content {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .section-content [contenteditable] {
+        font-size: 16px;
+        line-height: 1.6;
+        color: #000000;
+        margin: 0;
+        text-align: justify;
+        font-family: var(--font-primary);
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+
+      .section-content [contenteditable]:focus {
+        outline: 1px solid #000000;
+        outline-offset: 2px;
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      .section-heading {
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1.4;
+        margin: 0;
+        color: #000000;
+        font-family: var(--font-primary);
+      }
+
+      .section-heading:focus {
+        outline: 1px solid #000000;
+        outline-offset: 3px;
+      }
+
+      .writer-footer {
+        grid-column: 1 / -1;
+        padding-top: 40px;
+        border-top: 2px solid #000000;
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .writer-save-btn {
+        background: #000000;
+        color: #ffffff;
+        border: none;
+        padding: 12px 24px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: var(--font-primary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.2s;
+      }
+
+      .writer-save-btn:hover {
+        background: #333333;
+      }
+
+      .writer-footer-title {
+        font-size: 48px;
+        font-weight: 700;
+        margin: 0;
+        color: #000000;
+        font-family: var(--font-primary);
       }
 
       .main-wrapper {
@@ -848,69 +1033,285 @@
       }
 
       .act-section.filtered-hidden,
-      .chapter-card.filtered-hidden {
+      .chapter-card.filtered-hidden,
+      .chapter-section.filtered-hidden {
         display: none;
       }
 
-      .act-section {
-        margin-bottom: 25px;
+      .structure-outline {
+        font-family: var(--font-primary);
+        line-height: 1.6;
+        background: #ffffff;
+        padding: var(--spacing-lg);
       }
 
-      .act-header {
+      .structure-item {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--spacing-md);
+        padding: var(--spacing-xs) 0;
+        border-bottom: 1px solid transparent;
+        transition: background 0.2s ease;
+      }
+
+      .structure-item:hover {
+        background: var(--bg-hover);
+      }
+
+      .structure-number {
+        flex-shrink: 0;
+        font-weight: bold;
+        min-width: 50px;
+        text-align: right;
+        color: var(--text-primary);
+        font-size: var(--font-size-sm);
+      }
+
+      .structure-content {
+        flex: 1;
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        margin-bottom: 12px;
-        padding: 8px 15px;
-        background: var(--bg-secondary);
-        border-radius: var(--border-radius-lg);
-        border: 1px solid var(--border-secondary);
-        gap: 10px;
-      }
-
-      .act-title {
-        color: var(--text-primary);
-        font-size: 1.3em;
-        margin: 0;
-        flex: 1;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
         min-width: 0;
       }
 
-      .act-title-input {
-        color: var(--text-primary);
-        font-size: 1.3em;
-        margin: 0;
-        flex: 1;
-        min-width: 0;
-        max-width: 100%;
-        border: 2px solid white;
-        padding: 4px 8px;
-        border-radius: 3px;
-        background: rgba(255, 255, 255, 0.2);
-        outline: none;
+      .structure-title-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+        width: 100%;
       }
 
-      .add-chapter-btn {
-        background: var(--bg-card-inner);
-        color: var(--text-primary);
-        border: none;
-        padding: 6px 14px;
-        border-radius: 6px;
-        font-size: 0.9em;
-        font-weight: 600;
+      .structure-title {
+        flex: 1;
+        min-width: 0;
+        word-wrap: break-word;
         cursor: pointer;
-        transition: background 0.2s;
+      }
+
+      .act-item {
+        margin-bottom: var(--spacing-md);
+        padding: var(--spacing-md) 0 var(--spacing-sm);
+        border-bottom: 1px solid var(--border-light);
+      }
+
+      .act-item .structure-number {
+        font-size: var(--font-size-lg);
+        font-weight: 600;
+        font-family: var(--font-primary);
+        letter-spacing: 0.05em;
+      }
+
+      .act-item .structure-title {
+        font-size: var(--font-size-lg);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+      }
+
+      .chapter-number {
+        color: #000000;
+        font-weight: 700;
+        text-align: right;
+        padding-top: 0;
+        font-family: var(--font-primary);
+        letter-spacing: 0.05em;
+        font-size: var(--font-size-base);
+        line-height: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        justify-content: flex-end;
+      }
+
+      .chapter-write-btn {
+        background: transparent;
+        border: 1px solid #000000;
+        color: #000000;
+        padding: 2px 6px;
+        font-size: 14px;
+        cursor: pointer;
+        border-radius: 3px;
+        transition: all 0.2s;
+        line-height: 1;
+      }
+
+      .chapter-write-btn:hover {
+        background: #000000;
+        color: #ffffff;
+      }
+
+      .chapter-title {
+        font-weight: 700;
+        font-size: var(--font-size-base);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        line-height: 1.3;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+
+      .chapter-sections {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-sm);
+      }
+
+      .section-row {
+        display: flex;
+        gap: var(--spacing-md);
+        align-items: flex-start;
+        padding: var(--spacing-xs) 0;
+        margin-bottom: 40px;
+      }
+
+      .section-row.empty {
+        color: var(--text-secondary);
+        font-style: italic;
+        font-size: var(--font-size-xs);
+      }
+
+      .section-number {
+        font-weight: 500;
+        color: var(--text-secondary);
+        font-family: var(--font-primary);
+        letter-spacing: 0.05em;
+        font-size: var(--font-size-xs);
+        min-width: 50px;
+        text-align: left;
+      }
+
+      .section-content {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-xs);
+      }
+
+      .section-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-xs);
+      }
+
+      .structure-action-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-secondary);
+        font-size: var(--font-size-xs);
+        cursor: pointer;
+        padding: 2px 6px;
+        border-radius: 3px;
+        transition: all 0.2s;
+        white-space: nowrap;
         flex-shrink: 0;
+        opacity: 0;
+      }
+
+      .chapter-collapse-btn {
+        opacity: 1;
+        margin-right: 4px;
+      }
+
+      .structure-item:hover .structure-action-btn {
+        opacity: 1;
+      }
+
+      .structure-action-btn:hover {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+      }
+
+      .chapters-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .chapter-row {
+        display: grid;
+        grid-template-columns: 90px 1fr 2fr;
+        gap: var(--spacing-lg);
+        padding: var(--spacing-md) 0;
+        border-top: 1px solid var(--border-light);
+        align-items: flex-start;
+      }
+
+      .chapter-row.collapsed .chapter-sections {
+        display: none;
+      }
+
+      .section-summary {
+        color: var(--text-primary);
+        font-size: var(--font-size-sm);
+        line-height: 1.5;
+        margin: 0;
+        font-style: normal;
+      }
+
+
+
+      .section-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-xs);
+        align-items: center;
+      }
+
+      .section-tag {
+        background: #f3f3f3;
+        color: #000000;
+        padding: 2px 6px 2px 8px;
+        border-radius: 3px;
+        font-size: var(--font-size-xs);
+        border: 1px solid var(--border-light);
+        font-style: italic;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .tag-remove-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-secondary);
+        font-size: 14px;
+        line-height: 1;
+        cursor: pointer;
+        padding: 0 2px;
+        margin: 0;
+        transition: color 0.2s;
+      }
+
+      .tag-remove-btn:hover {
+        color: var(--text-primary);
+      }
+
+      .tag-add-btn {
+        background: transparent;
+        border: 1px dashed var(--border-secondary);
+        color: var(--text-secondary);
+        font-size: var(--font-size-xs);
+        padding: 2px 8px;
+        border-radius: 3px;
+        cursor: pointer;
+        transition: all 0.2s;
         white-space: nowrap;
       }
 
-      .add-chapter-btn:hover {
-        background: var(--hover-bg-light);
-        transform: scale(1.05);
+      .tag-add-btn:hover {
+        border-color: var(--border-primary);
+        color: var(--text-primary);
+        background: var(--bg-secondary);
       }
 
-      .add-chapter-btn:active {
-        transform: scale(0.98);
+      .act-section {
+        margin-bottom: 40px;
+        page-break-inside: avoid;
       }
 
       .add-act-section {
@@ -942,162 +1343,21 @@
         transform: scale(0.98);
       }
 
-      .chapters-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: var(--spacing-md);
-        margin-bottom: var(--spacing-lg);
-        position: relative;
-      }
-
-      .chapter-card {
-        background: var(--bg-primary);
-        border-radius: 0;
-        padding: var(--spacing-md);
-        box-shadow: none;
-        transition: border-color 0.2s ease;
-        cursor: pointer;
-        position: relative;
-        border: var(--border-dotted);
-      }
-
-      .chapter-card:hover {
-        background: var(--bg-hover);
-        border-color: var(--border-primary);
-      }
-
-      .chapter-card.dragging {
+      /* Drag and drop support */
+      .chapter-section.dragging {
         opacity: 0.5;
         cursor: grabbing;
       }
 
-      .chapter-card.drag-over {
-        border: var(--border-width) solid var(--border-primary);
+      .chapter-section.drag-over {
         background: var(--bg-hover);
       }
 
-      .drag-handle {
-        position: absolute;
-        top: var(--spacing-sm);
-        right: var(--spacing-sm);
-        width: 14px;
-        height: 14px;
-        cursor: grab;
-        display: grid;
-        grid-template-columns: repeat(2, 5px);
-        grid-template-rows: repeat(3, 5px);
-        gap: 2px;
-        padding: 2px;
-        opacity: 0.3;
-        transition: opacity 0.2s ease;
-      }
-
-      .chapter-card:hover .drag-handle {
-        opacity: 1;
-      }
-
-      .drag-handle:active {
-        cursor: grabbing;
-      }
-
-      .drag-handle-dot {
-        width: 3px;
-        height: 3px;
-        background: var(--text-primary);
-        border-radius: 0;
-      }
-
-      .chapter-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        border-bottom: var(--border-dotted);
-        padding-bottom: var(--spacing-xs);
-        margin-bottom: var(--spacing-sm);
-      }
-
-      .chapter-title-container {
-        flex: 1;
-      }
-
-      .chapter-title {
-        color: var(--text-primary);
-        font-size: var(--font-size-base);
-        font-weight: normal;
-        margin-bottom: var(--spacing-xs);
-      }
-
-      .chapter-number {
+      .empty-state {
         color: var(--text-secondary);
-        font-size: var(--font-size-xs);
-      }
-
-      .chapter-settings-btn {
-        background: transparent;
-        border: none;
-        color: var(--text-primary);
-        font-size: var(--font-size-base);
-        cursor: pointer;
-        padding: 2px 6px;
-        border-radius: 0;
-        transition: text-decoration 0.2s;
-        line-height: 1;
-      }
-
-      .chapter-settings-btn:hover {
-        text-decoration: line-through;
-        transform: none;
-      }
-
-      .chapter-settings-btn:active {
-        transform: none;
-      }
-
-      .sections-list {
-        list-style: none;
-      }
-
-      .section-item {
-        margin-bottom: var(--spacing-xs);
-        padding: var(--spacing-xs);
-        background: var(--bg-primary);
-        border-radius: 0;
-        border-left: var(--border-width) solid var(--border-primary);
-      }
-
-      .section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: var(--spacing-xs);
-      }
-
-      .section-edit-btn {
-        background: transparent;
-        border: none;
-        color: var(--text-primary);
-        font-size: var(--font-size-sm);
-        cursor: pointer;
-        padding: 2px 4px;
-        border-radius: 0;
-        transition: text-decoration 0.2s;
-        line-height: 1;
-        flex-shrink: 0;
-      }
-
-      .section-edit-btn:hover {
-        text-decoration: line-through;
-      }
-
-      .section-edit-btn:active {
-        transform: none;
-      }
-
-      .section-summary {
-        color: var(--text-primary);
-        font-size: var(--font-size-sm);
-        line-height: 1.4;
-        flex: 1;
+        font-style: italic;
+        padding: var(--spacing-md);
+        text-align: center;
       }
 
       .section-tags {
@@ -1105,17 +1365,6 @@
         flex-wrap: wrap;
         gap: var(--spacing-xs);
         margin-top: var(--spacing-xs);
-      }
-
-      .section-tag {
-        display: inline-block;
-        padding: 2px 6px;
-        background: transparent;
-        color: var(--text-primary);
-        font-size: var(--font-size-xs);
-        border-radius: 0;
-        border: var(--border-width) dotted var(--border-light);
-        font-weight: normal;
       }
 
       .empty-state {
@@ -1257,7 +1506,6 @@
               <h1 class="info-book-title" id="info-book-title">Book Title</h1>
 
               <div class="info-section">
-                <div class="info-section-number">01</div>
                 <h3 class="info-section-title">Basic Information</h3>
                 <div class="info-section-content">
                   <div class="info-label">Title</div>
@@ -1287,7 +1535,6 @@
               </div>
 
               <div class="info-section">
-                <div class="info-section-number">02</div>
                 <h3 class="info-section-title">Synopsis</h3>
                 <div class="info-section-content" style="grid-template-columns: 1fr;">
                   <textarea class="info-textarea" id="info-synopsis" placeholder="Write a brief synopsis of your book..."></textarea>
@@ -1295,7 +1542,6 @@
               </div>
 
               <div class="info-section">
-                <div class="info-section-number">03</div>
                 <h3 class="info-section-title">Statistics</h3>
                 <div class="info-stats-grid">
                   <div class="info-stat-item">
@@ -1326,7 +1572,6 @@
               </div>
 
               <div class="info-section">
-                <div class="info-section-number">04</div>
                 <h3 class="info-section-title">Notes</h3>
                 <div class="info-section-content" style="grid-template-columns: 1fr;">
                   <textarea class="info-textarea" id="info-notes" placeholder="Additional notes, ideas, or reminders..."></textarea>
@@ -1373,9 +1618,48 @@
 
           <!-- Writer Panel -->
           <div id="writer-panel" class="app-panel">
-            <div class="container">
-              <h2>Writer View</h2>
-              <p>Writer view coming soon...</p>
+            <div class="writer-container">
+              <div class="writer-grid">
+                <h1 class="writer-title" contenteditable="true">Euismod tincidunt ut laoreet dolore</h1>
+                <div class="writer-number">02</div>
+              </div>
+              
+              <div class="writer-sections">
+                <div class="writer-section">
+                  <div class="section-summary">
+                    In quis enim sit magna molestiae, quae laudantia aperiet faciunt facilisi.
+                  </div>
+                  <div class="section-content">
+                    <p contenteditable="true">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.</p>
+                    <p contenteditable="true">Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.</p>
+                  </div>
+                </div>
+                
+                <div class="writer-section">
+                  <div class="section-summary">
+                    Duis autem vel eum dolore / 2020
+                  </div>
+                  <div class="section-content">
+                    <p contenteditable="true">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+                    <p contenteditable="true">Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.</p>
+                    <p contenteditable="true">Lorem ipsum dolor sit amet, cons ectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.</p>
+                  </div>
+                </div>
+                
+                <div class="writer-section">
+                  <div class="section-summary">
+                    Duska Expa 1997 - 2010
+                  </div>
+                  <div class="section-content">
+                    <p contenteditable="true">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+                    <p contenteditable="true">Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, cons ectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="writer-footer">
+                <h2 class="writer-footer-title">Osaka</h2>
+              </div>
             </div>
           </div>
 
@@ -2374,6 +2658,7 @@
       }
 
       .info-section-number {
+        display: none;
         font-size: 48px;
         font-weight: bold;
         line-height: 1;

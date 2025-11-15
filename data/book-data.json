@@ -55,7 +55,7 @@
       "chapters": [
         {
           "id": 1,
-          "title": "Capítulo 1: Primeiros Passos",
+          "title": "Primeiros Passos",
           "numbering": true,
           "visibleInFinal": true,
           "sections": [
@@ -97,7 +97,7 @@
       "chapters": [
         {
           "id": 2,
-          "title": "Capítulo 2: Barreiras Invisíveis",
+          "title": "Barreiras Invisíveis",
           "numbering": true,
           "visibleInFinal": true,
           "sections": [
@@ -139,7 +139,7 @@
       "chapters": [
         {
           "id": 3,
-          "title": "Capítulo 3: O Caminho para a Aceitação",
+          "title": "O Caminho para a Aceitação",
           "numbering": true,
           "visibleInFinal": true,
           "sections": [

@@ -185,68 +185,78 @@ function renderBookStructure(book) {
     return;
   }
 
-  let html = '';
+  let html = '<div class="structure-outline">';
 
   // Calculate chapter numbers sequentially across all acts
   let chapterNumber = 0;
 
-  book.acts.forEach(act => {
+  book.acts.forEach((act, actIndex) => {
+    const actNumber = String(actIndex + 1).padStart(2, '0');
+    
     html += `
       <div class="act-section">
-        <div class="act-header">
-          <h2 class="act-title" data-act-id="${act.id}">${act.title}</h2>
-          <button class="add-chapter-btn" data-act-id="${act.id}">+ Add Chapter</button>
+        <div class="structure-item act-item">
+          <div class="structure-number">${actNumber}</div>
+          <div class="structure-content">
+            <div class="structure-title act-title" data-act-id="${act.id}">${act.title}</div>
+            <button class="structure-action-btn add-chapter-btn" data-act-id="${act.id}">+ Add Chapter</button>
+          </div>
         </div>
-        <div class="chapters-grid">
     `;
 
     if (act.chapters && act.chapters.length > 0) {
-      act.chapters.forEach((chapter, index) => {
+      html += '<div class="chapters-list">';
+      
+      act.chapters.forEach((chapter, chapterIndex) => {
         chapterNumber++; // Increment for each chapter across all acts
+        
         html += `
-          <div class="chapter-card" draggable="true" data-chapter-id="${chapter.id}" data-act-id="${act.id}">
-            <div class="chapter-header">
-              <div class="chapter-title-container">
-                <div class="chapter-title" data-chapter-id="${chapter.id}" data-act-id="${act.id}">${chapter.title}</div>
-                <div class="chapter-number">Chapter ${chapterNumber}</div>
+          <div class="chapter-section" draggable="true" data-chapter-id="${chapter.id}" data-act-id="${act.id}">
+            <div class="structure-item chapter-item">
+              <div class="structure-number">${chapterNumber}</div>
+              <div class="structure-content">
+                <div class="structure-title chapter-title" data-chapter-id="${chapter.id}" data-act-id="${act.id}">${chapter.title}</div>
+                <button class="structure-action-btn chapter-settings-btn" data-chapter-id="${chapter.id}" data-act-id="${act.id}" title="Chapter Settings">⚙</button>
               </div>
-              <button class="chapter-settings-btn" data-chapter-id="${chapter.id}" data-act-id="${act.id}" title="Chapter Settings">⚙</button>
             </div>
-            <ul class="sections-list">
         `;
 
         if (chapter.sections && chapter.sections.length > 0) {
-          chapter.sections.forEach(section => {
+          html += '<div class="sections-list">';
+          
+          chapter.sections.forEach((section, sectionIndex) => {
+            const sectionNum = `${chapterNumber}.${sectionIndex + 1}`;
             const tagsHtml = section.tags && section.tags.length > 0
               ? section.tags.map(tag => `<span class="section-tag">${tag}</span>`).join('')
               : '';
 
             html += `
-              <li class="section-item">
-                <div class="section-header">
-                  <div class="section-title">${section.title}</div>
-                  <button class="section-edit-btn" data-section-id="${section.id}" data-chapter-id="${chapter.id}" data-act-id="${act.id}" title="Edit Section">✎</button>
+              <div class="structure-item section-item">
+                <div class="structure-number">${sectionNum}</div>
+                <div class="structure-content">
+                  <div class="structure-title-row">
+                    <div class="structure-title section-title">${section.title}</div>
+                    <button class="structure-action-btn section-edit-btn" data-section-id="${section.id}" data-chapter-id="${chapter.id}" data-act-id="${act.id}" title="Edit Section">✎</button>
+                  </div>
+                  ${section.summary ? `<div class="section-summary">${section.summary}</div>` : ''}
+                  ${tagsHtml ? `<div class="section-tags">${tagsHtml}</div>` : ''}
                 </div>
-                <div class="section-summary">${section.summary}</div>
-                ${tagsHtml ? `<div class="section-tags">${tagsHtml}</div>` : ''}
-              </li>
+              </div>
             `;
           });
-        } else {
-          html += '<li class="section-item"><div class="section-summary">No sections yet.</div></li>';
+          
+          html += '</div>';
         }
 
-        html += `
-            </ul>
-          </div>
-        `;
+        html += '</div>';
       });
+      
+      html += '</div>';
     } else {
       html += '<div class="empty-state">No chapters in this act yet.</div>';
     }
 
     html += `
-        </div>
       </div>
     `;
   });
@@ -256,17 +266,16 @@ function renderBookStructure(book) {
     <div class="add-act-section">
       <button class="add-act-btn">+ Add New Act</button>
     </div>
+  </div>
   `;
 
   container.innerHTML = html;
 
-  // Add click event listeners to chapter cards
-  document.querySelectorAll('.chapter-card').forEach(card => {
-    card.addEventListener('click', (e) => {
-      const chapterId = card.getAttribute('data-chapter-id');
-      console.log(`Chapter ${chapterId} clicked`);
-      // You can add more functionality here, like opening a detailed view
-    });
+  // Add click event listeners to chapter sections
+  document.querySelectorAll('.chapter-section').forEach(section => {
+    // Draggable functionality is maintained via the draggable attribute
+    const chapterId = section.getAttribute('data-chapter-id');
+    console.log(`Chapter ${chapterId} section ready`);
   });
 
   // Add click event listeners to add chapter buttons

@@ -9,7 +9,7 @@ class DragDropManager {
   }
 
   setup() {
-    const cards = document.querySelectorAll('.chapter-card');
+    const cards = document.querySelectorAll('.chapter-section');
 
     cards.forEach(card => {
       card.addEventListener('dragstart', (e) => this.handleDragStart(e, card));
@@ -24,7 +24,7 @@ class DragDropManager {
   // Capture positions of all cards before re-render (FLIP: First)
   captureCardPositions() {
     this.cardPositions.clear();
-    const cards = document.querySelectorAll('.chapter-card');
+    const cards = document.querySelectorAll('.chapter-section');
     cards.forEach(card => {
       const id = card.getAttribute('data-chapter-id');
       const rect = card.getBoundingClientRect();
@@ -53,10 +53,10 @@ class DragDropManager {
     e.dataTransfer.dropEffect = 'move';
 
     // Find the card being hovered (could be nested element)
-    const card = e.target.closest('.chapter-card');
+    const card = e.target.closest('.chapter-section');
     if (card && !card.classList.contains('dragging')) {
       // Remove highlight from all other cards
-      document.querySelectorAll('.chapter-card').forEach(c => {
+      document.querySelectorAll('.chapter-section').forEach(c => {
         if (c !== card) {
           c.classList.remove('drag-over');
         }
@@ -138,7 +138,7 @@ class DragDropManager {
   animateMovedCards() {
     if (this.cardPositions.size === 0) return;
 
-    const cards = document.querySelectorAll('.chapter-card');
+    const cards = document.querySelectorAll('.chapter-section');
 
     cards.forEach(card => {
       const id = card.getAttribute('data-chapter-id');

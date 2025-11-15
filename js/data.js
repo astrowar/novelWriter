@@ -83,9 +83,29 @@ class BookData {
 
   // Find a section
   findSection(actId, chapterId, sectionId) {
+    // If only one argument provided, treat it as sectionId and search all
+    if (arguments.length === 1) {
+      const sectionIdToFind = actId; // First param is actually sectionId
+      for (const act of this.data.acts) {
+        if (!act.chapters) continue;
+        for (const chapter of act.chapters) {
+          if (!chapter.sections) continue;
+          const section = chapter.sections.find(s => s.id === sectionIdToFind);
+          if (section) return section;
+        }
+      }
+      return null;
+    }
+    
+    // Standard three-parameter search
     const chapter = this.findChapter(actId, chapterId);
     if (!chapter || !chapter.sections) return null;
     return chapter.sections.find(s => s.id === sectionId);
+  }
+
+  // Save data (alias for saveData for consistency)
+  save() {
+    this.saveData();
   }
 
   // Add a new act
