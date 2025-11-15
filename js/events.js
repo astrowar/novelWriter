@@ -271,16 +271,30 @@ class EventHandlers {
         const sectionId = parseInt(el.getAttribute('data-section-id'));
         const chapterId = parseInt(el.getAttribute('data-chapter-id'));
         const actId = parseInt(el.getAttribute('data-act-id'));
-        // Find chapter and section
+
+        // Find chapter object
         const chapter = this.bookData.findChapter(actId, chapterId);
-        if (chapter) {
-          const sectionIndex = chapter.sections.findIndex(s => s.id === sectionId);
-          const chapterNumber = (typeof sectionIndex === 'number' && sectionIndex >= 0)
-            ? String(sectionIndex + 1).padStart(2, '0') : '01';
-          // Memorize context
-          EventHandlers.lastWriterContext = { actId, chapterId, chapterNumber };
-          this.openWriterPanel(chapter, chapterNumber, sectionId);
+        if (!chapter) return;
+
+        // Compute global chapter number (across acts)
+        const book = this.bookData.getBook();
+        let counter = 0;
+        let found = false;
+        for (const a of book.acts) {
+          if (a.chapters && a.chapters.length > 0) {
+            for (const ch of a.chapters) {
+              counter++;
+              // Match both act id and chapter id because chapter.id may repeat across acts
+              if (ch.id === chapterId && a.id === actId) { found = true; break; }
+            }
+          }
+          if (found) break;
         }
+        const chapterNumber = String(counter || 1).padStart(2, '0');
+
+        // Memorize context and open writer focused on section
+        EventHandlers.lastWriterContext = { actId, chapterId, chapterNumber };
+        this.openWriterPanel(chapter, chapterNumber, sectionId);
       });
     });
   }
