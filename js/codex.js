@@ -311,6 +311,23 @@ class Codex {
             gridContainer.appendChild(tile);
           });
 
+          // Add "+" tile to allow creating a new entry in this category
+          const addTile = document.createElement('div');
+          addTile.className = 'codex-entry-add';
+          addTile.setAttribute('data-category', category);
+          addTile.innerHTML = '<div class="codex-entry-add-inner">+<div class="codex-entry-add-label">Add</div></div>';
+          addTile.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            // open new entry panel and preselect this category
+            this.openEntryPanel(null);
+            // ensure category select is set after panel is populated
+            setTimeout(() => {
+              const sel = document.getElementById('codex-entry-panel-category');
+              if (sel) sel.value = category;
+            }, 50);
+          });
+          gridContainer.appendChild(addTile);
+
           // separator (visual) after category
           const sep = document.createElement('div');
           sep.style.gridColumn = '1 / -1';

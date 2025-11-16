@@ -536,6 +536,40 @@
         background: transparent;
       }
 
+      /* Add-tile: visually matches the grid tile, with centered + button */
+      .codex-entry-add {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px dashed var(--border-light);
+        background: rgba(0,0,0,0.02);
+        height: 570px;
+        cursor: pointer;
+        transition: background 0.15s, transform 0.08s;
+      }
+
+      .codex-entry-add:hover {
+        background: rgba(0,0,0,0.04);
+        transform: translateY(-2px);
+      }
+
+      .codex-entry-add-inner {
+        text-align: center;
+        font-size: 40px;
+        line-height: 1;
+        color: var(--text-primary);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .codex-entry-add-label {
+        font-size: 12px;
+        opacity: 0.8;
+        font-weight: 600;
+      }
+
       .codex-entry-tile.active {
         outline: 1px solid rgba(0,0,0,0.06);
       }
