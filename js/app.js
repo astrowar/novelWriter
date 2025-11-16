@@ -137,6 +137,17 @@ class NovelWriterApp {
       this.codex.openEntryPanel();
     });
 
+    // Main codex panel new entry / search controls (if present)
+    const codexMainNew = document.getElementById('codex-main-new');
+    if (codexMainNew) {
+      codexMainNew.addEventListener('click', () => this.codex.openEntryPanel());
+    }
+
+    const codexMainSearch = document.getElementById('codex-main-search');
+    if (codexMainSearch) {
+      codexMainSearch.addEventListener('input', (e) => this.codex.filterEntries(e.target.value));
+    }
+
     document.getElementById('codex-config-btn').addEventListener('click', () => {
       this.codex.openConfigPanel();
     });
@@ -273,6 +284,7 @@ class NovelWriterApp {
     // Show the selected panel
     const sectionMap = {
       'info': 'info-panel',
+      'codex': 'codex-main-panel',
       'structure': 'structure-panel',
       'writer': 'writer-panel',
       'ia': 'ai-panel',
@@ -288,6 +300,8 @@ class NovelWriterApp {
         // Special actions for specific panels
         if (section === 'info') {
           this.updateInfoPanelData();
+        } else if (section === 'codex') {
+          this.codex.render();
         } else if (section === 'structure') {
           this.update();
         }

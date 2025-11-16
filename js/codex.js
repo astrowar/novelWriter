@@ -115,8 +115,12 @@ class Codex {
 
   // Render the codex panel
   render() {
-    const container = document.getElementById('codex-content');
-    container.innerHTML = '';
+    const leftContainer = document.getElementById('codex-content');
+    const mainList = document.getElementById('codex-main-list');
+    const targets = [leftContainer, mainList].filter(Boolean);
+
+    // Clear both targets
+    targets.forEach(t => t.innerHTML = '');
 
     const categories = this.bookData.data.codex.categories;
 
@@ -136,42 +140,244 @@ class Codex {
         return;
       }
 
-      const categoryDiv = document.createElement('div');
-      categoryDiv.className = 'codex-category';
-      if (this.collapsedCategories.has(category)) {
-        categoryDiv.classList.add('collapsed');
-      }
+      // For each render target create nodes (so event listeners are attached)
+      targets.forEach(target => {
+        // If this is the main codex list, render a grid of tiles
+        if (target.id === 'codex-main-list') {
+          const sectionWrap = document.createElement('div');
+          // grid container will host the tiles centered
+          const gridContainer = document.createElement('div');
+          gridContainer.className = 'codex-grid-container';
 
-      const header = document.createElement('div');
-      header.className = 'codex-category-header';
-      header.innerHTML = `
-        <span class="codex-category-arrow">▼</span>
-        <span>${category}</span>
-        <span style="margin-left: auto; opacity: 0.6; font-size: 0.8em;">(${filteredEntries.length})</span>
-      `;
-      header.addEventListener('click', () => this.toggleCategory(category));
+          // category title (full width)
+          const titleRow = document.createElement('div');
+          titleRow.className = 'codex-category-title';
+          titleRow.innerHTML = `<strong>${category}</strong><span style="opacity:0.6; font-size:0.9em; margin-left:8px;">(${filteredEntries.length})</span>`;
+          gridContainer.appendChild(titleRow);
 
-      const entriesDiv = document.createElement('div');
-      entriesDiv.className = 'codex-category-entries';
+          // (types pills removed — simplified single-column magazine layout)
 
-      filteredEntries.forEach(entry => {
-        const entryDiv = document.createElement('div');
-        entryDiv.className = 'codex-entry';
-        entryDiv.textContent = entry.name;
-        entryDiv.title = entry.description || 'No description';
-        entryDiv.addEventListener('click', () => this.openEntryDetails(entry));
-        entriesDiv.appendChild(entryDiv);
+          // For each entry, create a tile and append directly to gridContainer (grid handles columns)
+          filteredEntries.forEach(entry => {
+            const tile = document.createElement('div');
+            tile.className = 'codex-entry-tile';
+            tile.setAttribute('data-entry-id', entry.id);
+            tile.addEventListener('click', () => this.openEntryDetails(entry));
+
+            // image
+            if (entry.image) {
+              const img = document.createElement('img');
+              img.className = 'codex-entry-image';
+              img.src = entry.image;
+              img.alt = entry.name;
+              tile.appendChild(img);
+            } else {
+              const imgPlaceholder = document.createElement('div');
+              imgPlaceholder.className = 'codex-entry-image';
+              tile.appendChild(imgPlaceholder);
+            }
+
+            // category tag element removed (redundant)
+
+            const nameEl = document.createElement('div');
+            nameEl.className = 'codex-entry-name';
+            nameEl.textContent = entry.name;
+            tile.appendChild(nameEl);
+
+            const descEl = document.createElement('div');
+            descEl.className = 'codex-entry-desc';
+            descEl.textContent = (entry.description || '').slice(0, 260);
+            tile.appendChild(descEl);
+
+            // Tags editor (similar to Structure panel tags)
+            const tagsContainer = document.createElement('div');
+            tagsContainer.className = 'codex-entry-tags section-info-tags';
+
+            // Ensure entry.tags exists
+            if (!entry.tags) entry.tags = [];
+
+            const renderTags = () => {
+              tagsContainer.innerHTML = '';
+
+              entry.tags.forEach(tag => {
+                const tagSpan = document.createElement('span');
+                tagSpan.className = 'section-info-tag removable';
+                tagSpan.textContent = tag;
+                tagSpan.onclick = (e) => {
+                  e.stopPropagation();
+                  const idx = entry.tags.indexOf(tag);
+                  if (idx > -1) {
+                    entry.tags.splice(idx, 1);
+                    try { this.bookData.save(); } catch (err) {}
+                    this.onUpdate();
+                    renderTags();
+                  }
+                };
+                tagsContainer.appendChild(tagSpan);
+              });
+
+              // Add input wrapper
+              const addWrapper = document.createElement('div');
+              addWrapper.style.position = 'relative';
+              addWrapper.style.display = 'inline-block';
+
+              const addInput = document.createElement('input');
+              addInput.type = 'text';
+              addInput.className = 'tag-add-input';
+              addInput.placeholder = '+ add tag';
+              addInput.autocomplete = 'off';
+
+              const dropdown = document.createElement('div');
+              dropdown.className = 'tag-dropdown';
+              dropdown.style.display = 'none';
+
+              const getCodexEntries = () => {
+                if (!this.bookData.data.codex || !this.bookData.data.codex.entries) return [];
+                const entryNames = this.bookData.data.codex.entries.map(e => e.name);
+                const allTags = new Set();
+                this.bookData.data.codex.entries.forEach(e => {
+                  if (e.tags && Array.isArray(e.tags)) e.tags.forEach(t => allTags.add(t));
+                });
+                const combined = [...new Set([...entryNames, ...Array.from(allTags)])];
+                return combined.sort();
+              };
+
+              const updateDropdown = (filter = '') => {
+                const entries = getCodexEntries();
+                const filtered = filter
+                  ? entries.filter(name => name.toLowerCase().includes(filter.toLowerCase()) && !entry.tags.includes(name))
+                  : entries.filter(name => !entry.tags.includes(name));
+
+                dropdown.innerHTML = '';
+                if (filtered.length === 0) { dropdown.style.display = 'none'; return; }
+
+                filtered.forEach(name => {
+                  const option = document.createElement('div');
+                  option.className = 'tag-dropdown-option';
+                  option.textContent = name;
+                  option.onclick = (ev) => { ev.stopPropagation(); addTag(name); };
+                  dropdown.appendChild(option);
+                });
+                dropdown.style.display = 'block';
+              };
+
+              const addTag = (name) => {
+                if (!name || name.trim() === '') return;
+                const tagName = name.trim();
+                if (!entry.tags.includes(tagName)) {
+                  entry.tags.push(tagName);
+                  try { this.bookData.save(); } catch (err) {}
+                  this.onUpdate();
+                  addInput.value = '';
+                  updateDropdown('');
+                  renderTags();
+                }
+              };
+
+              addInput.addEventListener('focus', () => updateDropdown(addInput.value));
+              addInput.addEventListener('input', (e) => updateDropdown(e.target.value));
+              addInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  const newTag = addInput.value.trim();
+                  const entries = getCodexEntries();
+                  if (newTag && entries.includes(newTag) && !entry.tags.includes(newTag)) {
+                    addTag(newTag);
+                  } else if (newTag && !entries.includes(newTag)) {
+                    alert('Tag must be a codex entry or existing tag. Add it to the codex first.');
+                  }
+                } else if (e.key === 'Escape') {
+                  dropdown.style.display = 'none';
+                  addInput.blur();
+                }
+              });
+
+              addInput.addEventListener('blur', () => {
+                setTimeout(() => { dropdown.style.display = 'none'; }, 200);
+              });
+
+              addWrapper.appendChild(addInput);
+              addWrapper.appendChild(dropdown);
+              addWrapper.addEventListener('click', (ev) => ev.stopPropagation());
+              tagsContainer.appendChild(addWrapper);
+            };
+
+            renderTags();
+            tile.appendChild(tagsContainer);
+
+            // mark data-category on a sentinel div to allow scrolling by pill
+            tile.setAttribute('data-category', category);
+
+            gridContainer.appendChild(tile);
+          });
+
+          // separator (visual) after category
+          const sep = document.createElement('div');
+          sep.style.gridColumn = '1 / -1';
+          sep.style.borderTop = '1px solid var(--border-light)';
+          sep.style.margin = '20px 0';
+          gridContainer.appendChild(sep);
+
+          sectionWrap.appendChild(gridContainer);
+          // horizontal separator
+          const hr = document.createElement('hr');
+          hr.style.border = 'none';
+          hr.style.borderTop = '1px solid var(--border-light)';
+          hr.style.margin = '18px 0';
+          sectionWrap.appendChild(hr);
+
+          target.appendChild(sectionWrap);
+        } else {
+          const categoryDiv = document.createElement('div');
+          categoryDiv.className = 'codex-category';
+          if (this.collapsedCategories.has(category)) {
+            categoryDiv.classList.add('collapsed');
+          }
+
+          const header = document.createElement('div');
+          header.className = 'codex-category-header';
+          header.innerHTML = `
+            <span class="codex-category-arrow">▼</span>
+            <span>${category}</span>
+            <span style="margin-left: auto; opacity: 0.6; font-size: 0.8em;">(${filteredEntries.length})</span>
+          `;
+          header.addEventListener('click', () => this.toggleCategory(category));
+
+          const entriesDiv = document.createElement('div');
+          entriesDiv.className = 'codex-category-entries';
+
+          filteredEntries.forEach(entry => {
+            const entryDiv = document.createElement('div');
+            entryDiv.className = 'codex-entry';
+            entryDiv.textContent = entry.name;
+            entryDiv.title = entry.description || 'No description';
+            entryDiv.setAttribute('data-entry-id', entry.id);
+            entryDiv.addEventListener('click', () => this.openEntryDetails(entry));
+            entriesDiv.appendChild(entryDiv);
+          });
+
+          categoryDiv.appendChild(header);
+          categoryDiv.appendChild(entriesDiv);
+
+          target.appendChild(categoryDiv);
+        }
       });
-
-      categoryDiv.appendChild(header);
-      categoryDiv.appendChild(entriesDiv);
-      container.appendChild(categoryDiv);
     });
   }
 
   // Open entry details in side panel
   openEntryDetails(entry) {
     this.openEntryPanel(entry);
+
+    // Mark active tile in main list (if present)
+    const tiles = document.querySelectorAll('#codex-main-list .codex-entry-tile');
+    tiles.forEach(el => {
+      if (el.getAttribute('data-entry-id') === entry.id) {
+        el.classList.add('active');
+      } else {
+        el.classList.remove('active');
+      }
+    });
   }
 
   // Open entry panel for editing

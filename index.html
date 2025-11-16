@@ -479,6 +479,112 @@
         font-weight: bold;
       }
 
+      /* Main codex grid styles */
+      .codex-category-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 0 6px 0;
+      }
+
+      .codex-types-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+      }
+
+      .codex-type-pill {
+        padding: 6px 10px;
+        background: var(--bg-primary);
+        border: 1px solid var(--border-light);
+        font-size: var(--font-size-xs);
+        border-radius: 12px;
+        cursor: pointer;
+      }
+
+      .codex-grid-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 12px 20px 24px 20px;
+      }
+
+      .codex-category-title {
+        grid-column: 1 / -1;
+        padding: 6px 0 12px 0;
+        border-top: 1px solid var(--border-light);
+        margin-top: 18px;
+      }
+
+      .codex-types-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+      }
+
+      .codex-entry-tile {
+        display: flex;
+        flex-direction: column;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+        background: transparent;
+      }
+
+      .codex-entry-tile.active {
+        outline: 1px solid rgba(0,0,0,0.06);
+      }
+
+      .codex-entry-image {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+        background: #e6e6e6;
+        margin-bottom: 15px;
+      }
+
+      .codex-entry-tag {
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: #666;
+      }
+
+      .codex-entry-name {
+        font-size: 18px;
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      .codex-entry-desc {
+        font-size: 14px;
+        line-height: 1.5;
+        color: #555;
+        margin-bottom: 15px;
+      }
+
+      .codex-entry-link {
+        font-size: 14px;
+        color: var(--text-primary);
+        text-decoration: none;
+        font-style: italic;
+      }
+
+      .codex-entry-link:hover { text-decoration: underline; }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .codex-grid-container { grid-template-columns: repeat(2, 1fr); }
+      }
+      @media (max-width: 600px) {
+        .codex-grid-container { grid-template-columns: 1fr; }
+      }
+
       .codex-config-panel {
         width: 0;
         background: var(--bg-primary);
@@ -1470,8 +1576,10 @@
     <div class="app-layout">
       <!-- Breadcrumb Navigation (Always Visible) -->
       <div class="breadcrumb-container">
-        <nav class="breadcrumb">
+          <nav class="breadcrumb">
           <span class="breadcrumb-item" data-section="info">Info</span>
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-item" data-section="codex">Codex</span>
           <span class="breadcrumb-separator">/</span>
           <span class="breadcrumb-item active" data-section="structure">Structure</span>
           <span class="breadcrumb-separator">/</span>
@@ -1575,6 +1683,25 @@
                 <h3 class="info-section-title">Notes</h3>
                 <div class="info-section-content" style="grid-template-columns: 1fr;">
                   <textarea class="info-textarea" id="info-notes" placeholder="Additional notes, ideas, or reminders..."></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Codex Main Panel (new) -->
+          <div id="codex-main-panel" class="app-panel">
+            <div class="container">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px;">
+                <h2 style="margin:0;">Codex</h2>
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <button class="codex-btn" id="codex-main-new">New Entry</button>
+                  <input type="text" id="codex-main-search" class="codex-search" placeholder="Filter..." style="max-width:240px;" />
+                </div>
+              </div>
+
+              <div id="codex-main-content" style="display:block;">
+                <div id="codex-main-list" style="width:100%; overflow-y:auto; padding-right:6px;">
+                  <!-- Codex list will be rendered here (large view) -->
                 </div>
               </div>
             </div>
@@ -2299,22 +2426,28 @@
         display: flex;
         flex-wrap: wrap;
         gap: var(--spacing-sm);
+        align-items: center;
       }
 
+      /* Make the inline editable tags use the same visual style as the Structure tags */
       .section-info-tag {
-        background: var(--bg-card-inner);
-        padding: var(--spacing-xs) 8px;
-        border-radius: 12px;
-        font-size: 0.75em;
-        font-weight: 500;
+        background: #f3f3f3;
+        color: #000000;
+        padding: 2px 6px 2px 8px;
+        border-radius: 3px;
+        font-size: var(--font-size-xs);
+        font-weight: 400;
         cursor: pointer;
         transition: background 0.2s;
-        border: 1px solid var(--border-primary);
-        color: var(--text-primary);
+        border: 1px solid var(--border-light);
+        font-style: italic;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
       }
 
       .section-info-tag:hover {
-        background: var(--hover-bg);
+        background: var(--bg-secondary);
       }
 
       .section-info-tag.removable::after {
@@ -2323,13 +2456,14 @@
         margin-left: var(--spacing-sm);
       }
 
+      /* Tag input aligned with Structure small controls */
       .tag-add-input {
-        background: var(--bg-tertiary);
-        border: 1px solid var(--border-primary);
-        padding: var(--spacing-xs) 8px;
-        border-radius: 12px;
-        font-size: 0.75em;
-        width: 90px;
+        background: transparent;
+        border: 1px dashed var(--border-secondary);
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: var(--font-size-xs);
+        width: auto;
         color: var(--text-primary);
       }
 
