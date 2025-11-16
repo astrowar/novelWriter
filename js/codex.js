@@ -8,7 +8,7 @@ class Codex {
     // Initialize codex data if not exists
     if (!this.bookData.data.codex) {
       this.bookData.data.codex = {
-        categories: ['Character', 'Locals', 'Plots', 'Object', 'Lore', 'Other'],
+        categories: ['Characters', 'Objects', 'Lore', 'Subplots', 'Locations', 'Events', 'Conflicts', 'Themes', 'Others'],
         entries: []
       };
     }
@@ -135,13 +135,16 @@ class Codex {
           )
         : entries;
 
-      // Skip categories with no entries (always, not just during search)
-      if (filteredEntries.length === 0) {
-        return;
-      }
+      // Previously we skipped categories with no entries. Keep sidebar compact
+      // but for the main Codex panel we want to show empty categories as
+      // a container with only the "+" add-tile. So do not return here.
 
       // For each render target create nodes (so event listeners are attached)
       targets.forEach(target => {
+        // If this is the sidebar (leftContainer) and there are no entries, skip rendering
+        if (target.id !== 'codex-main-list' && filteredEntries.length === 0) {
+          return;
+        }
         // If this is the main codex list, render a grid of tiles
         if (target.id === 'codex-main-list') {
           const sectionWrap = document.createElement('div');

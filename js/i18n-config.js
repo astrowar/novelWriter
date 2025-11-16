@@ -246,6 +246,29 @@ const I18nConfig = {
       'filosofia'
     ]
   }
+
+  ,
+  // Conflicts identification
+  conflict: {
+    categories: [
+      'conflict',
+      'conflicts',
+      'conflito',
+      'conflitos',
+      'dispute',
+      'disputes'
+    ],
+    tags: [
+      'conflict',
+      'conflito',
+      'war',
+      'guerra',
+      'tension',
+      'tensão',
+      'rivalry',
+      'rivalidade'
+    ]
+  }
 };
 
 /**

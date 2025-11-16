@@ -32,7 +32,7 @@ class BookData {
         title: "Novo Livro",
         language: "pt-BR",
         codex: {
-          categories: ['Character', 'Locals', 'Plots', 'Object', 'Lore', 'Other'],
+          categories: ['Characters', 'Objects', 'Lore', 'Subplots', 'Locations', 'Events', 'Conflicts', 'Themes', 'Others'],
           entries: []
         },
         acts: []

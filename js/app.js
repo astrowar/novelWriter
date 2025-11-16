@@ -17,6 +17,13 @@ class NovelWriterApp {
     this.codex = new Codex(this.bookData, () => this.update());
     this.filterManager = new FilterManager(this.bookData, () => this.update());
     this.renderer = new UIRenderer(this.bookData);
+    // Publisher renderer
+    try {
+      this.publisher = new Publisher(this.bookData);
+    } catch (err) {
+      // safe fallback if Publisher class not available yet
+      this.publisher = null;
+    }
 
     // UI Components
     this.modalManager = new ModalManager();
@@ -304,6 +311,10 @@ class NovelWriterApp {
           this.codex.render();
         } else if (section === 'structure') {
           this.update();
+          } else if (section === 'publish') {
+            if (this.publisher && typeof this.publisher.render === 'function') {
+              this.publisher.render();
+            }
         }
       }
     } else {

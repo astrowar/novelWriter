@@ -2,47 +2,47 @@
   "title": "Uma História de Aceitação",
   "language": "pt-BR",
   "codex": {
-    "categories": ["Character", "Locals", "Plots", "Object", "Lore", "Other"],
+    "categories": ["Characters", "Objects", "Lore", "Subplots", "Locations", "Events", "Conflicts", "Themes", "Others"],
     "entries": [
       {
         "id": 1,
         "name": "John",
-        "category": "Character",
+        "category": "Characters",
         "description": "Um homem encantador e de coração gentil na casa dos trinta anos, que trabalha em uma galeria de arte. Ele é observador, paciente e profundamente compassivo.",
         "tags": ["Principal", "Protagonista", "Romântico"]
       },
       {
         "id": 2,
         "name": "Emma",
-        "category": "Character",
+        "category": "Characters",
         "description": "Uma jovem com um rosto encantador, mas visivelmente autoconsciente sobre seu peso. Ela tem uma personalidade brilhante e é bastante inteligente.",
         "tags": ["Principal", "Romântica", "Autoimagem"]
       },
       {
         "id": 3,
         "name": "Café",
-        "category": "Locals",
+        "category": "Locations",
         "description": "Um café aconchegante e bem iluminado onde John e Emma se encontram regularmente. É o cenário principal onde seu relacionamento se desenvolve.",
         "tags": ["Café", "Encontro", "Cenário"]
       },
       {
         "id": 4,
         "name": "O Bilhete",
-        "category": "Object",
+        "category": "Objects",
         "description": "Um bilhete tocante que John deixa para Emma no café, expressando sua admiração por ela sem mencionar uma vez seu peso. Esse pequeno ato de gentileza toca profundamente Emma.",
         "tags": ["Bilhete", "Romântico", "Turning Point"]
       },
       {
         "id": 5,
         "name": "Jornada de Autoaceitação",
-        "category": "Plots",
+        "category": "Subplots",
         "description": "Emma luta contra seus próprios demônios de autoimagem, muitas vezes se sentindo indigna de amor devido ao seu peso. Com o apoio de John, ela aprende a se aceitar.",
         "tags": ["Autoimagem", "Crescimento", "Romance"]
       },
       {
         "id": 6,
         "name": "Dilema de John",
-        "category": "Plots",
+        "category": "Subplots",
         "description": "John luta para encontrar o equilíbrio entre demonstrar seus sentimentos por Emma e respeitar seu espaço, sem focar em aspectos físicos.",
         "tags": ["Dilema", "Relacionamento", "Apoio"]
       }

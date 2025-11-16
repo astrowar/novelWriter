@@ -1,18 +1,21 @@
 {
   "title": "Uma História de Aceitação",
   "codex": {
-    "categories": [
-      "Character",
-      "Locals",
-      "Plots",
-      "Object",
+      "categories": [
+      "Characters",
+      "Objects",
       "Lore",
-      "Other"
+      "Subplots",
+      "Locations",
+      "Events",
+      "Conflicts",
+      "Themes",
+      "Others"
     ],
     "entries": [
       {
         "name": "John",
-        "category": "Character",
+        "category": "Characters",
         "description": "Um homem encantador e de coração gentil na casa dos trinta anos, que trabalha em uma galeria de arte. Ele é observador, paciente e profundamente compassivo.",
         "tags": [
           "Principal",
@@ -23,7 +26,7 @@
       },
       {
         "name": "Emma",
-        "category": "Character",
+        "category": "Characters",
         "description": "Uma jovem com um rosto encantador, mas visivelmente autoconsciente sobre seu peso. Ela tem uma personalidade brilhante e é bastante inteligente.",
         "tags": [
           "Principal",
@@ -35,7 +38,7 @@
       {
         "id": 4,
         "name": "O Bilhete",
-        "category": "Object",
+        "category": "Objects",
         "description": "Um bilhete tocante que John deixa para Emma no café, expressando sua admiração por ela sem mencionar uma vez seu peso. Esse pequeno ato de gentileza toca profundamente Emma.",
         "tags": [
           "Bilhete",
@@ -45,7 +48,7 @@
       },
       {
         "name": "Jornada de Autoaceitação",
-        "category": "Plots",
+        "category": "Subplots",
         "description": "Emma luta contra seus próprios demônios de autoimagem, muitas vezes se sentindo indigna de amor devido ao seu peso. Com o apoio de John, ela aprende a se aceitar.",
         "tags": [
           "Autoimagem",
@@ -59,7 +62,7 @@
       },
       {
         "name": "Dilema de John",
-        "category": "Plots",
+        "category": "Subplots",
         "description": "John luta para encontrar o equilíbrio entre demonstrar seus sentimentos por Emma e respeitar seu espaço, sem focar em aspectos físicos.",
         "tags": [
           "Dilema",
@@ -75,7 +78,7 @@
       },
       {
         "name": "Carreira de Emma",
-        "category": "Plots",
+        "category": "Subplots",
         "description": "Emma luta para equilibrar suas inseguranças pessoais com sua ambição profissional. Ela está tentando avançar em sua carreira, mas seu problema com autoimagem muitas vezes a impede.",
         "tags": [
           "Carreira",
@@ -88,7 +91,7 @@
       {
         "id": 8,
         "name": "Família de John",
-        "category": "Plots",
+        "category": "Subplots",
         "description": "John vem de uma família tradicional que tem expectativas claras sobre o casamento e a vida. Ele luta para equilibrar suas próprias aspirações com as esperanças de sua família.",
         "tags": [
           "Família",

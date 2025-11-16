@@ -2,26 +2,26 @@
   "title": "A Story of Acceptance",
   "language": "en-US",
   "codex": {
-    "categories": ["Character", "Locals", "Plots", "Object", "Lore", "Other"],
+    "categories": ["Characters", "Objects", "Lore", "Subplots", "Locations", "Events", "Conflicts", "Themes", "Others"],
     "entries": [
       {
         "id": 1,
         "name": "John",
-        "category": "Character",
+        "category": "Characters",
         "description": "A charming and kind-hearted man in his thirties who works at an art gallery. He is observant, patient, and deeply compassionate.",
         "tags": ["Main", "Protagonist", "Romantic"]
       },
       {
         "id": 2,
         "name": "Emma",
-        "category": "Character",
+        "category": "Characters",
         "description": "A young woman with a lovely face, but visibly self-conscious about her weight. She has a brilliant personality and is quite intelligent.",
         "tags": ["Main", "Romantic", "Self-image"]
       },
       {
         "id": 3,
         "name": "The Café",
-        "category": "Locals",
+        "category": "Locations",
         "description": "A cozy, well-lit café where John and Emma regularly meet. It is the main setting where their relationship develops.",
         "tags": ["Café", "Meeting", "Setting"]
       }
