@@ -1,0 +1,6 @@
+{
+  "default_acts_per_book": 3,
+  "default_chapters_per_act": 5,
+  "default_sections_per_chapter": 4,
+  "default_beats_per_section": 6
+}

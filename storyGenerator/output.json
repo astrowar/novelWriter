@@ -1,0 +1,56 @@
+{
+  "title": null,
+  "author": null,
+  "genre": "Urbano Fantástico",
+  "genero": null,
+  "conceito": "Um bairro onde plantas e animais urbanos ganham vida à noite",
+  "trama": null,
+  "logline": "Em um bairro onde plantas e animais ganham vida noturna, uma família luta para manter sua identidade enquanto a linha entre real e fantástico se desvanece",
+  "logline_expanded": "Em um bairro aparentemente comum, onde plantas e animais urbanos ganham vida à noite, uma família luta para manter sua identidade enquanto a linha entre real e fantástico se desvanece. A história começa quando os membros da família percebem que as plantas no jardim e os bichos de rua começam a se mover e interagir apenas após o anoitecer, criando um ambiente de mistério e fascinação. No entanto, essa nova realidade traz consigo desafios inesperados: a mãe, uma mulher prática e cética, começa a questionar sua sanidade ao ver os eventos noturnos, enquanto o pai, mais aberto à ideia do sobrenatural, tenta proteger a família das consequências dessa situação inusitada. O filho adolescente, por outro lado, vê nisso uma oportunidade de explorar e se conectar com esse mundo oculto, mesmo que isso signifique colocar-se em perigo. A tensão aumenta quando os vizinhos começam a notar mudanças estranhas no bairro, e rumores sobre a família espalham-se como um vírus. O clímax ocorre quando uma tempestade violenta atinge o bairro durante a noite, e as plantas e animais ganham vida de maneira ainda mais intensa e ameaçadora, forçando a família a enfrentar seus medos e decidir se devem lutar contra ou aceitar essa nova realidade. No final, após uma noite de caos e revelações, a família descobre que a única maneira de manter sua identidade e sanidade é abraçar o fantástico, aprendendo a conviver com as criaturas noturnas em vez de tentar controlá-las ou negar sua existência.",
+  "tema": "Luta",
+  "heroi": "Sofia",
+  "vilao": "Verdor Sombrio",
+  "protagonistas": [
+    {
+      "nome": "Sofia",
+      "descricao": "Uma menina de 10 anos que vive no bairro onde plantas e animais ganham vida à noite, lutando para manter sua família unida enquanto a realidade se torna cada vez mais distorcida.",
+      "acoes": [
+        "Descobre o segredo do bairro",
+        "Protege seus irmãos menores dos perigos noturnos",
+        "Encontra aliados entre as criaturas que habitam o bairro",
+        "Confronta suas próprias dúvidas e medos para salvar sua família"
+      ],
+      "transformacao": "De uma criança assustada e confusa, Sofia se transforma em uma líder corajosa e determinada, aprendendo a lutar não apenas contra os perigos externos, mas também contra seus próprios temores e incertezas. Essa jornada interna reflete o tema da luta, mostrando como ela encontra força dentro de si mesma para proteger o que mais importa."
+    }
+  ],
+  "antagonistas": [
+    {
+      "nome": "Verdor Sombrio",
+      "descricao": "Uma força de corrupção que infecta a vida noturna do bairro, tornando plantas e animais hostis à presença humana",
+      "acoes": [
+        "Corrompe as plantas urbanas para atacar os moradores",
+        "Controla animais noturnos para sabotar a família protagonista",
+        "Cria ilusões para confundir a percepção da realidade"
+      ],
+      "transformacao": "De ameaça onipresente a força contida, mas não completamente derrotada"
+    }
+  ],
+  "acts": [
+    {
+      "act": 1,
+      "description": "A família começa a perceber que plantas e animais urbanos ganham vida à noite, criando um ambiente de mistério e fascinação. A mãe questiona sua sanidade, enquanto o pai tenta proteger a família.",
+      "disaster_point": "Os vizinhos começam a notar mudanças estranhas no bairro e rumores sobre a família se espalham."
+    },
+    {
+      "act": 2,
+      "description": "A tensão aumenta à medida que os eventos noturnos se tornam mais intensos. O filho adolescente explora o mundo oculto, colocando-se em perigo. A mãe luta contra sua ceticismo e o pai tenta manter a família unida.",
+      "disaster_point": "Uma tempestade violenta atinge o bairro durante a noite, e as plantas e animais ganham vida de maneira ainda mais intensa e ameaçadora."
+    },
+    {
+      "act": 3,
+      "description": "A família enfrenta uma noite de caos e revelações. Eles descobrem que devem abraçar o fantástico para manter sua identidade e sanidade, aprendendo a conviver com as criaturas noturnas.",
+      "disaster_point": "O filho adolescente é ferido durante um confronto com as plantas e animais, forçando a família a aceitar a nova realidade de forma definitiva."
+    }
+  ],
+  "character_sheets": []
+}
